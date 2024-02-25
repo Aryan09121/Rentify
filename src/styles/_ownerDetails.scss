@@ -1,0 +1,148 @@
+.ownerDetails {
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	> h2 {
+		font-size: 2.2rem;
+		margin: 1rem 3rem;
+	}
+	> .vehicleTableContainer {
+		margin: 0 2rem;
+		margin-bottom: 2rem;
+		> .Table {
+			border: 1.5px solid #4f5d5e;
+			border-top: none;
+		}
+	}
+}
+
+.ownerProfileContainer {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	padding: 1rem;
+	margin: 1rem 2rem;
+	gap: 2rem;
+	> section {
+		border-radius: 5px;
+	}
+	> .profileDetails {
+		width: 54%;
+		display: flex;
+		align-items: flex-start;
+		justify-content: flex-start;
+		flex-direction: column;
+		box-shadow: 0 0 3px #868686;
+		> header {
+			border-radius: 5px;
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+			padding: 1.5rem;
+			background-color: #029e9d;
+			width: 100%;
+		}
+		> div {
+			font-family: "Gilroy", "open sans";
+			padding: 1rem 3rem;
+			> .basicProfile {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				> img {
+					width: 23%;
+				}
+				> .details {
+					display: flex;
+					align-items: flex-start;
+					justify-content: flex-start;
+					flex-direction: column;
+
+					> div {
+						display: flex;
+						align-items: center;
+						justify-content: flex-start;
+						gap: 1rem;
+						> h3 {
+							color: #4f5d5e;
+						}
+						> svg {
+							color: #4f5d5e;
+						}
+					}
+				}
+			}
+			> .carDetails {
+				padding: 1.4rem 0;
+				@include flex(column, center, flex-start, 0.8rem);
+				> div {
+					@include flex(row, flex-start, center, 1rem);
+					> h3 {
+						font-size: 0.9rem;
+						color: #4f5d5e;
+						font-weight: 600;
+					}
+					> svg {
+						font-size: 1rem;
+						color: #4f5d5e;
+					}
+				}
+			}
+			> .socials {
+				@include flex(row, space-between, center, unset);
+				padding: 0.4rem 0;
+				> .sociallinks {
+					@include flex(row, center, center, 2rem);
+					> svg {
+						font-size: 2rem;
+						color: #029e9d;
+						cursor: pointer;
+					}
+				}
+				> button {
+					padding: 0.75rem 1.5rem;
+					background-color: #029e9d;
+					border-radius: 5px;
+					color: #fcfcfc;
+					width: 40%;
+				}
+			}
+		}
+	}
+	> .registrationDetails {
+		width: 46%;
+		display: flex;
+		align-items: flex-start;
+		justify-content: flex-start;
+		flex-direction: column;
+		box-shadow: 0 0 3px #868686;
+		> header {
+			border-radius: 5px;
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+			padding: 1.5rem;
+			background-color: #029e9d;
+			width: 100%;
+		}
+		> .body {
+			width: 100%;
+			padding: 1rem;
+			font-family: "Gilroy", "open sans";
+			> .detialRow {
+				padding: 0.4rem;
+				width: 100%;
+				@include grid(repeat(2, 1fr));
+				> h4 {
+					color: #4f5d5e;
+				}
+				> .heading {
+					place-self: self-start;
+				}
+				> .value {
+					place-self: self-end;
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,173 @@
+.dashboard {
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	> h2 {
+		font-size: 2.2rem;
+		margin: 1rem 2rem;
+	}
+	//**  widgetcontainer
+	.widget-container {
+		@include flex(row, space-around, stretch, 1rem);
+		// flex-wrap: wrap;
+		padding: 2rem;
+		.widget {
+			border-radius: 10px;
+			// @include square(15rem);
+			min-width: 18rem;
+			height: 14rem;
+			background-color: #029e9d;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.132);
+			padding: 1rem;
+			@include flex(column, flex-start, unset, 0.4rem);
+			> div:nth-child(1) {
+				@include flex(row, flex-start, center, 0.5rem);
+				width: 100%;
+				padding: 0.5rem 0.2rem;
+				> i {
+					@include square(2.4rem);
+					border-radius: 50%;
+					@include flex(row, center, center, 0);
+					background-color: #979595;
+					> svg {
+						font-size: 2rem;
+					}
+				}
+				> h4 {
+					margin-right: auto;
+				}
+				> p {
+					font-size: 1.1rem;
+					@include flex(row, center, center);
+					> svg {
+						font-size: 1.4rem;
+					}
+				}
+			}
+			> h2 {
+				font-size: 2.5rem;
+				text-align: center;
+			}
+			> h5 {
+				margin-top: 1rem;
+				align-self: flex-end;
+				font-size: 1.4rem;
+			}
+		}
+	}
+	// ** graph-container
+	.dashboardTripTableContainer {
+		margin: 0 2rem;
+		margin-bottom: 2rem;
+		> .Table {
+			border: 1.5px solid #979595;
+			// min-height: 80vh;
+			> .tableContentBody {
+				min-height: unset;
+				> a {
+					padding: 1rem 0;
+				}
+			}
+		}
+	}
+	.driver-container {
+		@include flex(row, unset, unset, 1rem);
+		margin: 0 2rem;
+		margin-bottom: 2rem;
+
+		.dashboardTableContainer {
+			// width: 33%;
+			margin: 0;
+			> .Table {
+				border: 1.5px solid #979595;
+			}
+		}
+
+		//  driver container
+
+		.dashboarddriverDetailsTableContainer {
+			width: 70%;
+			> .tableHeading {
+				color: #fcfcfc;
+				> button {
+					border: none;
+					outline: none;
+					display: flex;
+					align-items: center;
+					padding-left: 1rem;
+					border-radius: 5px;
+					> svg {
+						font-size: 1rem;
+					}
+					> input {
+						@include inputStyles;
+						border-radius: 5px;
+					}
+				}
+			}
+			> .Table {
+				border: 1.5px solid #979595;
+				> .tableContentBody {
+					> a {
+						padding: 1rem 0.2rem;
+						> button {
+							padding: 0.7rem;
+						}
+					}
+				}
+				> .driverFooter {
+					width: 100%;
+					border-top: 1.5px solid #979595;
+					> .tripDetails {
+						width: 100%;
+						width: 100%;
+						display: flex;
+						align-items: center;
+						justify-content: space-evenly;
+						padding-top: 1rem;
+						padding-bottom: 1rem;
+						> div {
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							flex-direction: column;
+							row-gap: 0.2rem;
+							> h3 {
+								color: #029e9d;
+								font-size: 1.9rem;
+							}
+						}
+					}
+					> .tripcalculated {
+						width: 100%;
+						display: flex;
+						align-items: center;
+						justify-content: space-evenly;
+						padding-bottom: 1rem;
+						> div {
+							display: flex;
+							align-items: center;
+							gap: 0.5rem;
+							> svg {
+								color: #029e9d;
+								font-size: 1.4rem;
+							}
+							> p {
+								font-size: 1rem;
+							}
+						}
+						> button {
+							padding: 1rem 2rem;
+							border-radius: 5px;
+							background-color: #029e9d;
+							color: #fcfcfc;
+							font-size: 1.1rem;
+							font-weight: 600;
+						}
+					}
+				}
+			}
+		}
+	}
+}

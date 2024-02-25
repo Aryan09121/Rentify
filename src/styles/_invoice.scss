@@ -1,0 +1,107 @@
+.invoice {
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	&_filter {
+		@include flex(row, space-between, center, 0);
+		margin: 1rem 2rem;
+		> h2 {
+			font-size: 2.2rem;
+		}
+	}
+	&_widget_container {
+		@include flex(row, space-between, center, 1rem);
+		flex-wrap: wrap;
+		margin: 0 2rem;
+		margin-bottom: 2rem;
+	}
+
+	&_widget {
+		max-width: 400px;
+		min-width: 250px;
+		border-radius: 5px;
+		background-color: #fcfcfc;
+		box-shadow: 0 0 2px #bdbcbc;
+		padding: 1rem;
+		width: 32%;
+		&_header {
+			@include flex(row, space-between, center, 0);
+			> span {
+				@include flex(row, unset, center, 1rem);
+			}
+		}
+		> h2 {
+			text-align: center;
+			margin: 1.3rem 0;
+			font-size: 2rem;
+			color: #029e9d;
+		}
+		&_trends {
+			@include flex(row, center, center, 1rem);
+		}
+	}
+	&_table_container {
+		margin: 0 2rem;
+		margin-bottom: 2rem;
+		> .Table {
+			border: 1.5px solid #029e9d;
+			border-top: 1px solid #bdbcbc;
+		}
+	}
+	&_options {
+		@include flex(row, center, center, 1rem);
+		> button {
+			padding: 0.78rem;
+			@include flex(row, center, center, 0.5rem);
+			font-weight: 600;
+			color: #666;
+			font-size: 1.1rem;
+			border-radius: 2px;
+			background-color: #fff;
+		}
+	}
+	&_functionality {
+		@include flex(row, flex-start, baseline, 1rem);
+		// background-color: red;
+		border-left: 1.5px solid #029e9d;
+		border-right: 1.5px solid #029e9d;
+		padding: 0;
+		&_sort {
+			@include flex(row, flex-start, baseline, 1rem);
+			margin-right: auto;
+			> h4 {
+				padding: 1rem;
+			}
+		}
+		&_search {
+			@include flex(row, flex-end, center, 2rem);
+			padding: 0.5rem 1rem;
+			> button:first-child {
+				padding-left: 1rem;
+				background-color: #ffff;
+				border-radius: 3px;
+				@include flex(row, unset, center, 0.3rem);
+				border: 1.5px solid #bdbcbc;
+				background-color: transparent;
+				> input {
+					border-radius: 3px;
+					@include inputStyles;
+				}
+			}
+			> button:last-child {
+				padding: 1rem 1.5rem;
+				background-color: #ffff;
+				border-radius: 3px;
+				font-size: 1.1rem;
+				font-weight: 600;
+				@include flex(row, unset, center, 1rem);
+				background-color: #029e9d;
+				color: #fcfcfc;
+				> svg {
+					font-size: 1.2rem;
+				}
+			}
+		}
+	}
+}

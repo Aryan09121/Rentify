@@ -1,0 +1,109 @@
+.addNew {
+	overflow-y: auto;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	> h2 {
+		font-size: 2.2rem;
+		margin: 1rem 2rem;
+	}
+
+	//**  widgetcontainer
+	.widget-container {
+		@include flex(row, space-around, stretch, 1rem);
+		// flex-wrap: wrap;
+		padding: 2rem;
+
+		.widget {
+			border-radius: 10px;
+			// @include square(15rem);
+			min-width: 18rem;
+			height: 14rem;
+			background-color: #fff;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.132);
+			padding: 1rem;
+			@include flex(column, space-between, unset, 0);
+
+			> div {
+				@include flex(row, flex-start, center, 0.5rem);
+				width: 100%;
+				align-items: center;
+				justify-content: center;
+				padding: 0.5rem 0.2rem;
+
+				> img,
+				svg {
+					color: #029e9d;
+				}
+			}
+
+			> h2 {
+				font-size: 2.5rem;
+				text-align: center;
+				color: #029e9d;
+			}
+
+			> .add-new {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				font-size: 1.2rem;
+
+				> img,
+				svg {
+					font-size: 1.8rem;
+				}
+			}
+		}
+	}
+
+	// ** graph-container
+	.graph-container {
+		@include flex(row, unset, unset, 2rem);
+		padding: 0 2rem 2rem 2.4rem;
+		width: 100%;
+		height: 70vh;
+
+		> div {
+			background-color: white;
+			border-radius: 10px;
+		}
+
+		.car-chart {
+			width: 100%;
+			overflow: hidden;
+
+			.nav-toggles {
+				padding: 0.5rem 1rem;
+				width: 100%;
+				display: flex;
+				background-color: #029e9d;
+				align-items: center;
+				border-radius: 10px;
+				justify-content: space-between;
+
+				> .right-toggles {
+					display: flex;
+					width: fit-content;
+					gap: 1rem;
+				}
+
+				> .toggle-div {
+					width: fit-content;
+					border-radius: 10px;
+					background-color: #fff !important;
+					z-index: 100;
+				}
+			}
+
+			> h2 {
+				@include heading;
+				margin: 1rem 0 2rem 0.25rem;
+				text-align: center;
+				opacity: 0.8;
+			}
+		}
+	}
+}

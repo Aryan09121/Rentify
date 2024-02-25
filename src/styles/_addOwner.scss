@@ -1,0 +1,129 @@
+.owner-details {
+	margin: 2rem;
+	padding: 2rem;
+	/* // border: 2px solid rgb(2, 158, 157); */
+	border-radius: 10px;
+	box-shadow: 0 0 5px rgb(2, 158, 157);
+
+	button {
+		text-align: right;
+		background-color: rgb(2, 158, 157);
+		padding: 0.6rem 2rem;
+		border-radius: 8px;
+		font-size: 1.2rem;
+		color: #fff;
+	}
+
+	select {
+		padding: 0.5rem 5rem;
+		border: 3px solid rgb(2, 158, 157);
+		border-radius: 10px;
+		color: #000;
+		opacity: 0.6;
+		font-weight: 600;
+		font-family: "Gilroy";
+		font-size: 1.2rem;
+		height: fit-content;
+	}
+
+	input {
+		border: 1px solid rgb(2, 158, 157);
+		border-radius: 5px;
+		outline: 0;
+		color: rgb(2, 158, 157);
+		height: fit-content;
+		padding: 1rem;
+	}
+
+	h2 {
+		padding: 1rem 0;
+	}
+
+	.form-control {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+
+		.uploadFiles {
+			width: fit-content;
+			gap: 1rem;
+			color: transparent;
+			border-radius: 10px;
+			border: 4px dashed rgb(2, 158, 157);
+
+			.toggle-div {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 4rem;
+				gap: 1rem;
+
+				#ownerImage {
+					display: none;
+				}
+			}
+		}
+
+		.owner-information,
+		.car-information {
+			padding: 2rem;
+			display: flex;
+			flex-direction: column;
+
+			> .form-elements {
+				width: 100%;
+				display: flex;
+				gap: 4rem;
+
+				.image-div {
+					width: 70%;
+					gap: 2rem;
+					display: flex;
+					flex-direction: column;
+					padding: 2rem;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					border-radius: 10px;
+					border: 2px dashed rgb(2, 158, 157);
+					> img {
+						width: 50%;
+					}
+				}
+
+				.content-div {
+					display: flex;
+					align-items: center;
+					justify-content: start;
+					flex-wrap: wrap;
+					gap: 1rem;
+
+					> input {
+						padding: 1rem 4rem;
+						/* // width: min-content; */
+
+						&:nth-child(odd) {
+							width: 40%;
+						}
+						&:nth-child(even) {
+							width: 45%;
+						}
+					}
+
+					select {
+						font-size: 1rem;
+						padding: 1rem;
+						text-align: center;
+						width: 40%;
+					}
+				}
+			}
+		}
+
+		> button {
+			align-self: flex-end;
+			margin: 1rem 10rem;
+		}
+	}
+}
