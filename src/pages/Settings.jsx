@@ -13,7 +13,6 @@ import { Link, useLocation } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
 import { Formik, Form, Field } from "formik";
-import VectorImage from "../assets/vector.jpg";
 import { RowDefault, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "../components/TableHOC";
 
 const VehicleData = [
@@ -99,7 +98,7 @@ const Settings = () => {
 										<h2>Owner Information</h2>
 										<div className="form-elements">
 											<div className="image-div">
-												<img src={VectorImage} alt="" />
+												{/* <img src={VectorImage} alt="" /> */}
 												{/* Hidden file input element */}
 												<input
 													id="file"

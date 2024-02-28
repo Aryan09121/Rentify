@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { IoClose } from "react-icons/io5";
-import { TiTick } from "react-icons/ti";
 import { toast } from "react-toastify";
 
 function NewInvoice({ isOpen, setIsOpen }) {
