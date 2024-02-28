@@ -44,6 +44,12 @@
 	&_table_container {
 		margin: 0 2rem;
 		margin-bottom: 2rem;
+		.tableHeading {
+			> h5 {
+				color: #fcfcfc;
+				font-size: 1.3rem;
+			}
+		}
 		> .Table {
 			border: 1.5px solid #029e9d;
 			border-top: 1px solid #bdbcbc;
@@ -61,6 +67,7 @@
 			background-color: #fff;
 		}
 	}
+
 	&_functionality {
 		@include flex(row, flex-start, baseline, 1rem);
 		// background-color: red;
@@ -71,7 +78,21 @@
 			@include flex(row, flex-start, baseline, 1rem);
 			margin-right: auto;
 			> h4 {
-				padding: 1rem;
+				padding: 1.2rem 0.3rem;
+				transition: all 0.3s;
+				margin-left: 0.2rem;
+				cursor: pointer;
+				&:hover {
+					color: #029e9d;
+				}
+			}
+			> .selected_invoice {
+				border-bottom: 2.5px solid #d70372;
+
+				color: #d70372;
+				&:hover {
+					color: #d70372;
+				}
 			}
 		}
 		&_search {
@@ -100,6 +121,66 @@
 				color: #fcfcfc;
 				> svg {
 					font-size: 1.2rem;
+				}
+			}
+		}
+	}
+
+	> .newInvoiceDropdown {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 40%;
+		height: 80%;
+		border: 2px solid #029e9d;
+		// box-shadow: 0 0 2px #029e9d;
+		background-color: #f8fafa;
+		border-radius: 5px;
+		> div {
+			padding-top: 2rem;
+			> h2 {
+				font-size: 2rem;
+			}
+			@include flex(column, flex-start, center, 1rem);
+			height: 100%;
+			width: 100%;
+			position: relative;
+			> svg {
+				position: absolute;
+				cursor: pointer;
+				top: 3%;
+				right: 3%;
+				font-size: 2rem;
+				color: #d70372;
+			}
+			> form {
+				@include flex(column, flex-start, center, 1rem);
+				padding: 2rem;
+				height: 100%;
+				width: 100%;
+				padding-top: 2rem;
+				> div {
+					width: 100%;
+					@include grid(30% 70%);
+					align-items: center;
+					> input {
+						@include inputStyles;
+						border: 1.5px solid #029e9d;
+						border-radius: 5px;
+					}
+				}
+				> button {
+					margin-top: 2rem;
+					padding: 1rem 2.2rem;
+					border-radius: 5px;
+					font-size: 1.2rem;
+					background-color: #029e9d;
+					transition: all 0.3s;
+					&:hover {
+						background-color: #029e9ed6;
+						color: #fcfcfc;
+					}
 				}
 			}
 		}

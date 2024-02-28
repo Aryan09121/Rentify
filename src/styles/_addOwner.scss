@@ -1,129 +1,247 @@
-.owner-details {
-	margin: 2rem;
-	padding: 2rem;
-	/* // border: 2px solid rgb(2, 158, 157); */
-	border-radius: 10px;
-	box-shadow: 0 0 5px rgb(2, 158, 157);
-
-	button {
-		text-align: right;
-		background-color: rgb(2, 158, 157);
-		padding: 0.6rem 2rem;
-		border-radius: 8px;
-		font-size: 1.2rem;
-		color: #fff;
+.addNewOwner {
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		display: none;
 	}
-
-	select {
-		padding: 0.5rem 5rem;
-		border: 3px solid rgb(2, 158, 157);
-		border-radius: 10px;
-		color: #000;
-		opacity: 0.6;
-		font-weight: 600;
-		font-family: "Gilroy";
-		font-size: 1.2rem;
-		height: fit-content;
+	> h2 {
+		font-size: 2.2rem;
+		margin: 1rem 2rem;
 	}
-
-	input {
-		border: 1px solid rgb(2, 158, 157);
-		border-radius: 5px;
-		outline: 0;
-		color: rgb(2, 158, 157);
-		height: fit-content;
-		padding: 1rem;
-	}
-
-	h2 {
-		padding: 1rem 0;
-	}
-
-	.form-control {
-		display: flex;
-		align-items: center;
-		flex-direction: column;
-
-		.uploadFiles {
-			width: fit-content;
-			gap: 1rem;
-			color: transparent;
-			border-radius: 10px;
-			border: 4px dashed rgb(2, 158, 157);
-
-			.toggle-div {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				padding: 4rem;
-				gap: 1rem;
-
-				#ownerImage {
-					display: none;
-				}
-			}
-		}
-
-		.owner-information,
-		.car-information {
+	> .newOwnerFormContainer {
+		padding: 1rem 2rem;
+		> .formContainer {
 			padding: 2rem;
-			display: flex;
-			flex-direction: column;
+			border-radius: 5px;
+			border: 1px solid #029e9d;
+			min-height: 61vh;
+		}
+	}
+}
 
-			> .form-elements {
-				width: 100%;
-				display: flex;
-				gap: 4rem;
+.formContainer {
+	> .documentUploader {
+		width: 50%;
+		margin: 1rem auto;
+		padding: 2rem 4rem;
+		border-radius: 6px;
+		border: 1.5px solid #029e9d;
+		position: relative;
+		> h3 {
+			text-align: center;
+			margin: 1rem;
+		}
 
-				.image-div {
-					width: 70%;
-					gap: 2rem;
-					display: flex;
-					flex-direction: column;
-					padding: 2rem;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					border-radius: 10px;
-					border: 2px dashed rgb(2, 158, 157);
-					> img {
-						width: 50%;
-					}
-				}
-
-				.content-div {
-					display: flex;
-					align-items: center;
-					justify-content: start;
-					flex-wrap: wrap;
-					gap: 1rem;
-
-					> input {
-						padding: 1rem 4rem;
-						/* // width: min-content; */
-
-						&:nth-child(odd) {
-							width: 40%;
-						}
-						&:nth-child(even) {
-							width: 45%;
-						}
-					}
-
-					select {
-						font-size: 1rem;
-						padding: 1rem;
-						text-align: center;
-						width: 40%;
-					}
-				}
+		> p {
+			margin-bottom: 1rem;
+			font-size: 0.8rem;
+			font-weight: 700;
+			@include flex(row, flex-start, center, 1rem);
+			svg {
+				font-size: 2rem;
+			}
+			font-family: "Gilroy";
+			> span {
+				cursor: pointer;
 			}
 		}
 
+		> input {
+			display: block;
+			color: #fcfcfc;
+			background-color: #029e9d;
+			text-align: center;
+			// padding: 1rem 1rem;
+			width: fit-content;
+			margin: 0 auto;
+			width: 90%;
+			height: 60px;
+			border-radius: 3px;
+			&::-webkit-file-upload-button {
+				width: 100%;
+				border-radius: 4px;
+				padding: 1rem 2rem;
+				background-color: #029e9d;
+				height: 100%;
+				@include flex(row, center, center, 1rem);
+				overflow: auto;
+				color: #fcfcfc;
+				font-size: 1rem;
+				border: none;
+				outline: none;
+			}
+		}
+	}
+
+	> .ownerDetails {
+		margin: 4rem auto;
+		padding: 1rem 0;
+		> .ownerDetailsFormDiv {
+			margin-top: 2rem;
+			@include flex(row, space-between, flex-start, 1rem);
+		}
+	}
+	> button {
+		font-size: 1.2rem;
+		padding: 1rem 2.2rem;
+		background-color: #d70372;
+		margin: 0 auto;
+		display: block;
+		font-weight: 600;
+		color: #fcfcfc;
+		border-radius: 3px;
+	}
+}
+
+.ownerDetailsFormDiv {
+	> .ownerPhotoUpload {
+		@include flex(column, center, center, 1rem);
+		padding: 2rem 1rem;
+		width: 25%;
+		border: 2px solid #029e9d;
+		border-radius: 3px;
+		> img {
+			width: 70%;
+			border-radius: 50%;
+			@include square(9rem);
+		}
+		> .files-dropzone {
+			color: #fcfcfc;
+			background-color: #029e9d;
+			text-align: center;
+			padding: 1rem 1rem;
+			width: fit-content;
+			margin: 0 auto;
+			margin-top: 1rem;
+			border-radius: 3px;
+		}
+	}
+	> .ownerDataUpload {
+		width: 75%;
+		padding: 0 2rem;
+		// background-color: cyan;
+		@include flex(column, center, center, 1rem);
+	}
+}
+
+.ownerDataUpload {
+	> div {
+		width: 100%;
+		@include flex(row, flex-start, center, 1rem);
+		> input {
+			@include inputStyles;
+			border: 1.5px solid #029e9d;
+			border-radius: 3px;
+			width: 65%;
+		}
+		> .css-b62m3t-container {
+			width: 35%;
+			border: 1.5px solid #029e9d;
+			border-radius: 5px;
+		}
+		> textarea {
+			@include inputStyles;
+			border: 1.5px solid #029e9d;
+			border-radius: 3px;
+		}
+	}
+}
+
+.formContainer {
+	.carDetails {
+		margin-bottom: 2rem;
+		> h3 {
+			margin-bottom: 2rem;
+		}
+		> .carInputDiv {
+			@include flex(column, flex-start, center, 1rem);
+			> div {
+				@include flex(row, flex-start, center, 1rem);
+				width: 100%;
+				> input {
+					width: 50%;
+					@include inputStyles;
+					border: 1.5px solid #029e9d;
+					border-radius: 3px;
+				}
+				> .css-b62m3t-container {
+					width: 70%;
+					border: 1.5px solid #029e9d;
+					border-radius: 5px;
+				}
+			}
+			&:last-child {
+				> .css-b62m3t-container {
+					width: 20%;
+				}
+			}
+		}
+		> .carExcelBtn {
+			margin: 1rem auto;
+		}
 		> button {
-			align-self: flex-end;
-			margin: 1rem 10rem;
+			margin-top: 2rem;
+			margin-right: 0;
+			padding: 1rem 2.2rem;
+			background-color: #029e9d;
+		}
+		> dialog {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			height: 300px;
+			width: 40%;
+			background-color: #fcfcfc;
+			border-radius: 5px;
+			border: 2px solid #029e9d;
+			> div {
+				height: 100%;
+				width: 100%;
+				@include flex(column, center, center, 2rem);
+				position: relative;
+				> svg {
+					position: absolute;
+					top: 4%;
+					right: 4%;
+					font-size: 2rem;
+					z-index: 999;
+					color: #d70372;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+	#carfileupload {
+		width: 45%;
+		display: block;
+		margin: 1rem auto;
+		margin-top: 1rem;
+		border: none;
+		border-radius: 4px;
+		outline: none;
+		&::-webkit-file-upload-button {
+			background-color: #029e9d;
+			border: none;
+			outline: none;
+			width: 100%;
+			border-radius: 4px;
+			color: #fcfcfc;
+			font-size: 1.2rem;
+			font-weight: 600;
+			padding: 1rem 2.2rem;
+		}
+	}
+}
+
+.carstable {
+	padding: 1rem 2rem;
+	margin-bottom: 4rem;
+	border-radius: 5px;
+	> .addnewOwnerTable {
+		> .Table {
+			border: 1.5px solid #029e9d;
+			border-bottom-left-radius: 5px;
+			border-bottom-right-radius: 5px;
 		}
 	}
 }

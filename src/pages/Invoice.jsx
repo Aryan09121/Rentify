@@ -5,8 +5,11 @@ import Bar from "../components/Bar";
 import Select, { components } from "react-select";
 import { HiTrendingDown, HiTrendingUp } from "react-icons/hi";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { RowDefault, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "../components/TableHOC";
+import { InvoiceRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "../components/TableHOC";
 import { FaPlus, FaSearch, FaUpload } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
+import NewInvoice from "../components/NewInvoice";
 
 const analyticsFilterOptions = [
 	{ value: "month", label: "Monthly" },
@@ -14,9 +17,9 @@ const analyticsFilterOptions = [
 ];
 
 const invoiceFilterOptions = [
-	{ value: "", label: "Sort By" },
-	{ value: "status", label: "Status" },
-	{ value: "amount", label: "Amount" },
+	{ value: "default", label: "Sort By Amount" },
+	{ value: "increasing", label: "Amount 📈" },
+	{ value: "decreasing", label: "Amount 📉" },
 ];
 
 const DropdownIndicator = (props) => {
@@ -67,33 +70,103 @@ const invoiceHeaders = ["Invoice ID", "Vehicle Owner", "Email", "Issue Date", "A
 
 const invoiceData = [
 	{
-		data: ["43178", "Priyansh Dubey", "priyansh.dubey@gmail.com", "Febuary 06, 2021", "₹ 8367.00"],
+		data: ["43178", "Priyansh Dubey", "priyansh.dubey@gmail.com", "Febuary 06, 2021", "8367.0"],
 		status: "paid",
 		_id: 11218,
 	},
 	{
-		data: ["43179", "Rahul Sen", "rahul.sen@gmail.com", "April 18, 2019", "₹ 4347.00"],
+		data: ["43179", "Rahul Sen", "rahul.sen@gmail.com", "April 18, 2019", "4347.0"],
 		status: "pending",
 		_id: 11219,
 	},
 	{
-		data: ["43176", "Himanshu Sahu", "sahu091@gmail.com", "June 23, 2018", "₹ 7456.00"],
+		data: ["43176", "Himanshu Sahu", "sahu091@gmail.com", "June 23, 2018", "7456.0"],
 		status: "pending",
 		_id: 11220,
 	},
 	{
-		data: ["43175", "Navjat Kaur", "navya.kaur@gmail.com", "January 22, 2011", "₹ 9474.00"],
+		data: ["43175", "Navjat Kaur", "navya.kaur@gmail.com", "January 22, 2011", "9474.0"],
 		status: "unpaid",
 		_id: 11221,
 	},
 	{
-		data: ["43173", "Brij Sahu", "brij.sahu@gmail.com", "October 01, 2015", "₹ 9352.00"],
+		data: ["43173", "Brij Sahu", "brij.sahu@gmail.com", "October 01, 2015", "9352.0"],
 		status: "paid",
 		_id: 11222,
 	},
 ];
 
 const Invoice = () => {
+	const [selectedInvoice, setSelectedInvoice] = useState("all");
+	const [filteredInvoiceData, setFilteredInvoiceData] = useState(invoiceData);
+	const [searchQuery, setSearchQuery] = useState(""); // State to hold search input value
+	const [selectedSortOption, setSelectedSortOption] = useState("default");
+	const [isOpen, setIsOpen] = useState(false);
+
+	useEffect(() => {
+		filterInvoiceData(selectedInvoice, searchQuery, selectedSortOption);
+	}, [selectedInvoice, searchQuery, selectedSortOption]); // Re-run filterInvoiceData when selectedInvoice changes
+
+	//  ? filtering and sorting invoice data
+	const filterInvoiceData = (status, query, sortOption) => {
+		let filteredData = invoiceData.slice();
+
+		// ? filtering the invoice data based on the status | paid | unpaid | all invoices
+
+		if (status !== "all") {
+			filteredData = filteredData.filter((invoice) => invoice.status === status);
+		}
+
+		// ? filtering the invoice data based on the name or email.
+
+		if (query) {
+			const lowercaseQuery = query.toLowerCase();
+			filteredData = filteredData.filter((invoice) => invoice.data.some((cell) => cell.toLowerCase().includes(lowercaseQuery)));
+		}
+
+		// ? Sorting the invoice data. | default | increasing | decreasing
+		if (sortOption === "default") {
+			// No sorting needed
+		} else if (sortOption === "increasing") {
+			filteredData.sort((a, b) => {
+				const invoiceIDA = parseInt(a.data[0]);
+				const invoiceIDB = parseInt(b.data[0]);
+				return invoiceIDA - invoiceIDB;
+			});
+		} else if (sortOption === "decreasing") {
+			filteredData.sort((a, b) => {
+				const invoiceIDA = parseInt(a.data[0]);
+				const invoiceIDB = parseInt(b.data[0]);
+				return invoiceIDB - invoiceIDA;
+			});
+		}
+		setFilteredInvoiceData(filteredData);
+	};
+
+	const handleSortOptionChange = (selectedOption) => {
+		console.log(selectedOption.value);
+		setSelectedSortOption(selectedOption.value);
+	};
+
+	const exportToExcel = () => {
+		const worksheet = XLSX.utils.json_to_sheet(
+			filteredInvoiceData.map((invoice) => {
+				const row = {
+					"Invoice Id": invoice.data[0],
+					"Owner Name": invoice.data[1],
+					"Owner Email Id": invoice.data[2],
+					"Invoice Date": invoice.data[3],
+					"Invoice Amount": invoice.data[4],
+					Status: invoice.status,
+				};
+				return row;
+			})
+		);
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, "Invoices");
+		XLSX.writeFile(workbook, "invoices.xlsx");
+	};
+
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
@@ -118,29 +191,37 @@ const Invoice = () => {
 					<TableHeading>
 						<h5>All Invoices</h5>
 						<div className="invoice_options">
-							<Select
-								defaultValue={invoiceFilterOptions[0]}
-								options={invoiceFilterOptions}
-								components={{ DropdownIndicator }}
-								styles={customStyles}
-							/>
-							<button>
+							<button onClick={() => setIsOpen((curr) => !curr)}>
 								Create Invoice <FaPlus />
 							</button>
 						</div>
 					</TableHeading>
 					<TableHeading className="invoice_functionality">
 						<div className="invoice_functionality_sort">
-							<h4>All Invoices</h4>
-							<h4>Pending</h4>
-							<h4>Paid Invoices</h4>
+							<h4 className={selectedInvoice === "all" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("all")}>
+								All Invoices
+							</h4>
+							<h4 className={selectedInvoice === "pending" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("pending")}>
+								Pending
+							</h4>
+							<h4 className={selectedInvoice === "paid" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("paid")}>
+								Paid
+							</h4>
+							<h4 className={selectedInvoice === "unpaid" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("unpaid")}>
+								Unpaid Invoices
+							</h4>
 						</div>
 						<div className="invoice_functionality_search">
 							<button>
 								<FaSearch />
-								<input type="text" placeholder="Search by Email, Name" />
+								<input
+									type="text"
+									placeholder="Search by Email, Name"
+									value={searchQuery}
+									onChange={(e) => setSearchQuery(e.target.value)}
+								/>
 							</button>
-							<button>
+							<button onClick={exportToExcel}>
 								<FaUpload />
 								Export
 							</button>
@@ -148,9 +229,10 @@ const Invoice = () => {
 					</TableHeading>
 					<Table>
 						<TableHeaders style={{ gridTemplateColumns: `repeat(${invoiceHeaders.length},1fr)` }} headers={invoiceHeaders} />
-						<TableBody TableRow={RowDefault} data={invoiceData} />
+						<TableBody TableRow={InvoiceRow} data={filteredInvoiceData} />
 					</Table>
 				</TableContainer>
+				<NewInvoice isOpen={isOpen} setIsOpen={setIsOpen} />
 			</main>
 		</div>
 	);

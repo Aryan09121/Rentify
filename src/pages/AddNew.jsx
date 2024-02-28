@@ -1,76 +1,50 @@
 /* eslint-disable react/prop-types */
 import AdminSidebar from "../components/AdminSidebar";
-import { FaArrowRight } from "react-icons/fa";
-import { IoIosArrowDown } from "react-icons/io";
+import { FaArrowRight, FaUser } from "react-icons/fa";
+import { TableContainer, Table, TableHeading } from "../components/TableHOC";
 import { IoMdAdd } from "react-icons/io";
+import { BarChart } from "@mui/x-charts/BarChart";
+import { Box } from "@mui/system";
 
 import Bar from "../components/Bar";
-import Select, { components } from "react-select";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-const options1 = [
-	{ value: "", label: "Search Owner" },
-	{ value: "price", label: "Price" },
-	{ value: "condition", label: "Condition" },
-	{ value: "distance", label: "Distance Travelled" },
-];
+const xLabels = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-const options2 = [
-	{ value: "", label: "Vehicles" },
-	{ value: "price", label: "Price" },
-	{ value: "condition", label: "Condition" },
-	{ value: "distance", label: "Distance Travelled" },
-];
-
-const options3 = [
-	{ value: "", label: "Year" },
-	{ value: "price", label: "Price" },
-	{ value: "condition", label: "Condition" },
-	{ value: "distance", label: "Distance Travelled" },
-];
-
-const DropdownIndicator = (props) => {
-	return (
-		<components.DropdownIndicator {...props}>
-			<IoIosArrowDown />
-		</components.DropdownIndicator>
-	);
-};
-
-const customStyles = {
-	control: (provided) => ({
-		...provided,
-		// padding: "0.3rem 0.6rem",
-		cursor: "pointer",
-		backgroundColor: "#fff",
-		transition: "all 0.3s ease-in-out",
-		"&:hover, &:focus": {
-			backgroundColor: "#fff",
-			color: "rgb(2, 158, 157)",
-		},
-	}),
-	singleValue: (provided) => ({
-		...provided,
-		padding: "0.2rem",
-		borderRadius: "10px",
-		fontSize: "1.1rem",
-		opacity: "0.8",
-		transition: "all 0.3s ease-in-out",
-		"&:hover, &:focus": {
-			color: "rgb(2, 158, 157)",
-		},
-	}),
-	dropdownIndicator: (provided) => ({
-		...provided,
-		color: "#000",
-		fontSize: "2rem",
-		"&:hover, &:focus": {
-			color: "rgb(2, 158, 157)",
-		},
-	}),
+const dummyData = {
+	2022: [4000, 3000, 2000, 2780, 1890, 2390, 3490, 2225, 1347, 644, 2443, 1333],
+	2023: [4500, 3200, 2200, 2880, 1990, 2490, 3590, 2325, 1447, 744, 2543, 1433],
+	// Add data for other years as needed
 };
 
 const AddNew = () => {
+	const [selectedYear, setSelectedYear] = useState(""); // State to hold the selected year
+	const [chartData, setChartData] = useState([]); // State to hold the chart data for the selected year
+
+	// Function to handle year selection
+	const handleYearChange = (event) => {
+		setSelectedYear(event.target.value);
+		// Here you would fetch the data for the selected year from your backend API and update the chartData state
+		// For demonstration purposes, I'll generate dummy data for different years
+		const dummyData = {
+			2022: [4000, 3000, 2000, 2780, 1890, 2390, 3490, 2225, 1347, 644, 2443, 1333],
+			2023: [4500, 3200, 2200, 2880, 1990, 2490, 3590, 2325, 1447, 744, 2543, 1433],
+			2021: [6500, 1200, 2200, 1880, 1920, 3383, 1590, 1325, 2447, 1144, 543, 1633],
+			2020: [500, 2800, 1200, 1145, 3240, 1630, 1590, 5523, 547, 1744, 2954, 3633],
+			// Add data for other years as needed
+		};
+		setChartData(dummyData[event.target.value] || []);
+	};
+
+	useEffect(() => {
+		// Set the default selected year to the latest year from dummyData
+		const years = Object.keys(dummyData);
+		const latestYear = years.length > 0 ? years[years.length - 1] : "";
+		setSelectedYear(latestYear);
+		setChartData(dummyData[latestYear] || []);
+	}, []);
+
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
@@ -80,42 +54,47 @@ const AddNew = () => {
 				<section className="widget-container">
 					<WidgetItem designation="Owner" percent={2.8} value={243} />
 					<WidgetItem designation="Driver" percent={-2.5} value={143} />
-					<WidgetItem designation="Employee" percent={4} value={243} />
+					<WidgetItem designation="Staff" percent={4} value={243} />
 				</section>
-				<section className="graph-container">
-					<div className="car-chart">
-						<div className="nav-toggles">
-							<div className="toggle-div">
-								<Select
-									className="filter"
-									defaultValue={options1[0]}
-									options={options1}
-									components={{ DropdownIndicator }}
-									styles={customStyles}
-								/>
+				<section className="barChartContainer">
+					<TableContainer className="addnewOwnerTable">
+						<TableHeading>
+							<button>
+								<FaUser />
+								<input type="text" />
+							</button>
+							<div>
+								<button>
+									<input type="number" placeholder="Year" onChange={handleYearChange} value={selectedYear} />
+								</button>
+								<button></button>
 							</div>
-							<div className="right-toggles">
-								<div className="toggle-div">
-									<Select
-										className="filter"
-										defaultValue={options2[0]}
-										options={options2}
-										components={{ DropdownIndicator }}
-										styles={customStyles}
-									/>
-								</div>
-								<div className="toggle-div">
-									<Select
-										className="filter"
-										defaultValue={options3[0]}
-										options={options3}
-										components={{ DropdownIndicator }}
-										styles={customStyles}
-									/>
-								</div>
-							</div>
-						</div>
-					</div>
+						</TableHeading>
+						<Table>
+							<Box sx={{ width: "100%", height: "80vh", p: 2, bgcolor: "background.paper" }}>
+								{selectedYear !== "" ? (
+									chartData.length !== 0 ? (
+										<BarChart
+											series={[{ data: chartData, label: "Rent Charges", id: "uvId" }]}
+											xAxis={[{ data: xLabels, scaleType: "band" }]}
+											grid={{ x: true, y: true }}
+											leftAxis={null}
+											axisHighlight={{
+												x: "band", // Or 'none', or 'band'
+												y: "line", // Or 'none'
+											}}
+										/>
+									) : (
+										<h1 className="red" style={{ textAlign: "center", marginTop: "10rem" }}>
+											Please Select the Valid year first
+										</h1>
+									)
+								) : (
+									<h1>Please Select the year first</h1>
+								)}
+							</Box>
+						</Table>
+					</TableContainer>
 				</section>
 			</main>
 		</div>
@@ -129,7 +108,7 @@ const WidgetItem = ({ value, designation }) => (
 		</div>
 		<h2>{Math.abs(value)}</h2>
 		<div className="add-new">
-			<Link to="/add/new/owner">
+			<Link to={`/add/new/${designation}`}>
 				Add New {designation} <IoMdAdd />
 			</Link>
 		</div>

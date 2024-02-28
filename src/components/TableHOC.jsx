@@ -112,6 +112,22 @@ export const OwnerRow = ({ rowdata, className = "tableContents" }) => {
 		</Link>
 	);
 };
+//  ?-- Invoice row
+
+export const InvoiceRow = ({ rowdata, className = "tableContents" }) => {
+	return (
+		<div className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}>
+			{rowdata.data.map((data) => {
+				return <h3 key={rowdata._id}>{data}</h3>;
+			})}
+			<button
+				className={rowdata.status === "unpaid" ? "tableBtn purplebg" : rowdata.status === "pending" ? "tableBtn redbg" : "tableBtn greenbg"}
+			>
+				{rowdata.status}
+			</button>
+		</div>
+	);
+};
 
 // ?-- Bill List Row
 

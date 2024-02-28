@@ -11,15 +11,16 @@
 	}
 
 	//**  widgetcontainer
-	.widget-container {
-		@include flex(row, space-around, stretch, 1rem);
-		// flex-wrap: wrap;
+	> .widget-container {
+		@include flex(row, center, stretch, 1rem);
+		flex-wrap: wrap;
 		padding: 2rem;
 
-		.widget {
-			border-radius: 10px;
-			// @include square(15rem);
-			min-width: 18rem;
+		> .widget {
+			border-radius: 3px;
+			min-width: 220px;
+			max-width: 400px;
+			width: 31%;
 			height: 14rem;
 			background-color: #fff;
 			box-shadow: 0 0 10px rgba(0, 0, 0, 0.132);
@@ -27,20 +28,27 @@
 			@include flex(column, space-between, unset, 0);
 
 			> div {
-				@include flex(row, flex-start, center, 0.5rem);
+				@include flex(row, flex-start, center, 1rem);
 				width: 100%;
 				align-items: center;
 				justify-content: center;
 				padding: 0.5rem 0.2rem;
 
-				> img,
-				svg {
+				> svg {
 					color: #029e9d;
+					margin-left: auto;
+				}
+				> a {
+					@include flex(row, flex-start, center, 1rem);
+					transition: all 0.3s;
+					&:hover {
+						color: #029e9d;
+					}
 				}
 			}
 
 			> h2 {
-				font-size: 2.5rem;
+				font-size: 2rem;
 				text-align: center;
 				color: #029e9d;
 			}
@@ -58,51 +66,27 @@
 			}
 		}
 	}
-
-	// ** graph-container
-	.graph-container {
-		@include flex(row, unset, unset, 2rem);
-		padding: 0 2rem 2rem 2.4rem;
-		width: 100%;
-		height: 70vh;
-
-		> div {
-			background-color: white;
-			border-radius: 10px;
-		}
-
-		.car-chart {
-			width: 100%;
-			overflow: hidden;
-
-			.nav-toggles {
-				padding: 0.5rem 1rem;
-				width: 100%;
-				display: flex;
-				background-color: #029e9d;
-				align-items: center;
-				border-radius: 10px;
-				justify-content: space-between;
-
-				> .right-toggles {
-					display: flex;
-					width: fit-content;
-					gap: 1rem;
-				}
-
-				> .toggle-div {
-					width: fit-content;
-					border-radius: 10px;
-					background-color: #fff !important;
-					z-index: 100;
+	> .barChartContainer {
+		padding: 2rem 3rem;
+		> .addnewOwnerTable {
+			> .tableHeading {
+				@include flex(row, space-between, center, 1rem);
+				button {
+					@include flex(row, flex-start, center, 1rem);
+					padding-left: 1rem;
+					border-radius: 5px;
+					> svg {
+						color: #3f3f3fb6;
+						font-size: 1rem;
+					}
+					> input {
+						border-radius: 5px;
+						@include inputStyles;
+					}
 				}
 			}
-
-			> h2 {
-				@include heading;
-				margin: 1rem 0 2rem 0.25rem;
-				text-align: center;
-				opacity: 0.8;
+			> .Table {
+				border: 1.5px solid #029e9d;
 			}
 		}
 	}
