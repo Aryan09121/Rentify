@@ -39,31 +39,6 @@ export const ownerSortOptions = [
 	{ value: "status", label: "Payment Status" },
 ];
 
-//  vehicle data
-
-export const VehicleData = [
-	{
-		data: ["1", "Tata Nexon", "134 km", "543.00/day", "52 days", 4443.0],
-		_id: 1,
-	},
-	{
-		data: ["2", "Harrier", "224 km", "866.00/day", "12 days", 1121.0],
-		_id: 2,
-	},
-	{
-		data: ["3", "Maruti Suzuki", "274 km", "300.00/day", "39 days", 5369.0],
-		_id: 3,
-	},
-	{
-		data: ["4", "Tata Punch", "344 km", "514.00/day", "62 days", 2193.0],
-		_id: 4,
-	},
-	{
-		data: ["5", "Maruti Breeza", "184 km", "455.00/day", "41 days", 1343.0],
-		_id: 5,
-	},
-];
-
 export const vehicleHeaders = ["Serial No", "Brand Name", "Kilometers", "Rate", "Total Days", "Amount"];
 
 export const vehicleSortOptions = [
@@ -73,3 +48,81 @@ export const vehicleSortOptions = [
 	{ value: "days", label: "Days" },
 	{ value: "rate", label: "Rate" },
 ];
+
+const owner = {
+	_id: 1,
+	name: "Saksham Bisen",
+	phone: "7415729120",
+	email: "dummyuser.car@gmail.com",
+	address: "3, Ultra Apartment, Hari Shankar Joshi Road, Dahisagar",
+	gstin: "BVHDE1425D",
+	hsn: "BVHDE1425D",
+	pan: "BVHDE1425D",
+	joining: new Date().toDateString(),
+	facebook: "https://www.facebook.com",
+	twitter: "https://x.com",
+	instagram: "https://instagram.com",
+	totalKm: "2873",
+	paid: 24000.0,
+	pending: 36000.0,
+	cars: [
+		{
+			brand: "Tata Nexon",
+			distance: 134,
+			rate: 543.0,
+			days: 51,
+			amount: 4443,
+			_id: 101,
+		},
+		{
+			brand: "Tata Harrier",
+			distance: 134,
+			rate: 1943.0,
+			days: 41,
+			amount: 93269,
+			_id: 102,
+		},
+		{
+			brand: "Tata Nexon",
+			distance: 134,
+			rate: 543.0,
+			days: 51,
+			amount: 4443,
+			_id: 103,
+		},
+		{
+			brand: "Tata Harrier",
+			distance: 134,
+			rate: 1943.0,
+			days: 41,
+			amount: 93269,
+			_id: 104,
+		},
+		{
+			brand: "Tata Harrier",
+			distance: 134,
+			rate: 1943.0,
+			days: 41,
+			amount: 93269,
+			_id: 105,
+		},
+		{
+			brand: "Tata Nexon",
+			distance: 134,
+			rate: 543.0,
+			days: 51,
+			amount: 4443,
+			_id: 106,
+		},
+		{
+			brand: "Tata Harrier",
+			distance: 134,
+			rate: 1943.0,
+			days: 41,
+			amount: 93269,
+			_id: 107,
+		},
+	],
+};
+
+export { owner };

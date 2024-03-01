@@ -16,12 +16,6 @@ const analyticsFilterOptions = [
 	{ value: "all", label: "Annualy" },
 ];
 
-const invoiceFilterOptions = [
-	{ value: "default", label: "Sort By Amount" },
-	{ value: "increasing", label: "Amount 📈" },
-	{ value: "decreasing", label: "Amount 📉" },
-];
-
 const DropdownIndicator = (props) => {
 	return (
 		<components.DropdownIndicator {...props}>
@@ -100,15 +94,14 @@ const Invoice = () => {
 	const [selectedInvoice, setSelectedInvoice] = useState("all");
 	const [filteredInvoiceData, setFilteredInvoiceData] = useState(invoiceData);
 	const [searchQuery, setSearchQuery] = useState(""); // State to hold search input value
-	const [selectedSortOption, setSelectedSortOption] = useState("default");
 	const [isOpen, setIsOpen] = useState(false);
 
 	useEffect(() => {
-		filterInvoiceData(selectedInvoice, searchQuery, selectedSortOption);
-	}, [selectedInvoice, searchQuery, selectedSortOption]); // Re-run filterInvoiceData when selectedInvoice changes
+		filterInvoiceData(selectedInvoice, searchQuery);
+	}, [selectedInvoice, searchQuery]); // Re-run filterInvoiceData when selectedInvoice changes
 
-	//  ? filtering and sorting invoice data
-	const filterInvoiceData = (status, query, sortOption) => {
+	//  ? filtering  invoice data
+	const filterInvoiceData = (status, query) => {
 		let filteredData = invoiceData.slice();
 
 		// ? filtering the invoice data based on the status | paid | unpaid | all invoices
@@ -124,28 +117,7 @@ const Invoice = () => {
 			filteredData = filteredData.filter((invoice) => invoice.data.some((cell) => cell.toLowerCase().includes(lowercaseQuery)));
 		}
 
-		// ? Sorting the invoice data. | default | increasing | decreasing
-		if (sortOption === "default") {
-			// No sorting needed
-		} else if (sortOption === "increasing") {
-			filteredData.sort((a, b) => {
-				const invoiceIDA = parseInt(a.data[0]);
-				const invoiceIDB = parseInt(b.data[0]);
-				return invoiceIDA - invoiceIDB;
-			});
-		} else if (sortOption === "decreasing") {
-			filteredData.sort((a, b) => {
-				const invoiceIDA = parseInt(a.data[0]);
-				const invoiceIDB = parseInt(b.data[0]);
-				return invoiceIDB - invoiceIDA;
-			});
-		}
 		setFilteredInvoiceData(filteredData);
-	};
-
-	const handleSortOptionChange = (selectedOption) => {
-		console.log(selectedOption.value);
-		setSelectedSortOption(selectedOption.value);
 	};
 
 	const exportToExcel = () => {

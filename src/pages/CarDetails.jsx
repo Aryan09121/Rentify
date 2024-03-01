@@ -5,6 +5,8 @@ import Select, { components } from "react-select";
 import { FaFilter, FaIndianRupeeSign } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 import { GrStorage } from "react-icons/gr";
+import { CUSTOME_STYLES } from "../assets/data/constants";
+import { useState } from "react";
 
 const options = [
 	{ value: "", label: "Filter" },
@@ -21,30 +23,9 @@ const DropdownIndicator = (props) => {
 	);
 };
 
-const customStyles = {
-	control: (provided) => ({
-		...provided,
-		padding: "0.3rem 0.6rem",
-		cursor: "pointer",
-		backgroundColor: "#029e9d",
-		"&:hover, &:focus": {
-			backgroundColor: "#029e9d",
-			padding: "0.3rem 0.6rem",
-		},
-	}),
-	singleValue: (provided) => ({
-		...provided,
-		padding: "0.3rem 0.6rem",
-		marginRight: "1rem",
-		borderRadius: "5px",
-	}),
-	dropdownIndicator: (provided) => ({
-		...provided,
-		color: "#fcfcfc",
-		"&:hover, &:focus": {
-			color: "#fcfcfc",
-		},
-	}),
+const car = {
+	owner: "Ramesh Gupta",
+	address: "3 Ultra Apartment, Hari",
 };
 
 function CarDetails() {
@@ -68,13 +49,19 @@ function CarDetails() {
 	);
 }
 
-export const Filter = ({ isOwnerProfile = false }) => {
+export const Filter = ({ isOwnerProfile = false, onClickSearchHandler }) => {
+	const [query, setQuery] = useState("");
 	return (
-		<form className="filter">
-			{!isOwnerProfile && <Select defaultValue={options[0]} options={options} components={{ DropdownIndicator }} styles={customStyles} />}
-			<div className="filterInp">
+		<form className="filter" onSubmit={(e) => onClickSearchHandler(e, query)}>
+			{!isOwnerProfile && <Select defaultValue={options[0]} options={options} components={{ DropdownIndicator }} styles={CUSTOME_STYLES} />}
+			<div className="filterInp" style={isOwnerProfile ? { width: "100%" } : {}}>
 				<FaSearch />
-				<input type="text" placeholder="Search by car number..." />
+				<input
+					type="text"
+					placeholder={isOwnerProfile ? "Search By Owner Name or Email Id " : "Search by car number..."}
+					value={query}
+					onChange={(e) => setQuery(e.target.value)}
+				/>
 			</div>
 			<button type="submit">Search</button>
 		</form>

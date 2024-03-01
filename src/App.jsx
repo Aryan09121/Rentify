@@ -16,6 +16,7 @@ const Settings = lazy(() => import("./pages/Settings"));
 const BillDetails = lazy(() => import("./components/BillDetails"));
 const AddNew = lazy(() => import("./pages/AddNew"));
 const AddNewOwner = lazy(() => import("./pages/AddNewOwner"));
+const Search = lazy(() => import("./pages/Search"));
 
 const App = () => {
 	return (
@@ -26,10 +27,12 @@ const App = () => {
 					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/invoice" element={<Invoice />} />
 					<Route path="/cars" element={<CarDetails />} />
+					<Route path="/cars/:id" element={<CarDetails />} />
 					<Route path="/profile/owner" element={<OwnerProfile />} />
 					<Route path="/profile/owner/:id" element={<OwnerDetails />} />
 					<Route path="/billings" element={<Billings />} />
 					<Route path="/settings" element={<Settings />} />
+					<Route path="/search" element={<Search />} />
 					<Route path="/billings/:id" element={<BillDetails />} />
 					<Route path="/add/new" element={<AddNew />} />
 					<Route path="/add/new/owner" element={<AddNewOwner />} />

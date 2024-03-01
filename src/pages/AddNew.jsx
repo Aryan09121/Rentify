@@ -61,7 +61,7 @@ const AddNew = () => {
 						<TableHeading>
 							<button>
 								<FaUser />
-								<input type="text" />
+								<input type="text" placeholder="Search Owner" />
 							</button>
 							<div>
 								<button>

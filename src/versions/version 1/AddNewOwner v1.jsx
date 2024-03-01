@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-import AdminSidebar from "../components/AdminSidebar";
-import Bar from "../components/Bar";
+import AdminSidebar from "../../components/AdminSidebar";
+import Bar from "../../components/Bar";
 import userImg from "../assets/userImage.png";
 import { TiTick } from "react-icons/ti";
 // import { Table, TableBody, TableContainer, TableHeaders, TableHeading, RowDefault } from "../components/TableHOC";

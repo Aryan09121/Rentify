@@ -1,0 +1,108 @@
+.search {
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	h2 {
+		text-align: center;
+		margin-top: 2rem;
+	}
+	background-color: rgb(249, 248, 246);
+	// table styling
+	.table {
+		border-collapse: 10%;
+		// padding: 2rem;
+		width: 100%;
+		th,
+		td {
+			padding: 8px;
+			text-align: left;
+			vertical-align: middle;
+		}
+		th {
+			font-weight: bold;
+			color: #000000cd;
+			font-size: 1rem;
+			font-family: monospace;
+			padding: 1rem 1rem;
+			user-select: none;
+			text-align: center;
+			@include heading(1px);
+			font-weight: 800;
+		}
+		tbody {
+			tr {
+				box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.093);
+				cursor: pointer;
+			}
+
+			td {
+				padding: 0.4rem;
+				text-align: center;
+				font-size: 0.9rem;
+				font-family: monospace, Gilroy;
+
+				img {
+					width: 4rem;
+					height: 4rem;
+					object-fit: contain;
+					border-radius: 50%;
+				}
+
+				a {
+					text-decoration: none;
+					background-color: rgba(44, 104, 255, 0.455);
+					color: rgba(44, 104, 255);
+					padding: 0.25rem 0.5rem;
+					border-radius: 10px;
+					font-weight: 200;
+				}
+
+				button {
+					width: 2rem;
+					height: 2rem;
+					font-size: 1.1rem;
+					border: none;
+					outline: none;
+					background-color: transparent;
+					cursor: pointer;
+					color: rgb(255, 44, 44);
+					&:hover {
+						opacity: 0.6;
+					}
+				}
+
+				&:first-child {
+					border-left: none;
+				}
+
+				&:last-child {
+					border-right: none;
+				}
+				> svg {
+					color: #029e9d;
+					display: block;
+					text-align: center;
+					cursor: pointer;
+					font-size: 1.4rem;
+					width: 100%;
+				}
+			}
+		}
+	}
+
+	.table-pagination {
+		@include flex(row, center, center, 2rem);
+		padding: 2rem 1rem;
+		> button {
+			padding: 1rem 2.2rem;
+			background-color: #f0f0f0;
+			border-radius: 5px;
+			font-weight: 700;
+			cursor: pointer;
+			&:hover {
+				opacity: 0.7;
+			}
+		}
+	}
+}

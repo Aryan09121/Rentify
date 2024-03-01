@@ -2,19 +2,14 @@
 import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
 import { Filter } from "./CarDetails";
-import { useEffect, useState } from "react";
-import { IoCloseSharp } from "react-icons/io5";
-// import { toast } from "react-toastify";
-// import { XLSX } from "xlsx";
-import { read, utils } from "xlsx";
-import { toast } from "react-toastify";
+import { useState } from "react";
 import Select, { components } from "react-select";
+import { CUSTOME_STYLES } from "../assets/data/constants";
 
 import { customerHeaders, customerData, ownerSortOptions } from "../assets/data/owner";
 import { TableBody, Table, TableContainer, TableHeaders, TableHeading, OwnerRow } from "../components/TableHOC";
 import { FaSort } from "react-icons/fa";
-
-const expectedColumnOwnerProfile = ["Serial No", "_id", "Owner Name", "Total Vehicle", "Address", "Payment Status"];
+import { toast } from "react-toastify";
 
 //  ?--- dropdown indicator
 
@@ -26,89 +21,10 @@ const DropdownIndicator = (props) => {
 	);
 };
 
-// ?--- custom select styles
-
-const customStyles = {
-	control: (provided) => ({
-		...provided,
-		padding: "0.3rem 0.6rem",
-		cursor: "pointer",
-		backgroundColor: "#fcfcfc",
-		"&:hover, &:focus": {
-			backgroundColor: "#fcfcfc",
-			padding: "0.3rem 0.6rem",
-		},
-	}),
-	singleValue: (provided) => ({
-		...provided,
-		padding: "0.3rem 0.6rem",
-		marginRight: "1rem",
-		borderRadius: "5px",
-	}),
-	dropdownIndicator: (provided) => ({
-		...provided,
-		color: "#111",
-		"&:hover, &:focus": {
-			color: "#111",
-		},
-	}),
-};
-
 function OwnerProfile() {
-	const [file, setFile] = useState("");
-	const [fileName, setFileName] = useState("");
-	const [isValidFile, setIsValidFile] = useState(false);
-	// const [owner, setOwner] = useState(customerData);
 	const [sortedData, setSortedData] = useState(customerData);
 
-	const handleUploadFile = (e) => {
-		const selectedFile = e.target.files[0];
-		if (selectedFile) {
-			const reader = new FileReader();
-			reader.onload = (event) => {
-				const bstr = event.target.result;
-				const wb = read(bstr, { type: "binary" });
-				const wsname = wb.SheetNames[0];
-				const ws = wb.Sheets[wsname];
-				// const data = utils.sheet_to_csv(ws, { header: 1 });
-				const data = utils.sheet_to_json(ws, { header: 1 })[0];
-				console.log(utils.sheet_to_json(ws, { header: 1 })[1]);
-				setFile(utils.sheet_to_json(ws, { header: 1 }));
-				setFileName(selectedFile.name);
-				// console.log(data);
-				validateExcelFile(data);
-			};
-			reader.readAsBinaryString(selectedFile);
-		} else {
-			console.error("No file selected");
-		}
-	};
-
-	const validate = (fileContent, expectedColumnOwnerProfile) => {
-		let isTrue = true;
-		fileContent.forEach((curr, index) => {
-			if (curr !== expectedColumnOwnerProfile[index]) {
-				// console.table(curr == expectedColumnOwnerProfile[index]);
-				isTrue = false;
-			}
-			// console.table(curr, expectedColumnOwnerProfile[index]);
-		});
-		return isTrue;
-	};
-
-	const validateExcelFile = (fileContent) => {
-		const isValid = validate(fileContent, expectedColumnOwnerProfile);
-		// console.log(isValid);
-		setIsValidFile(isValid);
-		if (!isValid) {
-			toast.error("Invalid File Format");
-			setFile("");
-			setFileName("");
-		} else {
-			toast.success("file uploaded successfully");
-		}
-	};
-
+	// ? handle sorting functionalities
 	const handleSortChange = (selectedOption) => {
 		let sortedDataCopy = [...customerData];
 		if (selectedOption.value === "kilometers") {
@@ -131,29 +47,38 @@ function OwnerProfile() {
 		setSortedData(sortedDataCopy);
 	};
 
-	useEffect(() => {
-		const readFile = () => {
-			if (file) {
-				file.map((fileItem, idx) => {
-					// let customerObj = {};
-					if (idx !== 0) {
-						const _id = fileItem[1];
-						const status = fileItem[fileItem.length - 1];
-						const data = fileItem.filter((item, index) => {
-							if (index == 1 || index == fileItem.length - 1) {
-								return false;
-							} else {
-								return true;
-							}
-						});
-						setSortedData((prev) => [...prev, { _id, data, status }]);
-					}
-				});
-			}
-			console.log(sortedData);
-		};
-		readFile();
-	}, [file, setFile]);
+	const searchOwner = (e, query) => {
+		e.preventDefault();
+		const filteredData = customerData.filter((item) => {
+			// Adjust this condition based on your data structure
+			// Here assumed item.data[1] contains the field to search
+			const searchData = item.data.map((value) => value.toLowerCase());
+			return searchData.some((value) => value.includes(query.toLowerCase()));
+		});
+		console.log(filteredData);
+		if (filteredData.length === 0) {
+			toast.error("Data Not Found");
+		}
+		setSortedData(() => filteredData);
+	};
+
+	// useEffect(() => {
+	// 	const filteredData = customerData.filter((item) => {
+	// 		// Adjust this condition based on your data structure
+	// 		// Here assumed item.data[1] contains the field to search
+	// 		const searchData = item.data.map((value) => value.toLowerCase());
+	// 		return searchData.some((value) => value.includes(query.toLowerCase()));
+	// 	});
+	// 	console.log(filteredData);
+	// 	const id = setTimeout(() => {
+	// 		setSortedData(() => filteredData);
+	// 	}, 1000);
+
+	// 	return () => {
+	// 		clearInterval(id);
+	// 		// setSortedData(customerData);
+	// 	};
+	// }, [query, sortedData]);
 
 	return (
 		<div className="admin-container">
@@ -161,7 +86,7 @@ function OwnerProfile() {
 			<main className="ownerProfile">
 				<Bar />
 				<h2>Owner Profile</h2>
-				<Filter isOwnerProfile={true} />
+				<Filter isOwnerProfile={true} onClickSearchHandler={searchOwner} />
 				<TableContainer>
 					<TableHeading>
 						<p>All Bills</p>
@@ -170,42 +95,14 @@ function OwnerProfile() {
 							options={ownerSortOptions}
 							components={{ DropdownIndicator }}
 							onChange={handleSortChange}
-							styles={customStyles}
+							styles={CUSTOME_STYLES}
 						/>
 					</TableHeading>
 					<Table>
-						<TableHeaders style={{ gridTemplateColumns: `repeat(${customerHeaders.length + 1},1fr)` }} headers={customerHeaders} />
-						<TableBody TableRow={OwnerRow} data={customerData} />
+						<TableHeaders style={{ gridTemplateColumns: `repeat(${customerHeaders.length},1fr)` }} headers={customerHeaders} />
+						<TableBody TableRow={OwnerRow} data={sortedData} />
 					</Table>
 				</TableContainer>
-				<form className="addFile">
-					{!file && !isValidFile && (
-						<>
-							<label htmlFor="file">
-								<i className="fas fa-file-upload"></i> Upload File
-							</label>
-
-							<input
-								type="file"
-								id="file"
-								name="file"
-								accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-								onChange={handleUploadFile}
-							/>
-						</>
-					)}
-					{file && isValidFile && (
-						<>
-							<p>{fileName}</p>
-							<IoCloseSharp
-								style={{ cursor: "pointer", fontSize: "1.3rem" }}
-								onClick={() => {
-									setFile(""), setIsValidFile(false);
-								}}
-							/>
-						</>
-					)}
-				</form>
 			</main>
 		</div>
 	);

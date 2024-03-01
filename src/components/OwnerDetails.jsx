@@ -7,12 +7,14 @@ import { AiFillInstagram } from "react-icons/ai";
 import { FaSquareXTwitter } from "react-icons/fa6";
 import { MdLocationPin } from "react-icons/md";
 import { BiLogoGmail } from "react-icons/bi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Select, { components } from "react-select";
+import { CUSTOME_STYLES } from "../assets/data/constants";
 
-import { VehicleData, vehicleHeaders, vehicleSortOptions } from "../assets/data/owner";
-import { RowDefault, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
+import { vehicleHeaders, vehicleSortOptions, owner } from "../assets/data/owner";
+import { CarRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
+import { Link } from "react-router-dom";
 
 //  ?-- dropdown select
 
@@ -24,39 +26,13 @@ const DropdownIndicator = (props) => {
 	);
 };
 
-// ?--- custom select styles
-
-const customStyles = {
-	control: (provided) => ({
-		...provided,
-		padding: "0.3rem 0.6rem",
-		cursor: "pointer",
-		backgroundColor: "#fcfcfc",
-		"&:hover, &:focus": {
-			backgroundColor: "#fcfcfc",
-			padding: "0.3rem 0.6rem",
-		},
-	}),
-	singleValue: (provided) => ({
-		...provided,
-		padding: "0.3rem 0.6rem",
-		marginRight: "1rem",
-		borderRadius: "5px",
-	}),
-	dropdownIndicator: (provided) => ({
-		...provided,
-		color: "#111",
-		"&:hover, &:focus": {
-			color: "#111",
-		},
-	}),
-};
-
 function OwnerDetails() {
-	const [sortedData, setSortedData] = useState(VehicleData);
+	const [cardata, setCarData] = useState([]);
+	const [ownerdata] = useState(owner);
+	// const [sortedData, setSortedData] = useState(cardata);
 
 	const handleSortChange = (selectedOption) => {
-		let sortedDataCopy = [...VehicleData];
+		let sortedDataCopy = [...cardata];
 		if (selectedOption.value === "kilometers") {
 			sortedDataCopy.sort((a, b) => {
 				const kilometersA = parseInt(a.data[2].replace(/ km/g, ""));
@@ -74,8 +50,19 @@ function OwnerDetails() {
 				return rateA - rateB;
 			});
 		}
-		setSortedData(sortedDataCopy);
+		setCarData(sortedDataCopy);
 	};
+
+	useEffect(() => {
+		const carsdata = ownerdata.cars.map((car, index) => {
+			return {
+				data: [index + 1, car.brand, car.distance, car.rate, car.days, car.amount],
+				_id: car._id,
+			};
+		});
+		console.log(carsdata);
+		setCarData(carsdata);
+	}, [ownerdata]);
 
 	return (
 		<div className="admin-container">
@@ -92,33 +79,39 @@ function OwnerDetails() {
 								<section className="details">
 									<div>
 										<FaUser />
-										<h3>Ramesh Gupta</h3>
+										<h3>{ownerdata.name}</h3>
 									</div>
 									<div>
 										<BsTelephoneFill />
-										<h3>+98 7452190256</h3>
+										<h3>+91 {ownerdata.phone}</h3>
 									</div>
 									<div>
 										<BiLogoGmail />
-										<h3>demouser.car@gmail.com</h3>
+										<h3>{ownerdata.email}</h3>
 									</div>
 								</section>
 							</article>
 							<section className="carDetails">
 								<div>
 									<FaCar />
-									<h3>3 Cars</h3>
+									<h3>{ownerdata.cars.length} Cars</h3>
 								</div>
 								<div>
 									<MdLocationPin />
-									<h3>3, Ultra Apartment, Hari Shankar Joshi Road, Dahisagar</h3>
+									<h3>{ownerdata.address}</h3>
 								</div>
 							</section>
 							<section className="socials">
 								<div className="sociallinks">
-									<FaFacebook />
-									<FaSquareXTwitter />
-									<AiFillInstagram />
+									<Link to={ownerdata.facebook}>
+										<FaFacebook />
+									</Link>
+									<Link to={ownerdata.twitter}>
+										<FaSquareXTwitter />
+									</Link>
+									<Link to={ownerdata.instagram}>
+										<AiFillInstagram />
+									</Link>
 								</div>
 								<button>Edit Info</button>
 							</section>
@@ -129,23 +122,23 @@ function OwnerDetails() {
 						<div className="body">
 							<div className="detialRow">
 								<h4 className="heading">GST Number:</h4>
-								<h4 className="value">BVHDE1425D</h4>
+								<h4 className="value">{ownerdata.gstin}</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">HSN No:</h4>
-								<h4 className="value">BVHDE1425D</h4>
+								<h4 className="value">{ownerdata.hsn}</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Pan Card No:</h4>
-								<h4 className="value">BVHDE1425D</h4>
+								<h4 className="value">{ownerdata.pan}</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Total Km:</h4>
-								<h4 className="value">2873km</h4>
+								<h4 className="value">{ownerdata.totalKm}</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Joined Date:</h4>
-								<h4 className="value">08/02/2024</h4>
+								<h4 className="value">{ownerdata.joining}</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Amount Paid:</h4>
@@ -166,12 +159,12 @@ function OwnerDetails() {
 							options={vehicleSortOptions}
 							components={{ DropdownIndicator }}
 							onChange={handleSortChange}
-							styles={customStyles}
+							styles={CUSTOME_STYLES}
 						/>
 					</TableHeading>
 					<Table>
-						<TableHeaders style={{ gridTemplateColumns: `repeat(${vehicleHeaders.length + 1},1fr)` }} headers={vehicleHeaders} />
-						<TableBody TableRow={RowDefault} data={sortedData} />
+						<TableHeaders style={{ gridTemplateColumns: `repeat(${vehicleHeaders.length},1fr)` }} headers={vehicleHeaders} />
+						<TableBody TableRow={CarRow} data={cardata} />
 					</Table>
 				</TableContainer>
 			</main>

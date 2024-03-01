@@ -158,6 +158,19 @@ export const BillDetailsRow = ({ rowdata, className = "tableContents" }) => {
 };
 
 // ?-- Default Row
+export const CarRow = ({ rowdata, className = "tableContents" }) => {
+	return (
+		<Link to={`/cars/${rowdata._id}`} style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }} className={className}>
+			{rowdata.data.map((data) => {
+				return (
+					<h3 style={{ textWrap: "balance", textAlign: "left" }} key={rowdata._id}>
+						{data}
+					</h3>
+				);
+			})}
+		</Link>
+	);
+};
 export const RowDefault = ({ rowdata, className = "tableContents" }) => {
 	return (
 		<div style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }} className={className}>
