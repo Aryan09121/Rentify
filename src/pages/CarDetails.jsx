@@ -3,10 +3,12 @@ import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
 import Select, { components } from "react-select";
 import { FaFilter, FaIndianRupeeSign } from "react-icons/fa6";
-import { FaSearch } from "react-icons/fa";
-import { GrStorage } from "react-icons/gr";
+import { FaCar, FaSearch } from "react-icons/fa";
 import { CUSTOME_STYLES } from "../assets/data/constants";
 import { useState } from "react";
+import { IoIosSnow } from "react-icons/io";
+import { BsSpeedometer } from "react-icons/bs";
+import { car } from "../assets/data/car";
 
 const options = [
 	{ value: "", label: "Filter" },
@@ -21,11 +23,6 @@ const DropdownIndicator = (props) => {
 			<FaFilter />
 		</components.DropdownIndicator>
 	);
-};
-
-const car = {
-	owner: "Ramesh Gupta",
-	address: "3 Ultra Apartment, Hari",
 };
 
 function CarDetails() {
@@ -74,18 +71,18 @@ export const CarDetailCard = () => {
 			<header>
 				<div>
 					<h3>
-						Owner Name: <span>Himesh Sharma</span>
+						Owner Name: <span>{car.owner.name}</span>
 					</h3>
 					<h3 className="address">
-						Address: <span>3 Ultra Apartment, Hari Shankar Joshi Road, Dahisagar</span>
+						Address: <span>{car.owner.address}</span>
 					</h3>
 				</div>
 				<div>
 					<h3>
-						Mobile Number: <span>9893456274</span>
+						Mobile Number: <span>{car.owner.phone}</span>
 					</h3>
 					<h3>
-						Car Number: <span>WB 06 F 5977</span>
+						Car Number: <span>{car.carnumber}</span>
 					</h3>
 				</div>
 			</header>
@@ -93,46 +90,46 @@ export const CarDetailCard = () => {
 				<section className="basicDetails">
 					<div>
 						<h3>
-							Brand Name: <span>Maruti Suzuki</span>
+							Brand Name: <span>{car.brand}</span>
 						</h3>
 						<h3>
-							Year: <span>2023</span>
+							Year: <span>{car.year}</span>
 						</h3>
 					</div>
 					<div>
 						<h3>
-							Model: <span>BVXYZOR</span>
+							Model: <span>{car.model}</span>
 						</h3>
 						<h3>
-							Rent From: <span>17/08/2025</span>
+							Rent From: <span>{car.onboardon}</span>
 						</h3>
 					</div>
 				</section>
 				<section className="tagContainer">
-					<Tag Icon={GrStorage} heading="Capacity" content="4 Seats" />
-					<Tag Icon={GrStorage} heading="Type" content="Non AC" />
-					<Tag Icon={GrStorage} heading="Capacity" content="4 Seats" />
+					<Tag Icon={FaCar} heading="Capacity" content={`${car.features.capacity}`} />
+					<Tag Icon={IoIosSnow} heading="Type" content={`${car.features.type}`} />
+					<Tag Icon={BsSpeedometer} heading="Max Speed" content={`${car.features.maxspeed}`} />
 				</section>
 				<section className="advDetails">
 					<h4>Rent Description</h4>
 					<article>
 						<div>
 							<h3>
-								Total Days: <span>231 days</span>
+								Total Days: <span>{car.rentdescription.days} days</span>
 							</h3>
 							<h3>
-								Total Kilometer: <span>345933km</span>
+								Total Kilometer: <span>{car.rentdescription.distance}km</span>
 							</h3>
 							<h3>
-								Period From: <span>Jan 21,2023 - Sep 16,2023</span>
+								Period From: <span>{car.rentdescription.period}</span>
 							</h3>
 						</div>
 						<div>
 							<h3>
-								Rent Cost: <span>766.00rs/days</span>
+								Rent Cost: <span>{car.rentdescription.cost}₹/days</span>
 							</h3>
 							<h3>
-								Sub Total: <span>34,243.00</span>
+								Sub Total: <span>{car.rentdescription.total}</span>
 							</h3>
 						</div>
 					</article>
@@ -142,7 +139,7 @@ export const CarDetailCard = () => {
 					<h3>
 						<span>with @GST</span>
 						<FaIndianRupeeSign />
-						1,22,000.00
+						{car.rentdescription.total + (car.rentdescription.total * 18) / 100}
 					</h3>
 				</section>
 			</main>
