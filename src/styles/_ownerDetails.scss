@@ -3,9 +3,25 @@
 	&::-webkit-scrollbar {
 		display: none;
 	}
-	> h2 {
-		font-size: 2.2rem;
-		margin: 1rem 3rem;
+	> div {
+		@include flex(row, space-between, center, 0rem);
+		// margin: 1rem 3rem;
+		padding: 0rem 3rem;
+		padding-top: 0.6rem;
+		> h2 {
+			font-size: 2.2rem;
+		}
+		> button {
+			padding: 0.8rem 2rem;
+			@include flex(row, flex-start, center, 1rem);
+			background-color: #d70372;
+			border-radius: 5px;
+			color: #fcfcfc;
+			font-size: 1rem;
+			> svg {
+				@include square(2rem);
+			}
+		}
 	}
 	> .vehicleTableContainer {
 		margin: 0 2rem;
@@ -23,6 +39,7 @@
 	justify-content: space-between;
 	padding: 1rem;
 	margin: 1rem 2rem;
+	margin-top: 0.4rem;
 	gap: 2rem;
 	> section {
 		border-radius: 5px;

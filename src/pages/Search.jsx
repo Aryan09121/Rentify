@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useState } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";

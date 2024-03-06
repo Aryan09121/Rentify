@@ -5,8 +5,17 @@ import Bar from "./Bar";
 
 import { billDetailsData, billDetailsHeaders } from "../assets/data/bill";
 import { BillDetailsRow, Table, TableBody, TableContainer, TableFooter, TableHeaders, TableHeading } from "./TableHOC";
+import { useNavigate } from "react-router-dom";
 
 function BillDetails() {
+	const navigate = useNavigate();
+	const payBill = (id) => {
+		navigate(`/Bill/${id}`, { state: { billType: "individual" } });
+	};
+	const payAllBill = () => {
+		alert("All Bill Payed");
+		navigate("/Bill/43178");
+	};
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
@@ -14,26 +23,6 @@ function BillDetails() {
 				<Bar />
 				<h2>Bills</h2>
 				<Filter />
-				{/* <Table
-					className="tableContainer"
-					length={billDetailsHeaders.length}
-					data={billDetailsData}
-					headers={billDetailsHeaders}
-					isBill={true}
-				>
-					<div className="billHeaders">
-						<div>
-							<h4>Bill To Address</h4>
-							<h4>4157 Washington Ave.Manchester, Kentuchy 39456</h4>
-						</div>
-						<div>
-							<h4>
-								Month: <span>Nov 24</span>
-							</h4>
-							<h4>Vehicle Monthly Rental Basis PO</h4>
-						</div>
-					</div>
-				</Table> */}
 				<TableContainer>
 					<TableHeading>
 						<div className="billHeaders">
@@ -51,7 +40,7 @@ function BillDetails() {
 					</TableHeading>
 					<Table>
 						<TableHeaders style={{ gridTemplateColumns: `1fr 4fr 1fr 1fr 1fr 1fr` }} headers={billDetailsHeaders} />
-						<TableBody TableRow={BillDetailsRow} data={billDetailsData}></TableBody>
+						<TableBody onClick={payBill} TableRow={BillDetailsRow} data={billDetailsData}></TableBody>
 						<TableFooter>
 							<div>
 								<h4>Taxable Value (%)</h4>
@@ -68,6 +57,9 @@ function BillDetails() {
 						</TableFooter>
 					</Table>
 				</TableContainer>
+				<button className="billpay" onClick={payAllBill}>
+					Pay Bill
+				</button>
 			</main>
 		</div>
 	);

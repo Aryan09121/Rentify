@@ -3,7 +3,7 @@ import { useTable, useSortBy, usePagination } from "react-table";
 import { AiOutlineSortAscending, AiOutlineSortDescending } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 
-function TableHOC(columns, data, containerClassName, heading, showPagination = false, pageSize = 2) {
+function TableHOC(columns, data, containerClassName, heading, showPagination = false) {
 	const navigate = useNavigate();
 
 	return function HOC() {
@@ -11,7 +11,7 @@ function TableHOC(columns, data, containerClassName, heading, showPagination = f
 			columns,
 			data,
 			initialState: {
-				pageSize: pageSize,
+				pageSize: 900,
 			},
 		};
 		const {

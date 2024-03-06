@@ -15,7 +15,7 @@ function Bar({ query, handleSearch }) {
 		<div className="bar">
 			<div>
 				<BsSearch />
-				<input onClick={handleSearchClick} value={query} onChange={handleSearch} type="text" placeholder="Search..." />
+				<input onClick={handleSearchClick} value={query} onChange={handleSearch} type="text" placeholder="Search Owners..." />
 			</div>
 			<article>
 				<i>

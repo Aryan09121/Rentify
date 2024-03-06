@@ -27,12 +27,12 @@ export const TableHeaders = ({ style, headers }) => {
 };
 
 // !-- Table Body
-export const TableBody = ({ data, children, TableRow, isSingleData = false }) => {
+export const TableBody = ({ data, children, TableRow, isSingleData = false, onClick }) => {
 	return (
 		<div className="tableContentBody">
 			{!isSingleData &&
 				data?.map((row) => {
-					return <TableRow key={row._id} rowdata={row} />;
+					return <TableRow key={row._id} rowdata={row} onClick={onClick} />;
 				})}
 			{isSingleData && <TableRow rowdata={data} />}
 			{children}
@@ -114,9 +114,9 @@ export const OwnerRow = ({ rowdata, className = "tableContents" }) => {
 };
 //  ?-- Invoice row
 
-export const InvoiceRow = ({ rowdata, className = "tableContents" }) => {
+export const InvoiceRow = ({ rowdata, className = "tableContents", onClick }) => {
 	return (
-		<div className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}>
+		<div onClick={() => onClick(rowdata._id)} className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}>
 			{rowdata.data.map((data) => {
 				return <h3 key={rowdata._id}>{data}</h3>;
 			})}
@@ -143,9 +143,9 @@ export const BillListRow = ({ rowdata, className = "tableContents" }) => {
 
 // ?-- Bill Details Row
 
-export const BillDetailsRow = ({ rowdata, className = "tableContents" }) => {
+export const BillDetailsRow = ({ rowdata, className = "tableContents", onClick }) => {
 	return (
-		<div style={{ gridTemplateColumns: `1fr 4fr 1fr 1fr 1fr 1fr` }} className={className}>
+		<div onClick={() => onClick(rowdata._id)} style={{ gridTemplateColumns: `1fr 4fr 1fr 1fr 1fr 1fr` }} className={className}>
 			{rowdata.data.map((data) => {
 				return (
 					<h3 style={{ textWrap: "balance", textAlign: "left" }} key={rowdata._id}>

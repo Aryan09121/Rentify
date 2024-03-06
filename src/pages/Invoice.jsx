@@ -10,6 +10,10 @@ import { FaPlus, FaSearch, FaUpload } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import NewInvoice from "../components/NewInvoice";
+import { invoice } from "../assets/data/bill";
+// eslint-disable-next-line no-unused-vars
+import { generatePdf } from "../components/PdfGenerator";
+import { useNavigate } from "react-router-dom";
 
 const analyticsFilterOptions = [
 	{ value: "month", label: "Monthly" },
@@ -62,43 +66,14 @@ const customStyles = {
 
 const invoiceHeaders = ["Invoice ID", "Vehicle Owner", "Email", "Issue Date", "Amount", "Status"];
 
-const invoiceData = [
-	{
-		data: ["43178", "Priyansh Dubey", "priyansh.dubey@gmail.com", "Febuary 06, 2021", "8367.0"],
-		status: "paid",
-		_id: 11218,
-	},
-	{
-		data: ["43179", "Rahul Sen", "rahul.sen@gmail.com", "April 18, 2019", "4347.0"],
-		status: "pending",
-		_id: 11219,
-	},
-	{
-		data: ["43176", "Himanshu Sahu", "sahu091@gmail.com", "June 23, 2018", "7456.0"],
-		status: "pending",
-		_id: 11220,
-	},
-	{
-		data: ["43175", "Navjat Kaur", "navya.kaur@gmail.com", "January 22, 2011", "9474.0"],
-		status: "unpaid",
-		_id: 11221,
-	},
-	{
-		data: ["43173", "Brij Sahu", "brij.sahu@gmail.com", "October 01, 2015", "9352.0"],
-		status: "paid",
-		_id: 11222,
-	},
-];
-
 const Invoice = () => {
 	const [selectedInvoice, setSelectedInvoice] = useState("all");
-	const [filteredInvoiceData, setFilteredInvoiceData] = useState(invoiceData);
+	const [filteredInvoiceData, setFilteredInvoiceData] = useState([]);
+	const [invoiceData, setInvoiceData] = useState([]);
 	const [searchQuery, setSearchQuery] = useState(""); // State to hold search input value
 	const [isOpen, setIsOpen] = useState(false);
 
-	useEffect(() => {
-		filterInvoiceData(selectedInvoice, searchQuery);
-	}, [selectedInvoice, searchQuery]); // Re-run filterInvoiceData when selectedInvoice changes
+	const navigate = useNavigate();
 
 	//  ? filtering  invoice data
 	const filterInvoiceData = (status, query) => {
@@ -114,11 +89,47 @@ const Invoice = () => {
 
 		if (query) {
 			const lowercaseQuery = query.toLowerCase();
-			filteredData = filteredData.filter((invoice) => invoice.data.some((cell) => cell.toLowerCase().includes(lowercaseQuery)));
+			console.log("query is : " + lowercaseQuery);
+			filteredData = filteredData.filter((invoice) => {
+				console.log(invoice);
+				return invoice.data.some((cell) => {
+					console.log(cell);
+					return cell.toLowerCase().includes(lowercaseQuery);
+				});
+			});
+			console.log(filteredData);
 		}
 
 		setFilteredInvoiceData(filteredData);
 	};
+
+	const generatePdf1 = (id) => {
+		// console.log(filteredInvoiceData);
+		// const data = filteredInvoiceData.filter((invoice) => invoice._id === id);
+
+		// console.log(newdata);
+		navigate(`/Bill/${id}`);
+		// generatePdf();
+	};
+
+	useEffect(() => {
+		const invoices = invoice.map((invoice) => {
+			const { _id, amount, status, owner, issuedate } = invoice;
+			const { name, email } = owner;
+			return {
+				data: [_id, name, email, issuedate, amount],
+				_id,
+				status,
+			};
+		});
+		setInvoiceData(invoices);
+		setFilteredInvoiceData(invoices);
+	}, []); // Re-run filterInvoiceData when selectedInvoice changes
+
+	useEffect(() => {
+		filterInvoiceData(selectedInvoice, searchQuery);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedInvoice, searchQuery, invoiceData]);
 
 	const exportToExcel = () => {
 		const worksheet = XLSX.utils.json_to_sheet(
@@ -201,7 +212,7 @@ const Invoice = () => {
 					</TableHeading>
 					<Table>
 						<TableHeaders style={{ gridTemplateColumns: `repeat(${invoiceHeaders.length},1fr)` }} headers={invoiceHeaders} />
-						<TableBody TableRow={InvoiceRow} data={filteredInvoiceData} />
+						<TableBody TableRow={InvoiceRow} data={filteredInvoiceData} onClick={generatePdf1} />
 					</Table>
 				</TableContainer>
 				<NewInvoice isOpen={isOpen} setIsOpen={setIsOpen} />

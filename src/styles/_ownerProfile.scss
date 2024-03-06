@@ -128,6 +128,13 @@
 		outline: none;
 		border: none;
 		font-size: 1rem;
+		transition: all 0.4s;
+		&:hover {
+			background-color: #d70371a0;
+		}
+	}
+	> .billpay {
+		padding: 1rem 2rem;
 	}
 }
 

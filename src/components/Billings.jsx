@@ -14,9 +14,6 @@ function Billings() {
 				<Bar />
 				<h2>Bills</h2>
 				<Filter />
-				{/* <Table className="tableContainer" isAllBill={true} length={billHeaders.length} data={billData} headers={billHeaders} isBill={false}>
-					All Bills
-				</Table> */}
 				<TableContainer>
 					<TableHeading>
 						<p>All Bills</p>

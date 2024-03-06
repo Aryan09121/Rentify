@@ -3,6 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Suspense, lazy } from "react";
 import Loader from "./components/Loader";
 import { Bounce, ToastContainer } from "react-toastify";
+import BillPdf from "./components/BillPdf";
 
 // ** pages lazy import()
 const Signup = lazy(() => import("./pages/Signup"));
@@ -27,6 +28,7 @@ const App = () => {
 					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/invoice" element={<Invoice />} />
 					<Route path="/cars" element={<CarDetails />} />
+					<Route path="/bill/:id" element={<BillPdf />} />
 					<Route path="/cars/:id" element={<CarDetails />} />
 					<Route path="/profile/owner" element={<OwnerProfile />} />
 					<Route path="/profile/owner/:id" element={<OwnerDetails />} />

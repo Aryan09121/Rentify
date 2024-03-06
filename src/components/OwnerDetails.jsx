@@ -15,6 +15,7 @@ import { CUSTOME_STYLES } from "../assets/data/constants";
 import { vehicleHeaders, vehicleSortOptions, owner } from "../assets/data/owner";
 import { CarRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
 import { Link } from "react-router-dom";
+import { IoIosWarning } from "react-icons/io";
 
 //  ?-- dropdown select
 
@@ -53,6 +54,10 @@ function OwnerDetails() {
 		setCarData(sortedDataCopy);
 	};
 
+	const remindOwner = () => {
+		window.open("https://wa.me/+917415721902?text=Your Payment is Due worth 99000");
+	};
+
 	useEffect(() => {
 		const carsdata = ownerdata.cars.map((car, index) => {
 			return {
@@ -69,7 +74,12 @@ function OwnerDetails() {
 			<AdminSidebar />
 			<main className="ownerDetails">
 				<Bar />
-				<h2>Owner Details</h2>
+				<div>
+					<h2>Owner Details</h2>
+					<button onClick={remindOwner}>
+						Remind For Payment <IoIosWarning />
+					</button>
+				</div>
 				<section className="ownerProfileContainer">
 					<section className="profileDetails">
 						<header></header>
