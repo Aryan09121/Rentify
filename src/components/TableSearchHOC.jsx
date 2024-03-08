@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-key */
 import { useTable, useSortBy, usePagination } from "react-table";
 import { AiOutlineSortAscending, AiOutlineSortDescending } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
-function TableHOC(columns, data, containerClassName, heading, showPagination = false, pageSize = 2) {
-	const navigate = useNavigate();
+function TableHOC(columns, data, containerClassName, heading, showPagination = false, pageSize = 2, onNavigate) {
+	// const navigate = useNavigate();
 
 	return function HOC() {
 		const options = {
@@ -29,12 +29,6 @@ function TableHOC(columns, data, containerClassName, heading, showPagination = f
 			state: { pageIndex },
 		} = useTable(options, useSortBy, usePagination);
 
-		const handleRowClick = (row) => {
-			// Access _id property from the row's original data and redirect to the desired page
-			const { _id } = row.original;
-			navigate(`/profile/owner/${_id}`);
-		};
-
 		return (
 			<div className={containerClassName}>
 				<h2 className="heading">{heading}</h2>
@@ -57,7 +51,7 @@ function TableHOC(columns, data, containerClassName, heading, showPagination = f
 						{page.map((row) => {
 							prepareRow(row);
 							return (
-								<tr {...row.getRowProps} onClick={() => handleRowClick(row)}>
+								<tr {...row.getRowProps} onClick={() => onNavigate(row)}>
 									{row.cells.map((cell) => (
 										<td {...cell.getCellProps}>{cell.render("Cell")}</td>
 									))}
@@ -66,7 +60,7 @@ function TableHOC(columns, data, containerClassName, heading, showPagination = f
 						})}
 					</tbody>
 				</table>
-				{showPagination && pageCount >= 5 && (
+				{showPagination && (
 					<div className="table-pagination">
 						<button disabled={!canPreviousPage} onClick={() => gotoPage(0)}>
 							Go to First Page

@@ -7,15 +7,12 @@ import { useNavigate } from "react-router-dom";
 
 function Bar({ query, handleSearch }) {
 	const navigate = useNavigate();
-	const handleSearchClick = () => {
-		navigate("/search");
-	};
 
 	return (
 		<div className="bar">
 			<div>
 				<BsSearch />
-				<input onClick={handleSearchClick} value={query} onChange={handleSearch} type="text" placeholder="Search Owners..." />
+				<input value={query} onChange={handleSearch} type="text" placeholder="Search Owners..." />
 			</div>
 			<article>
 				<i>

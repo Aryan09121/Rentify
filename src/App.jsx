@@ -9,6 +9,7 @@ import BillPdf from "./components/BillPdf";
 const Signup = lazy(() => import("./pages/Signup"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const CarDetails = lazy(() => import("./pages/CarDetails"));
+const SearchCars = lazy(() => import("./pages/SearchCars"));
 const OwnerProfile = lazy(() => import("./pages/OwnerProfile"));
 const OwnerDetails = lazy(() => import("./components/OwnerDetails"));
 const Billings = lazy(() => import("./components/Billings"));
@@ -27,9 +28,9 @@ const App = () => {
 					<Route path="/" element={<Signup />} />
 					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/invoice" element={<Invoice />} />
-					<Route path="/cars" element={<CarDetails />} />
-					<Route path="/bill/:id" element={<BillPdf />} />
 					<Route path="/cars/:id" element={<CarDetails />} />
+					<Route path="/bill/:id" element={<BillPdf />} />
+					<Route path="/cars" element={<SearchCars />} />
 					<Route path="/profile/owner" element={<OwnerProfile />} />
 					<Route path="/profile/owner/:id" element={<OwnerDetails />} />
 					<Route path="/billings" element={<Billings />} />

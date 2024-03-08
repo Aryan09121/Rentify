@@ -1,63 +1,15 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-/* eslint-disable no-mixed-spaces-and-tabs */
 import { useEffect, useState } from "react";
 import { AiFillFileText, AiTwotoneCar } from "react-icons/ai";
-import { HiMenuAlt4 } from "react-icons/hi";
 import { RiDashboardFill } from "react-icons/ri";
 import { IoPersonAdd } from "react-icons/io5";
 import { BsFileText } from "react-icons/bs";
-// eslint-disable-next-line no-unused-vars
-import userImg from "../assets/userImage.png";
+// import userImg from "../assets/userImage.png";
 import { Link, useLocation } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
 import { Formik, Form, Field } from "formik";
-import { RowDefault, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "../components/TableHOC";
-
-const VehicleData = [
-	{
-		data: ["1", "Tata Nexon", "134 km", "543.00/day", "52 days", 4443.0],
-		_id: 1,
-	},
-	{
-		data: ["2", "Harrier", "224 km", "866.00/day", "12 days", 1121.0],
-		_id: 2,
-	},
-	{
-		data: ["3", "Maruti Suzuki", "274 km", "300.00/day", "39 days", 5369.0],
-		_id: 3,
-	},
-	{
-		data: ["4", "Tata Punch", "344 km", "514.00/day", "62 days", 2193.0],
-		_id: 4,
-	},
-	{
-		data: ["5", "Maruti Breeza", "184 km", "455.00/day", "41 days", 1343.0],
-		_id: 5,
-	},
-];
-
-const vehicleHeaders = ["Serial No", "Brand Name", "Kilometers", "Rate", "Total Days", "Amount"];
 
 const Settings = () => {
-	const location = useLocation();
-
-	const [showModal, setShowModal] = useState(false);
-	const [phoneActive, setPhoneActive] = useState(window.innerWidth < 1000);
-
-	const resizeHandler = () => {
-		setPhoneActive(window.innerWidth < 1000);
-	};
-
-	useEffect(() => {
-		window.addEventListener("resize", resizeHandler);
-
-		return () => {
-			window.removeEventListener("resize", resizeHandler);
-		};
-	}, []);
-
 	return (
 		<>
 			<div className="admin-container">

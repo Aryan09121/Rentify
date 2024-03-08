@@ -100,6 +100,7 @@ const Dashboard = () => {
 			<main className="dashboard">
 				<Bar />
 				<h2>Dashboard</h2>
+
 				<section className="widget-container">
 					<WidgetItem percent={2.8} value={340000} heading="Income" color="rgba(0,115,255)" />
 					<WidgetItem percent={-2.5} value={400} heading="Paid" color="rgba(0,198,202)" />

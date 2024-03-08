@@ -77,7 +77,7 @@ const DivOne = ({ location }) => (
 			<Li url="/profile/owner" text="Profile" Icon={AiFillFileText} location={location} />
 			<Li url="/billings" text="Billings" Icon={AiFillFileText} location={location} />
 			<Li url="/add/new" text="Add New" Icon={IoPersonAdd} location={location} />
-			<Li url="/settings" text="Settings" Icon={AiFillFileText} location={location} />
+			{/* <Li url="/settings" text="Settings" Icon={AiFillFileText} location={location} /> */}
 		</ul>
 	</div>
 );

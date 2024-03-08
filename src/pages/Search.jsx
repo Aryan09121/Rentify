@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
 import TableSearchTOC from "../components/TableSearchHOC";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
 	{
@@ -147,8 +148,15 @@ const arr = [
 
 function Search() {
 	const [query, setQuery] = useState("");
+	const navigate = useNavigate();
 
 	const [data, setData] = useState(arr);
+
+	const handleRowClick = (row) => {
+		// Access _id property from the row's original data and redirect to the desired page
+		const { _id } = row.original;
+		navigate(`/profile/owner/${_id}`);
+	};
 
 	const handleSearch = (e) => {
 		const searchTerm = e.target.value;
@@ -166,7 +174,7 @@ function Search() {
 		setData(filteredData);
 	}, [query]);
 
-	const Table = useCallback(TableSearchTOC(columns, data, "dashboard-product-box", "Customers", true), [data]);
+	const Table = useCallback(TableSearchTOC(columns, data, "dashboard-product-box", "Customers", true, 6, handleRowClick), [data]);
 	return (
 		<div className="admin-container">
 			<AdminSidebar />

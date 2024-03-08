@@ -108,7 +108,7 @@ const WidgetItem = ({ value, designation }) => (
 		</div>
 		<h2>{Math.abs(value)}</h2>
 		<div className="add-new">
-			<Link to={`/add/new/${designation}`}>
+			<Link to={`/add/new/${designation.toLowerCase()}`}>
 				Add New {designation} <IoMdAdd />
 			</Link>
 		</div>

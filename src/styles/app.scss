@@ -84,6 +84,7 @@
 @import "./signup";
 @import "./ownerProfile";
 @import "./ownerDetails";
+@import "./searchCars";
 @import "./mediaQueries";
 :root {
 	font-family: "Helvetica Rounded", Arial, sans-serif;
@@ -296,6 +297,7 @@ a {
 			@include square(3rem);
 			background-color: #d5d3d4;
 			border-radius: 50%;
+			cursor: pointer;
 			> svg {
 				font-size: 1.4rem;
 				opacity: 0.7;
