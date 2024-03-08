@@ -18,9 +18,9 @@ function Bar({ query, handleSearch }) {
 				<input onClick={handleSearchClick} value={query} onChange={handleSearch} type="text" placeholder="Search Owners..." />
 			</div>
 			<article>
-				<i>
+				{/* <i>
 					<IoMdMail />
-				</i>
+				</i> */}
 				<i onClick={() => navigate("/settings")}>
 					<IoIosSettings />
 				</i>

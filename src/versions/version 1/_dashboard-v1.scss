@@ -50,22 +50,17 @@
 					}
 				}
 
-				select {
+				> select {
 					margin-left: auto;
 					background-color: transparent;
 					border: none;
 					color: white;
 					font-size: 1.1rem;
 					cursor: pointer;
-					padding: 0.5rem;
-					outline: none;
-					border: none;
-					border-radius: 5px;
 
 					option {
 						background-color: #029e9d;
 						border: none;
-						outline: none;
 						color: white;
 					}
 				}
@@ -83,7 +78,6 @@
 			}
 		}
 	}
-
 	// ** graph-container
 	.dashboardTripTableContainer {
 		margin: 0 2rem;

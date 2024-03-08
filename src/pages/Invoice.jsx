@@ -221,30 +221,72 @@ const Invoice = () => {
 	);
 };
 
-const WidgetItem = ({ value, designation, percent }) => (
-	<article className="invoice_widget">
-		<div className="invoice_widget_header">
-			<span>
-				<svg width="18" height="19" viewBox="0 0 18 19" xmlns="http://www.w3.org/2000/svg">
-					<path d="M18 19L15 17L12 19L9 17L6 19L3 17L0 19V0H18V19Z" fill="#029E9D" />
-				</svg>
-				{designation}
-			</span>
-			<BsThreeDotsVertical />
-		</div>
-		<h2>{Math.abs(value)}</h2>
-		<div className="invoice_widget_trends">
-			{percent > 0 ? (
-				<h5 className="green">
-					<HiTrendingUp /> {percent}%
-				</h5>
-			) : (
-				<h5 className="red">
-					<HiTrendingDown /> {Math.abs(percent)}%
-				</h5>
-			)}
-		</div>
-	</article>
-);
+const WidgetItem = ({ value, designation, percent }) => {
+	const [showDropdown, setShowDropdown] = useState(false);
+	const [selectedOption, setSelectedOption] = useState(1);
+
+	const handleDropdownClick = () => {
+		setShowDropdown(!showDropdown);
+	};
+
+	useEffect(() => {
+		setShowDropdown(false);
+	}, [selectedOption]);
+
+	return (
+		<article className="invoice_widget">
+			<div className="invoice_widget_header">
+				<span>
+					<svg width="18" height="19" viewBox="0 0 18 19" xmlns="http://www.w3.org/2000/svg">
+						<path d="M18 19L15 17L12 19L9 17L6 19L3 17L0 19V0H18V19Z" fill="#029E9D" />
+					</svg>
+					{designation}
+				</span>
+				<BsThreeDotsVertical onClick={handleDropdownClick} />
+				{showDropdown && (
+					<div className="dropdown-menu">
+						{/* Dropdown items */}
+						<div
+							style={selectedOption === 1 ? { backgroundColor: "#d70372" } : { backgroundColor: "white" }}
+							onClick={() => {
+								setSelectedOption(1);
+							}}
+						>
+							Option 1
+						</div>
+						<div
+							style={selectedOption === 2 ? { backgroundColor: "#d70372" } : { backgroundColor: "white" }}
+							onClick={() => {
+								setSelectedOption(2);
+							}}
+						>
+							Option 2
+						</div>
+						<div
+							style={selectedOption === 3 ? { backgroundColor: "#d70372" } : { backgroundColor: "white" }}
+							onClick={() => {
+								setSelectedOption(3);
+							}}
+						>
+							Option 3
+						</div>
+					</div>
+				)}
+			</div>
+			<h2>{Math.abs(value)}</h2>
+			<div className="invoice_widget_trends">
+				{percent > 0 ? (
+					<h5 className="green">
+						<HiTrendingUp /> {percent}%
+					</h5>
+				) : (
+					<h5 className="red">
+						<HiTrendingDown /> {Math.abs(percent)}%
+					</h5>
+				)}
+			</div>
+		</article>
+	);
+};
 
 export default Invoice;

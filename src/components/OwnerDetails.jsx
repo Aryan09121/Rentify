@@ -14,8 +14,9 @@ import { CUSTOME_STYLES } from "../assets/data/constants";
 
 import { vehicleHeaders, vehicleSortOptions, owner } from "../assets/data/owner";
 import { CarRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoIosWarning } from "react-icons/io";
+import UpdateOwner from "./UpdateOwner";
 
 //  ?-- dropdown select
 
@@ -30,6 +31,7 @@ const DropdownIndicator = (props) => {
 function OwnerDetails() {
 	const [cardata, setCarData] = useState([]);
 	const [ownerdata] = useState(owner);
+	const navigate = useNavigate();
 	// const [sortedData, setSortedData] = useState(cardata);
 
 	const handleSortChange = (selectedOption) => {
@@ -123,7 +125,7 @@ function OwnerDetails() {
 										<AiFillInstagram />
 									</Link>
 								</div>
-								<button>Edit Info</button>
+								<button onClick={() => navigate(`/profile/owner/edit/${ownerdata._id}`)}>Edit Info</button>
 							</section>
 						</div>
 					</section>

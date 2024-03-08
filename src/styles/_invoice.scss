@@ -18,7 +18,9 @@
 	}
 
 	&_widget {
+		user-select: none;
 		max-width: 400px;
+		position: relative;
 		min-width: 250px;
 		border-radius: 5px;
 		background-color: #fcfcfc;
@@ -29,6 +31,28 @@
 			@include flex(row, space-between, center, 0);
 			> span {
 				@include flex(row, unset, center, 1rem);
+			}
+			> svg {
+				cursor: pointer;
+			}
+			> .dropdown-menu {
+				position: absolute;
+				// pointer-events: none;
+				top: 23%; // Position dropdown below the header
+				right: 8%;
+				background-color: white;
+				border: 1px solid #bdbcbc;
+				border-radius: 5px;
+				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+				> div {
+					padding: 1rem 2rem;
+					box-shadow: 0 0 2px rgba(178, 178, 180, 0.767);
+					user-select: none;
+					transition: all 0.4s;
+					&:hover {
+						background-color: #029e9d;
+					}
+				}
 			}
 		}
 		> h2 {

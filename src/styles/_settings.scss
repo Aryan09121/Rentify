@@ -1,0 +1,66 @@
+.settings {
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	> h2 {
+		font-size: 2.2rem;
+		margin: 1rem 2rem;
+		text-align: center;
+	}
+	> .updateContainer {
+		@include flex(ROW, center, center, 1rem);
+		flex-wrap: wrap;
+		padding: 1rem 2rem;
+		width: 100%;
+		> button {
+			@include flex(row, center, center, 1rem);
+			padding: 0.8rem 2.2rem;
+			font-size: 1.2rem;
+			border-radius: 5px;
+			color: #fcfcfc;
+			background-color: #029e9d;
+			> svg {
+				@include square(1.5rem);
+				color: #d70372;
+			}
+		}
+	}
+
+	> .formUpdation {
+		width: 90%;
+		margin: 1rem auto;
+	}
+}
+
+.logoUpdate {
+	width: 90%;
+	margin: 0 auto;
+	border-radius: 5px;
+	@include flex(column, flex-start, center, 1rem);
+	border: 1.5px solid #d70372;
+	padding: 2rem;
+	> img {
+		@include square(10rem);
+		border-radius: 50%;
+	}
+	> .files-dropzone {
+		padding: 0.8rem 2.2rem;
+		font-size: 1.2rem;
+		background-color: #029e9d;
+		color: #fcfcfc;
+	}
+	> input {
+		@include inputStyles;
+		border: 1.5px solid #029e9d;
+		width: 30%;
+		border-radius: 5px;
+	}
+	> button {
+		padding: 1rem 2.2rem;
+		font-size: 1.2rem;
+		color: #fcfcfc;
+		border-radius: 5px;
+		background-color: #d70372;
+	}
+}

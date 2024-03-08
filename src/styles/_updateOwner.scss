@@ -1,0 +1,61 @@
+.updateOwner {
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	> .basicDetails {
+		margin: 1rem 4rem;
+		@include flex(row, space-between, center, 1rem);
+		border: 1.5px solid #029e9d;
+		> .imgContainer {
+			width: 25%;
+			@include flex(column, flex-start, center, 0);
+			padding: 1rem 0;
+			> img {
+				padding: 2rem;
+				width: 100%;
+			}
+			> .files-dropzone {
+				padding: 0.6rem 2.2rem;
+				font-size: 1.2rem;
+				background-color: #029e9d;
+				color: #fcfcfc;
+			}
+		}
+		> .details {
+			@include flex(column, flex-start, flex-start, 0.6rem);
+			padding: 1rem 0;
+			width: 75%;
+			padding-right: 1rem;
+			> div {
+				width: 100%;
+				@include flex(row, flex-start, center, 0.7rem);
+				> input {
+					@include inputStyles;
+					border: 1.5px solid #029e9d;
+				}
+				> textarea {
+					@include inputStyles;
+					border: 1.5px solid #029e9d;
+					height: 140px;
+				}
+			}
+		}
+	}
+	> .btnsUpdate {
+		@include flex(row, flex-end, center, 1rem);
+		margin-right: 4rem;
+		> button {
+			padding: 1rem 2.2rem;
+			background-color: #d70372;
+			color: #fcfcfc;
+			transition: all 0.4s;
+			font-size: 1.2rem;
+			border-radius: 5px;
+			&:hover {
+				background-color: #d70371ab;
+			}
+		}
+	}
+}
