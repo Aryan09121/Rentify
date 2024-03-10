@@ -150,6 +150,14 @@ const Invoice = () => {
 		XLSX.writeFile(workbook, "invoices.xlsx");
 	};
 
+	const closeDropdown = (e) => {
+		e.stopPropagation();
+		if (e.target.id === "svg") {
+			return;
+		}
+		setShowDropdown(false);
+	};
+
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
@@ -229,12 +237,19 @@ const WidgetItem = ({ value, designation, percent }) => {
 		setShowDropdown(!showDropdown);
 	};
 
+	const closeDropdown = (e) => {
+		if (e.target.id === "svg") {
+			return;
+		}
+		setShowDropdown(false);
+	};
+
 	useEffect(() => {
 		setShowDropdown(false);
 	}, [selectedOption]);
 
 	return (
-		<article className="invoice_widget">
+		<article className="invoice_widget" onClick={closeDropdown}>
 			<div className="invoice_widget_header">
 				<span>
 					<svg width="18" height="19" viewBox="0 0 18 19" xmlns="http://www.w3.org/2000/svg">
@@ -242,7 +257,7 @@ const WidgetItem = ({ value, designation, percent }) => {
 					</svg>
 					{designation}
 				</span>
-				<BsThreeDotsVertical onClick={handleDropdownClick} />
+				<BsThreeDotsVertical id="svg" onClick={handleDropdownClick} />
 				{showDropdown && (
 					<div className="dropdown-menu">
 						{/* Dropdown items */}
