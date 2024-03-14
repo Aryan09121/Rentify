@@ -1,8 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit";
 
-const initialState = {
-	loading: true,
-};
+const initialState = {};
 
 export const userReducer = createReducer(initialState, (builder) => {
 	builder

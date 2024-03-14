@@ -3,12 +3,12 @@ import signupImg from "../assets/signup.png";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+// import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { userLogin } from "../actions/user.action";
 
 function SignUp() {
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 	const [isLoginPage, setIsLoginPage] = useState(true);
 	const [loginDetails, setLoginDetails] = useState({
 		username: "",
@@ -19,8 +19,7 @@ function SignUp() {
 		password: "",
 		phone: "",
 	});
-	const { user, loading, error, message } = useSelector((state) => state.user);
-	console.log(user, loading, error, message);
+	// const { user, loading, error, message } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 
 	const onChangeHandler = (e) => {
@@ -35,7 +34,6 @@ function SignUp() {
 
 	const loginSubmitHandler = (e) => {
 		e.preventDefault();
-
 		dispatch(userLogin(loginDetails));
 		// toast.success("Logged In Success");
 		// navigate("/dashboard", { replace: true });

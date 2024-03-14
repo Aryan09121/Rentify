@@ -1,15 +1,13 @@
-import axios from "../utils/axios.js";
+// import axios from "../utils/axios.js";
+import axios from "axios";
 
 export const userLogin = (loginDetails) => async (dispatch) => {
 	try {
 		dispatch({
 			type: "GET_LOGIN_REQUEST",
 		});
-		const data = await axios.post(`/user/login`, loginDetails, {
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
+		const data = await axios.post(`http://localhost:8000/api/v1/user/login`, loginDetails);
+
 		console.log(data);
 		const payload = {
 			user: data.user,
