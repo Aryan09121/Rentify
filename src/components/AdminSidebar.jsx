@@ -9,15 +9,23 @@ import { BsFileText } from "react-icons/bs";
 // eslint-disable-next-line no-unused-vars
 import userImg from "../assets/userImage.png";
 import { Link, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../actions/user.action";
+import { toast } from "react-toastify";
 
 const AdminSidebar = () => {
 	const location = useLocation();
-
+	const dispatch = useDispatch();
 	const [showModal, setShowModal] = useState(false);
 	const [phoneActive, setPhoneActive] = useState(window.innerWidth < 1000);
+	const { message, error } = useSelector((state) => state.user);
 
 	const resizeHandler = () => {
 		setPhoneActive(window.innerWidth < 1000);
+	};
+
+	const logoutHandler = () => {
+		dispatch(logoutUser());
 	};
 
 	useEffect(() => {
@@ -27,6 +35,17 @@ const AdminSidebar = () => {
 			window.removeEventListener("resize", resizeHandler);
 		};
 	}, []);
+
+	useEffect(() => {
+		if (message) {
+			toast.success(message);
+			dispatch({ type: "CLEAR_MESSAGES" });
+		}
+		if (error) {
+			toast.error(error);
+			dispatch({ type: "CLEAR_ERRORS" });
+		}
+	}, [message, error]);
 
 	return (
 		<>
@@ -56,7 +75,9 @@ const AdminSidebar = () => {
 				<h5>President of Sales</h5>
 				<DivOne location={location} />
 
-				<button id="logout-sidebar">Logout</button>
+				<button id="logout-sidebar" onClick={logoutHandler}>
+					Logout
+				</button>
 
 				{phoneActive && (
 					<button id="close-sidebar" onClick={() => setShowModal(false)}>
