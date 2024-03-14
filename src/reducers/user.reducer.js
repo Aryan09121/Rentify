@@ -6,21 +6,25 @@ const initialState = {
 
 export const userReducer = createReducer(initialState, (builder) => {
 	builder
-		.addCase("GET_COUNTRY_NAMES_REQUEST", (state) => {
+		.addCase("GET_LOGIN_REQUEST", (state) => {
 			state.loading = true;
+			state.isAuthenticated = false;
 		})
-		.addCase("GET_COUNTRY_NAMES_SUCCESS", (state, action) => {
+		.addCase("GET_LOGIN_SUCCESS", (state, action) => {
 			state.loading = false;
-			state.countries = action.payload;
+			state.user = action.payload.user;
+			state.message = action.payload.message;
+			state.isAuthenticated = true;
 		})
-		.addCase("GET_COUNTRY_NAMES_FAILURE", (state, action) => {
+		.addCase("GET_LOGIN_FAILURE", (state, action) => {
 			state.loading = false;
 			state.error = action.payload;
+			state.isAuthenticated = false;
 		})
 		.addCase("CLEAR_ERRORS", (state) => {
 			state.error = null;
 		})
 		.addCase("CLEAR_MESSAGES", (state) => {
-			state.messages = null;
+			state.message = null;
 		});
 });

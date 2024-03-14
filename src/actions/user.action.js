@@ -1,18 +1,29 @@
-import axios from "axios";
+import axios from "../utils/axios.js";
 
-export const getCountryNames = () => async (dispatch) => {
+export const userLogin = (loginDetails) => async (dispatch) => {
 	try {
 		dispatch({
-			type: "GET_COUNTRY_NAMES_REQUEST",
+			type: "GET_LOGIN_REQUEST",
 		});
-		const { data } = await axios.get(`http://api.airvisual.com/v2/countries?key=a049b2ed-ca11-4e3c-b28e-daddd0280c18`);
+		const data = await axios.post(`/user/login`, loginDetails, {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		console.log(data);
+		const payload = {
+			user: data.user,
+			message: data.message,
+		};
+
 		dispatch({
-			type: "GET_COUNTRY_NAMES_SUCCESS",
-			payload: data.data,
+			type: "GET_LOGIN_SUCCESS",
+			payload,
 		});
 	} catch (error) {
+		console.log(error);
 		dispatch({
-			type: "GET_COUNTRY_NAMES_FAILURE",
+			type: "GET_LOGIN_FAILURE",
 			payload: error.response.data.message,
 		});
 	}

@@ -4,6 +4,8 @@ import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { userLogin } from "../actions/user.action";
 
 function SignUp() {
 	const navigate = useNavigate();
@@ -17,6 +19,9 @@ function SignUp() {
 		password: "",
 		phone: "",
 	});
+	const { user, loading, error, message } = useSelector((state) => state.user);
+	console.log(user, loading, error, message);
+	const dispatch = useDispatch();
 
 	const onChangeHandler = (e) => {
 		const name = e.target.name;
@@ -30,8 +35,10 @@ function SignUp() {
 
 	const loginSubmitHandler = (e) => {
 		e.preventDefault();
-		toast.success("Logged In Success");
-		navigate("/dashboard", { replace: true });
+
+		dispatch(userLogin(loginDetails));
+		// toast.success("Logged In Success");
+		// navigate("/dashboard", { replace: true });
 	};
 	const signupSubmitHandler = (e) => {
 		e.preventDefault();
