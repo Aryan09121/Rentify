@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import readXlsxFile from "read-excel-file";
 import { IoClose } from "react-icons/io5";
 import { RowDefault, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "../components/TableHOC";
+import { useSelector } from "react-redux";
 
 const customStyles = {
 	control: (provided) => ({
@@ -65,29 +66,6 @@ const DropdownIndicator = (props) => {
 	);
 };
 
-// const ownersCarData = [
-// 	{
-// 		data: ["1", "Tata Nexon", "134 km", "543.00/day", "52 days", 4443.0],
-// 		_id: 1,
-// 	},
-// 	{
-// 		data: ["2", "Harrier", "224 km", "866.00/day", "12 days", 1121.0],
-// 		_id: 2,
-// 	},
-// 	{
-// 		data: ["3", "Maruti Suzuki", "274 km", "300.00/day", "39 days", 5369.0],
-// 		_id: 3,
-// 	},
-// 	{
-// 		data: ["4", "Tata Punch", "344 km", "514.00/day", "62 days", 2193.0],
-// 		_id: 4,
-// 	},
-// 	{
-// 		data: ["5", "Maruti Breeza", "184 km", "455.00/day", "41 days", 1343.0],
-// 		_id: 5,
-// 	},
-// ];
-
 const ownersCarHeaders = ["Serial No", "Brand Name", "Kilometers", "Rate", "Total Days", "Amount"];
 
 const expectedOwnerHeaders = ["name", "phone number", "gender", "email id", "gstin number", "pan number", "address"];
@@ -97,6 +75,8 @@ const AddNewOwner = () => {
 	// ? states
 	const [photo, setPhoto] = useState();
 	const [tableData, setTableData] = useState([]);
+
+	const { user } = useSelector((state) => state.user);
 
 	// ? excel file
 	const [selectedOwner, setSelectedOwner] = useState("");
@@ -609,17 +589,6 @@ const AddNewOwner = () => {
 						</section>
 						{ownerFinal.length === 0 ? <button type="submit">Add Owner</button> : <button onClick={excelSubmitHandler}>Add Owner</button>}
 					</form>
-				</section>
-				<section className="carstable">
-					<TableContainer className="addnewOwnerTable">
-						<TableHeading>
-							<p>All Bills</p>
-						</TableHeading>
-						<Table>
-							<TableHeaders style={{ gridTemplateColumns: `repeat(${ownersCarHeaders.length + 1},1fr)` }} headers={ownersCarHeaders} />
-							<TableBody TableRow={RowDefault} data={tableData} />
-						</Table>
-					</TableContainer>
 				</section>
 			</main>
 		</div>

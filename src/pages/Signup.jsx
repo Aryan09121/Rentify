@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import travelsImg from "../assets/travels.png";
 import signupImg from "../assets/signup.png";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
@@ -19,7 +20,7 @@ function SignUp() {
 		password: "",
 		phone: "",
 	});
-	const { error, message, loading } = useSelector((state) => state.user);
+	const { error, message, loading, user, isAuthenticated } = useSelector((state) => state.user);
 
 	const dispatch = useDispatch();
 
@@ -44,15 +45,22 @@ function SignUp() {
 	useEffect(() => {
 		if (message) {
 			toast.success(message);
+			// navigate("/dashboard");
 			dispatch({ type: "CLEAR_MESSAGES" });
-			navigate("/dashboard");
 		}
 		if (error) {
 			toast.error(error);
 			dispatch({ type: "CLEAR_ERRORS" });
-			navigate("/dashboard");
+			// navigate("/dashboard");
 		}
-	}, [message, error, dispatch]);
+		if (user) {
+			if (user.role !== "admin") {
+				navigate("/add/new/owner");
+			} else if (user.role === "admin") {
+				navigate("/dashboard");
+			}
+		}
+	}, [message, error, user]);
 
 	return (
 		<div className="signup">

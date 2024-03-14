@@ -7,6 +7,7 @@ import { Bounce, ToastContainer } from "react-toastify";
 import BillPdf from "./components/BillPdf";
 import { useDispatch, useSelector } from "react-redux";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
+import AdminRoute from "./ProtectedRoute/AdminRoute";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
 import { loadUser } from "./actions/user.action";
@@ -51,19 +52,21 @@ const App = () => {
 			<Routes>
 				<Route path="/" element={<Signup />} />
 				<Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
-					<Route path="/dashboard" element={<Dashboard />} />
-					<Route path="/invoice" element={<Invoice />} />
-					<Route path="/cars/:id" element={<CarDetails />} />
-					<Route path="/bill/:id" element={<BillPdf />} />
-					<Route path="/cars" element={<SearchCars />} />
-					<Route path="/profile/owner" element={<OwnerProfile />} />
-					<Route path="/profile/owner/edit/:id" element={<UpdateOwner />} />
-					<Route path="/profile/owner/:id" element={<OwnerDetails />} />
-					<Route path="/billings" element={<Billings />} />
-					<Route path="/settings" element={<Settings />} />
-					<Route path="/search" element={<Search />} />
-					<Route path="/billings/:id" element={<BillDetails />} />
-					<Route path="/add/new" element={<AddNew />} />
+					<Route element={<AdminRoute />}>
+						<Route path="/dashboard" element={<Dashboard />} />
+						<Route path="/invoice" element={<Invoice />} />
+						<Route path="/cars/:id" element={<CarDetails />} />
+						<Route path="/bill/:id" element={<BillPdf />} />
+						<Route path="/cars" element={<SearchCars />} />
+						<Route path="/profile/owner" element={<OwnerProfile />} />
+						<Route path="/profile/owner/edit/:id" element={<UpdateOwner />} />
+						<Route path="/profile/owner/:id" element={<OwnerDetails />} />
+						<Route path="/billings" element={<Billings />} />
+						<Route path="/settings" element={<Settings />} />
+						<Route path="/search" element={<Search />} />
+						<Route path="/billings/:id" element={<BillDetails />} />
+						<Route path="/add/new" element={<AddNew />} />
+					</Route>
 					<Route path="/add/new/owner" element={<AddNewOwner />} />
 					<Route path="/add/new/driver" element={<h1>Add New Driver</h1>} />
 					<Route path="/add/new/staff" element={<h1>Add new Staff</h1>} />

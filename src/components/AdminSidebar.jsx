@@ -18,7 +18,7 @@ const AdminSidebar = () => {
 	const dispatch = useDispatch();
 	const [showModal, setShowModal] = useState(false);
 	const [phoneActive, setPhoneActive] = useState(window.innerWidth < 1000);
-	const { message, error } = useSelector((state) => state.user);
+	const { message, error, user } = useSelector((state) => state.user);
 
 	const resizeHandler = () => {
 		setPhoneActive(window.innerWidth < 1000);
@@ -73,7 +73,7 @@ const AdminSidebar = () => {
 				<img src={userImg} alt="user image" />
 				<h2>Marvin McKinny</h2>
 				<h5>President of Sales</h5>
-				<DivOne location={location} />
+				<DivOne location={location} user={user} />
 
 				<button id="logout-sidebar" onClick={logoutHandler}>
 					Logout
@@ -89,14 +89,18 @@ const AdminSidebar = () => {
 	);
 };
 
-const DivOne = ({ location }) => (
+const DivOne = ({ location, user }) => (
 	<div>
 		<ul>
-			<Li url="/dashboard" text="Dashboard" Icon={RiDashboardFill} location={location} />
-			<Li url="/invoice" text="Invoices" Icon={BsFileText} location={location} />
-			<Li url="/cars" text="Search Cars" Icon={AiTwotoneCar} location={location} />
-			<Li url="/profile/owner" text="Profile" Icon={AiFillFileText} location={location} />
-			<Li url="/billings" text="Billings" Icon={AiFillFileText} location={location} />
+			{user?.role === "admin" && (
+				<>
+					<Li url="/dashboard" text="Dashboard" Icon={RiDashboardFill} location={location} />
+					<Li url="/invoice" text="Invoices" Icon={BsFileText} location={location} />
+					<Li url="/cars" text="Search Cars" Icon={AiTwotoneCar} location={location} />
+					<Li url="/profile/owner" text="Profile" Icon={AiFillFileText} location={location} />
+					<Li url="/billings" text="Billings" Icon={AiFillFileText} location={location} />
+				</>
+			)}
 			<Li url="/add/new" text="Add New" Icon={IoPersonAdd} location={location} />
 			{/* <Li url="/settings" text="Settings" Icon={AiFillFileText} location={location} /> */}
 		</ul>
