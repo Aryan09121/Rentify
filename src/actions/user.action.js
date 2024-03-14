@@ -1,5 +1,6 @@
 // import axios from "../utils/axios.js";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export const userLogin = (loginDetails) => async (dispatch) => {
 	try {
@@ -12,6 +13,8 @@ export const userLogin = (loginDetails) => async (dispatch) => {
 			user: data.data.user,
 			message: data.message,
 		};
+
+		Cookies.set("token", data.data.token, { expires: 1 });
 
 		dispatch({
 			type: "GET_LOGIN_SUCCESS",
@@ -31,10 +34,11 @@ export const logoutUser = () => async (dispatch) => {
 		dispatch({
 			type: "GET_LOGOUT_REQUEST",
 		});
-		const { data } = await axios.post(`http://localhost:8000/api/v1/user/logout`);
+
+		Cookies.remove("token");
 
 		const payload = {
-			message: data.message,
+			message: "User Logged Out Successfully",
 		};
 
 		dispatch({
@@ -45,7 +49,35 @@ export const logoutUser = () => async (dispatch) => {
 		console.log(error);
 		dispatch({
 			type: "GET_LOGOUT_FAILURE",
-			payload: error.response.data.message,
+			payload: "there was an error while logging out",
+		});
+	}
+};
+
+export const loadUser = () => async (dispatch) => {
+	try {
+		dispatch({
+			type: "LOAD_USER_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		const { data } = await axios.get("http://localhost:8000/api/v1/user/me", config);
+
+		dispatch({
+			type: "LOAD_USER_SUCCESS",
+			payload: data.data.user,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "LOAD_USER_FAILURE",
+			payload: "error while loading user",
 		});
 	}
 };
