@@ -3,12 +3,12 @@ import signupImg from "../assets/signup.png";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogin } from "../actions/user.action";
 
 function SignUp() {
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 	const [isLoginPage, setIsLoginPage] = useState(true);
 	const [loginDetails, setLoginDetails] = useState({
 		username: "",
@@ -36,7 +36,6 @@ function SignUp() {
 	const loginSubmitHandler = (e) => {
 		e.preventDefault();
 		dispatch(userLogin(loginDetails));
-		// navigate("/dashboard", { replace: true });
 	};
 	const signupSubmitHandler = (e) => {
 		e.preventDefault();
@@ -46,10 +45,12 @@ function SignUp() {
 		if (message) {
 			toast.success(message);
 			dispatch({ type: "CLEAR_MESSAGES" });
+			navigate("/dashboard");
 		}
 		if (error) {
 			toast.error(error);
 			dispatch({ type: "CLEAR_ERRORS" });
+			navigate("/dashboard");
 		}
 	}, [message, error, dispatch]);
 
