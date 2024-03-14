@@ -1,10 +1,10 @@
 import travelsImg from "../assets/travels.png";
 import signupImg from "../assets/signup.png";
 import { FaGoogle, FaFacebookF } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 // import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userLogin } from "../actions/user.action";
 
 function SignUp() {
@@ -19,7 +19,8 @@ function SignUp() {
 		password: "",
 		phone: "",
 	});
-	// const { user, loading, error, message } = useSelector((state) => state.user);
+	const { error, message, loading } = useSelector((state) => state.user);
+
 	const dispatch = useDispatch();
 
 	const onChangeHandler = (e) => {
@@ -35,12 +36,22 @@ function SignUp() {
 	const loginSubmitHandler = (e) => {
 		e.preventDefault();
 		dispatch(userLogin(loginDetails));
-		// toast.success("Logged In Success");
 		// navigate("/dashboard", { replace: true });
 	};
 	const signupSubmitHandler = (e) => {
 		e.preventDefault();
 	};
+
+	useEffect(() => {
+		if (message) {
+			toast.success(message);
+			dispatch({ type: "CLEAR_MESSAGES" });
+		}
+		if (error) {
+			toast.error(error);
+			dispatch({ type: "CLEAR_ERRORS" });
+		}
+	}, [message, error, dispatch]);
 
 	return (
 		<div className="signup">
@@ -72,7 +83,7 @@ function SignUp() {
 							placeholder="password"
 						/>
 						<button className="submitBtn" type="submit">
-							{isLoginPage ? "Log In" : "Sign Up"}
+							{loading ? "Loading..." : isLoginPage ? "Log In" : "Sign Up"}
 						</button>
 						<aside>OR</aside>
 						<div>

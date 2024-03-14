@@ -6,11 +6,10 @@ export const userLogin = (loginDetails) => async (dispatch) => {
 		dispatch({
 			type: "GET_LOGIN_REQUEST",
 		});
-		const data = await axios.post(`http://localhost:8000/api/v1/user/login`, loginDetails);
+		const { data } = await axios.post(`http://localhost:8000/api/v1/user/login`, loginDetails);
 
-		console.log(data);
 		const payload = {
-			user: data.user,
+			user: data.data.user,
 			message: data.message,
 		};
 
