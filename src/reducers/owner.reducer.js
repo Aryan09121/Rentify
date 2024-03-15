@@ -4,15 +4,27 @@ const initialState = {};
 
 export const ownerReducer = createReducer(initialState, (builder) => {
 	builder
-		.addCase("GET_OWNER_REQUEST", (state) => {
+		.addCase("GET_OWNERS_REQUEST", (state) => {
 			state.loading = true;
 		})
-		.addCase("GET_OWNER_SUCCESS", (state, action) => {
+		.addCase("GET_OWNERS_SUCCESS", (state, action) => {
 			state.loading = false;
 			state.owners = action.payload.owners;
 			state.message = action.payload.message;
 		})
-		.addCase("GET_OWNER_FAILURE", (state, action) => {
+		.addCase("GET_OWNERS_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
+		.addCase("GET_OWNER_BY_ID_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("GET_OWNER_BY_ID_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.owner = action.payload.owner;
+			state.message = action.payload.message;
+		})
+		.addCase("GET_OWNER_BY_ID_FAILURE", (state, action) => {
 			state.loading = false;
 			state.error = action.payload;
 		})

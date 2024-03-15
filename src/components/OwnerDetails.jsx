@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import AdminSidebar from "./AdminSidebar";
 import Bar from "./Bar";
 import userImg from "../assets/userImage.png";
@@ -9,67 +11,85 @@ import { MdLocationPin } from "react-icons/md";
 import { BiLogoGmail } from "react-icons/bi";
 import { useEffect, useState } from "react";
 
-import Select, { components } from "react-select";
-import { CUSTOME_STYLES } from "../assets/data/constants";
+// import Select, { components } from "react-select";
+// import { CUSTOME_STYLES } from "../assets/data/constants";
 
-import { vehicleHeaders, vehicleSortOptions, owner } from "../assets/data/owner";
-import { CarRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
-import { Link, useNavigate } from "react-router-dom";
+// import { vehicleHeaders, vehicleSortOptions } from "../assets/data/owner";
+// import { CarRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { IoIosWarning } from "react-icons/io";
-import UpdateOwner from "./UpdateOwner";
+import { useDispatch, useSelector } from "react-redux";
+import { getOwnerById } from "../actions/owner.action";
+// import UpdateOwner from "./UpdateOwner";
 
 //  ?-- dropdown select
 
-const DropdownIndicator = (props) => {
-	return (
-		<components.DropdownIndicator {...props}>
-			<FaSort />
-		</components.DropdownIndicator>
-	);
-};
+// const DropdownIndicator = (props) => {
+// 	return (
+// 		<components.DropdownIndicator {...props}>
+// 			<FaSort />
+// 		</components.DropdownIndicator>
+// 	);
+// };
 
 function OwnerDetails() {
-	const [cardata, setCarData] = useState([]);
-	const [ownerdata] = useState(owner);
+	// const [cardata, setCarData] = useState([]);
+	// const [ownerdata] = useState(owner);
+	const [ownerdata, setOwnerdata] = useState({});
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const params = useParams();
+	const { owner } = useSelector((state) => state.owner);
 	// const [sortedData, setSortedData] = useState(cardata);
 
-	const handleSortChange = (selectedOption) => {
-		let sortedDataCopy = [...cardata];
-		if (selectedOption.value === "kilometers") {
-			sortedDataCopy.sort((a, b) => {
-				const kilometersA = parseInt(a.data[2].replace(/ km/g, ""));
-				const kilometersB = parseInt(b.data[2].replace(/ km/g, ""));
-				return kilometersA - kilometersB;
-			});
-		} else if (selectedOption.value === "amount") {
-			sortedDataCopy.sort((a, b) => a.data[5] - b.data[5]);
-		} else if (selectedOption.value === "days") {
-			sortedDataCopy.sort((a, b) => parseInt(a.data[4].replace(" days", "")) - parseInt(b.data[4].replace(" days", "")));
-		} else if (selectedOption.value === "rate") {
-			sortedDataCopy.sort((a, b) => {
-				const rateA = parseFloat(a.data[3].replace("/day", ""));
-				const rateB = parseFloat(b.data[3].replace("/day", ""));
-				return rateA - rateB;
-			});
-		}
-		setCarData(sortedDataCopy);
-	};
+	// const handleSortChange = (selectedOption) => {
+	// 	let sortedDataCopy = [...cardata];
+	// 	if (selectedOption.value === "kilometers") {
+	// 		sortedDataCopy.sort((a, b) => {
+	// 			const kilometersA = parseInt(a.data[2].replace(/ km/g, ""));
+	// 			const kilometersB = parseInt(b.data[2].replace(/ km/g, ""));
+	// 			return kilometersA - kilometersB;
+	// 		});
+	// 	} else if (selectedOption.value === "amount") {
+	// 		sortedDataCopy.sort((a, b) => a.data[5] - b.data[5]);
+	// 	} else if (selectedOption.value === "days") {
+	// 		sortedDataCopy.sort((a, b) => parseInt(a.data[4].replace(" days", "")) - parseInt(b.data[4].replace(" days", "")));
+	// 	} else if (selectedOption.value === "rate") {
+	// 		sortedDataCopy.sort((a, b) => {
+	// 			const rateA = parseFloat(a.data[3].replace("/day", ""));
+	// 			const rateB = parseFloat(b.data[3].replace("/day", ""));
+	// 			return rateA - rateB;
+	// 		});
+	// 	}
+	// 	setCarData(sortedDataCopy);
+	// };
 
 	const remindOwner = () => {
-		window.open("https://wa.me/+917415721902?text=Your Payment is Due worth 99000");
+		window.open("https://wa.me/+917440649223?text=Your Payment is Due worth 99000");
 	};
 
+	// useEffect(() => {
+	// 	if (owner) {
+	// 		const carsdata = ownerdata?.cars?.map((car, index) => {
+	// 			return {
+	// 				data: [index + 1, car.brand, car.distance, car.rate, car.days, car.amount],
+	// 				_id: car._id,
+	// 			};
+	// 		});
+	// 		console.log(carsdata);
+	// 		setCarData(carsdata);
+	// 	}
+	// }, [ownerdata]);
+
 	useEffect(() => {
-		const carsdata = ownerdata.cars.map((car, index) => {
-			return {
-				data: [index + 1, car.brand, car.distance, car.rate, car.days, car.amount],
-				_id: car._id,
-			};
-		});
-		console.log(carsdata);
-		setCarData(carsdata);
-	}, [ownerdata]);
+		dispatch(getOwnerById(params.id));
+	});
+
+	useEffect(() => {
+		if (owner) {
+			setOwnerdata(owner);
+		}
+	}, [owner]);
 
 	return (
 		<div className="admin-container">
@@ -87,7 +107,7 @@ function OwnerDetails() {
 						<header></header>
 						<div>
 							<article className="basicProfile">
-								<img src={userImg} alt="user iamge" />
+								<img src={ownerdata?.avatar?.url ? ownerdata.avatar.url : userImg} alt="user iamge" />
 								<section className="details">
 									<div>
 										<FaUser />
@@ -95,7 +115,7 @@ function OwnerDetails() {
 									</div>
 									<div>
 										<BsTelephoneFill />
-										<h3>+91 {ownerdata.phone}</h3>
+										<h3>+91 {ownerdata.contact}</h3>
 									</div>
 									<div>
 										<BiLogoGmail />
@@ -106,11 +126,19 @@ function OwnerDetails() {
 							<section className="carDetails">
 								<div>
 									<FaCar />
-									<h3>{ownerdata.cars.length} Cars</h3>
+									<h3>{ownerdata?.cars?.length} Cars</h3>
 								</div>
 								<div>
 									<MdLocationPin />
-									<h3>{ownerdata.address}</h3>
+									<h3>
+										{ownerdata?.address?.street +
+											", " +
+											ownerdata?.address?.city +
+											", " +
+											ownerdata?.address?.state +
+											", " +
+											ownerdata?.address?.pincode}
+									</h3>
 								</div>
 							</section>
 							<section className="socials">
@@ -163,7 +191,7 @@ function OwnerDetails() {
 						</div>
 					</section>
 				</section>
-				<TableContainer className="vehicleTableContainer">
+				{/* <TableContainer className="vehicleTableContainer">
 					<TableHeading>
 						<p>All Bills</p>
 						<Select
@@ -171,6 +199,7 @@ function OwnerDetails() {
 							options={vehicleSortOptions}
 							components={{ DropdownIndicator }}
 							onChange={handleSortChange}
+							// onChange={handleSortChange}
 							styles={CUSTOME_STYLES}
 						/>
 					</TableHeading>
@@ -178,7 +207,7 @@ function OwnerDetails() {
 						<TableHeaders style={{ gridTemplateColumns: `repeat(${vehicleHeaders.length},1fr)` }} headers={vehicleHeaders} />
 						<TableBody TableRow={CarRow} data={cardata} />
 					</Table>
-				</TableContainer>
+				</TableContainer> */}
 			</main>
 		</div>
 	);
