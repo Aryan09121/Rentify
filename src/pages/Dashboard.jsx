@@ -6,6 +6,7 @@ import Bar from "../components/Bar";
 import { FaSearch, FaPhoneAlt } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { BiLogoGmail } from "react-icons/bi";
+import { useDispatch } from "react-redux";
 
 import { tripHeaders, tripData, driverHeaders, driverDetailsData, driverDetailsHeaders } from "../assets/data/dashboard";
 import {
@@ -19,36 +20,8 @@ import {
 	DriverDetailsRow,
 	TableFooter,
 } from "../components/TableHOC";
-import { useState } from "react";
-
-// const driverData = [
-// 	{
-// 		driverName: "Raju Malhotra",
-// 		_id: 101,
-// 		status: "On Trip",
-// 		driver_id: 101,
-// 	},
-// 	{
-// 		driverName: "Sanjay Singh",
-// 		_id: 102,
-// 		status: "On Leave",
-// 		driver_id: 102,
-// 	},
-// 	{
-// 		driverName: "Nayak Khanna",
-// 		_id: 103,
-// 		status: "On Trip",
-// 		driver_id: 103,
-// 	},
-// 	{
-// 		driverName: "Trisha",
-// 		_id: 104,
-// 		status: "On Trip",
-// 		driver_id: 104,
-// 	},
-// ];
-
-// Array of possible statuses
+import { useEffect, useState } from "react";
+import { getOwners } from "../actions/owner.action";
 
 const possibleStatuses = ["On Trip", "On Leave", "Available"];
 
@@ -94,6 +67,12 @@ const driverData = Object.entries(groupedTrips).map(([, trips]) => {
 // Extract the latest trip status for each driver
 
 const Dashboard = () => {
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		dispatch(getOwners());
+	}, [dispatch]);
+
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
