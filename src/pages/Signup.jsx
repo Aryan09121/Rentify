@@ -45,22 +45,19 @@ function SignUp() {
 	useEffect(() => {
 		if (message) {
 			toast.success(message);
-			// navigate("/dashboard");
 			dispatch({ type: "CLEAR_MESSAGES" });
 		}
 		if (error) {
 			toast.error(error);
 			dispatch({ type: "CLEAR_ERRORS" });
-			// navigate("/dashboard");
-		}
-		if (user) {
-			if (user.role !== "admin") {
-				navigate("/add/new/owner");
-			} else if (user.role === "admin") {
-				navigate("/dashboard");
-			}
 		}
 	}, [message, error, user]);
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate("/dashboard");
+		}
+	}, [isAuthenticated]);
 
 	return (
 		<div className="signup">

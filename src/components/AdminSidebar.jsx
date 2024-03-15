@@ -8,7 +8,7 @@ import { IoPersonAdd } from "react-icons/io5";
 import { BsFileText } from "react-icons/bs";
 // eslint-disable-next-line no-unused-vars
 import userImg from "../assets/userImage.png";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../actions/user.action";
 import { toast } from "react-toastify";
@@ -18,7 +18,8 @@ const AdminSidebar = () => {
 	const dispatch = useDispatch();
 	const [showModal, setShowModal] = useState(false);
 	const [phoneActive, setPhoneActive] = useState(window.innerWidth < 1000);
-	const { message, error, user } = useSelector((state) => state.user);
+	const { message, error } = useSelector((state) => state.user);
+	const navigate = useNavigate();
 
 	const resizeHandler = () => {
 		setPhoneActive(window.innerWidth < 1000);
@@ -26,6 +27,7 @@ const AdminSidebar = () => {
 
 	const logoutHandler = () => {
 		dispatch(logoutUser());
+		navigate("/");
 	};
 
 	useEffect(() => {
@@ -45,7 +47,7 @@ const AdminSidebar = () => {
 			toast.error(error);
 			dispatch({ type: "CLEAR_ERRORS" });
 		}
-	}, [message, error]);
+	}, [message, error, dispatch]);
 
 	return (
 		<>
@@ -73,7 +75,7 @@ const AdminSidebar = () => {
 				<img src={userImg} alt="user image" />
 				<h2>Marvin McKinny</h2>
 				<h5>President of Sales</h5>
-				<DivOne location={location} user={user} />
+				<DivOne location={location} />
 
 				<button id="logout-sidebar" onClick={logoutHandler}>
 					Logout
@@ -89,18 +91,14 @@ const AdminSidebar = () => {
 	);
 };
 
-const DivOne = ({ location, user }) => (
+const DivOne = ({ location }) => (
 	<div>
 		<ul>
-			{user?.role === "admin" && (
-				<>
-					<Li url="/dashboard" text="Dashboard" Icon={RiDashboardFill} location={location} />
-					<Li url="/invoice" text="Invoices" Icon={BsFileText} location={location} />
-					<Li url="/cars" text="Search Cars" Icon={AiTwotoneCar} location={location} />
-					<Li url="/profile/owner" text="Profile" Icon={AiFillFileText} location={location} />
-					<Li url="/billings" text="Billings" Icon={AiFillFileText} location={location} />
-				</>
-			)}
+			<Li url="/dashboard" text="Dashboard" Icon={RiDashboardFill} location={location} />
+			<Li url="/invoice" text="Invoices" Icon={BsFileText} location={location} />
+			<Li url="/cars" text="Search Cars" Icon={AiTwotoneCar} location={location} />
+			<Li url="/profile/owner" text="Profile" Icon={AiFillFileText} location={location} />
+			<Li url="/billings" text="Billings" Icon={AiFillFileText} location={location} />
 			<Li url="/add/new" text="Add New" Icon={IoPersonAdd} location={location} />
 			{/* <Li url="/settings" text="Settings" Icon={AiFillFileText} location={location} /> */}
 		</ul>
