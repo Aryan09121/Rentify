@@ -6,13 +6,12 @@ import { TiTick } from "react-icons/ti";
 import Select, { components } from "react-select";
 import { IoIosArrowDown, IoIosClose } from "react-icons/io";
 import Files from "react-files";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import readXlsxFile from "read-excel-file";
 import { IoClose } from "react-icons/io5";
-import { useDispatch, useSelector } from "react-redux";
-import { addSingleOwner } from "../actions/owner.action";
-// import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { addOwners, addSingleOwner } from "../actions/owner.action";
 
 const customStyles = {
 	control: (provided) => ({
@@ -97,7 +96,7 @@ const AddNewOwner = () => {
 	const [dialog, setDialog] = useState(false);
 	const [ownerFinal, setOwnerFinal] = useState([]);
 	const dispatch = useDispatch();
-	const { loading, message, error } = useSelector((state) => state.owner);
+	// const { loading, message, error } = useSelector((state) => state.owner);
 
 	// owner personal details
 	const [owner, setOwner] = useState({
@@ -143,13 +142,8 @@ const AddNewOwner = () => {
 
 	const handleCarFileUpload = (event) => {
 		const file = event.target.files[0];
-		if (selectedOwner) {
-			readCarExcelFile(file);
-			event.target.value = null;
-		} else {
-			event.target.value = null;
-			toast.error("Please Select the owner first");
-		}
+		readCarExcelFile(file);
+		event.target.value = null;
 	};
 
 	const readOwnerExcelFile = (file) => {
@@ -208,98 +202,36 @@ const AddNewOwner = () => {
 
 				if (arraysAreEqual) {
 					const carData = rows.slice(1);
-					// setCarExcelData(carData);
-					// eslint-disable-next-line no-unused-vars
-					const newCars = carData.map((data) => {
-						// console.log({
-						// 	gmail: data[0],
-						// 	brand: data[1],
-						// 	model: data[2],
-						// 	registrationNo: data[3],
-						// 	frvcode: data[4],
-						// 	rent: data[5],
-						// 	isAc: data[6],
-						// 	seater: data[7],
-						// 	street: data[8],
-						// 	city: data[9],
-						// 	state: data[10],
-						// 	pincode: data[11],
-						// });
-						const updatedOwners = ownerFinal.map((currowner) => {
-							if (currowner.email === data[0]) {
-								return {
-									...currowner,
-									cars: [
-										...currowner.cars,
-										{
-											gmail: data[0],
-											brand: data[1],
-											model: data[2],
-											registrationNo: data[3],
-											frvcode: data[4],
-											rent: data[5],
-											isAc: data[6],
-											seater: data[7],
-											street: data[8],
-											city: data[9],
-											state: data[10],
-											pincode: data[11],
-										},
-									],
-								};
-							}
-						});
 
-						console.log(updatedOwners);
-
-						return {
-							email: data[0],
-							brand: data[1],
-							model: data[2],
-							registrationNo: data[3],
-							frvcode: data[4],
-							rent: data[5],
-							isAc: data[6],
-							seater: data[7],
-							street: data[8],
-							city: data[9],
-							state: data[10],
-							pincode: data[11],
-						};
-					});
-
-					// Iterate through the ownerFinal array
-					// const updatedTableData = ownerFinal.reduce((acc, owner) => {
-					// 	// Extract cars data from the current owner
-					// 	const carsData = owner.cars.map((car, index) => ({
-					// 		data: [index + 1, car.name, car.model, car.brand, car.rent, car.frvcode, car.seater],
-					// 		_id: `CAR-${100 + index}`,
-					// 	}));
-
-					// 	// Combine the extracted cars data with the existing tableData
-					// 	return [...acc, ...carsData];
-					// }, tableData);
-					// console.log(updatedTableData);
-					// setTableData(updatedTableData);
-
-					// Iterate through the ownerFinal array
 					const updatedOwners = ownerFinal.map((owner) => {
-						// Check if the owner's phone number matches the selected phone number
-						// if (owner.email === selectedOwner.value) {
-						// 	// Add the new cars to the owner's cars property
-						// 	return {
-						// 		...owner,
-						// 		cars: [...owner.cars, ...newCars],
-						// 	};
-						// }
-						// newCars.map((car) => {
-						// 	console.log(car.email);
-						// });
+						const matchingCars = carData.filter((car) => car[0] === owner.email);
 
-						return owner;
+						if (matchingCars.length > 0) {
+							const cars = matchingCars.map((car) => ({
+								brand: car[1],
+								model: car[2],
+								registrationNo: car[3],
+								frvcode: car[4],
+								rent: car[5],
+								isAc: car[6],
+								seater: car[7],
+								address: {
+									street: car[8],
+									city: car[9],
+									state: car[10],
+									pincode: car[11],
+								},
+							}));
+
+							return {
+								...owner,
+								cars: owner.cars.concat(cars),
+							};
+						} else {
+							return owner;
+						}
 					});
 
-					// Update the ownerFinal state with the updated owners
 					setOwnerFinal(updatedOwners);
 					toast.success("Cars Data Reads Successfully");
 				} else {
@@ -437,16 +369,8 @@ const AddNewOwner = () => {
 	// ?? adding owners through excel files
 	const excelSubmitHandler = (e) => {
 		e.preventDefault();
+		dispatch(addOwners(ownerFinal));
 		toast.success("Owners Added Successfully");
-		console.table(ownerFinal);
-		console.log(tableData);
-	};
-
-	const onOwnerChange = (selectedValue) => {
-		console.log(selectedValue.value);
-		if (selectedValue.value) {
-			setSelectedOwner(selectedValue);
-		}
 	};
 
 	return (
@@ -742,31 +666,9 @@ const AddNewOwner = () => {
 							) : (
 								<>
 									<button className="carExcelBtn" onClick={() => setDialog((curr) => !curr)}>
-										Add Cars via Excel file
+										<h2>Add Cars</h2>
+										<input type="file" id="carfileupload" onChange={handleCarFileUpload} />
 									</button>
-									<dialog open={dialog}>
-										<div>
-											<IoClose onClick={() => setDialog(false)} />
-											<p>Select Owner From Phone Number</p>
-											<Select
-												defaultValue={
-													ownerFinal.map((owner) => ({
-														value: owner.email,
-														label: owner.email,
-													}))[0]
-												}
-												options={ownerFinal.map((owner) => ({
-													value: owner.email,
-													label: owner.email,
-												}))}
-												components={{ DropdownIndicator }}
-												styles={customStyles}
-												name="ownermap"
-												onChange={onOwnerChange}
-											/>
-											<input type="file" id="carfileupload" onChange={handleCarFileUpload} />
-										</div>
-									</dialog>
 								</>
 							)}
 						</section>

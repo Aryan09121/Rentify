@@ -177,6 +177,16 @@
 		}
 		> .carExcelBtn {
 			margin: 1rem auto;
+			padding: 1rem 0;
+			@include flex(column, flex-start, center, 0);
+			> input {
+				@include inputStyles;
+				padding: 0;
+				margin: 0 !important;
+				margin-top: 0 !important;
+				width: 100% !important;
+				cursor: pointer !important;
+			}
 		}
 		> button {
 			margin-top: 2rem;

@@ -66,6 +66,38 @@ export const getOwnerById = (id) => async (dispatch) => {
 		});
 	}
 };
+export const addOwners = (owners) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "ADD_MULTIPLE_OWNER_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		for (const owner of owners) {
+			const { data } = await axios.post(`http://localhost:8000/api/v1/admin/add/owner`, owner, config);
+			console.log(data); // Call addSingleOwner function for each owner
+		}
+
+		dispatch({
+			type: "ADD_MULTIPLE_OWNER_SUCCESS",
+			payload: "Owners Added Succesfully",
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "ADD_MULTIPLE_OWNER_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
+
 export const addSingleOwner = (owner) => async (dispatch) => {
 	try {
 		dispatch({

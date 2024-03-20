@@ -4,8 +4,8 @@ import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
 import TableSearchTOC from "../components/TableSearchHOC";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getOwners } from "../actions/owner.action";
+import { useSelector } from "react-redux";
+import userImg from "../assets/userImage.png";
 
 const columns = [
 	{
@@ -35,7 +35,6 @@ function Search() {
 	const navigate = useNavigate();
 	const { owners } = useSelector((state) => state.owner);
 	const [data, setData] = useState([]);
-	const dispatch = useDispatch();
 	const [ownersdata, setOwnersdata] = useState();
 	const handleRowClick = (row) => {
 		// Access _id property from the row's original data and redirect to the desired page
@@ -57,7 +56,7 @@ function Search() {
 			const ownerlist = [];
 			owners.map((owner) => {
 				const singleOwner = {
-					avatar: <img src={owner.avatar.url} alt={owner.name} />,
+					avatar: <img src={owner?.avatar?.url ? owner?.avatar?.url : userImg} alt={owner.name} />,
 					name: owner.name,
 					vehicle: owner.cars.length,
 					address: owner.address.city,
