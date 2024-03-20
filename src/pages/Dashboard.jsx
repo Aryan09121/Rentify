@@ -4,11 +4,10 @@ import { HiTrendingUp, HiTrendingDown } from "react-icons/hi";
 import { IoIosSettings } from "react-icons/io";
 import Bar from "../components/Bar";
 import { FaSearch, FaPhoneAlt } from "react-icons/fa";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { BiLogoGmail } from "react-icons/bi";
 import { useDispatch } from "react-redux";
 
-import { tripHeaders, tripData, driverHeaders, driverDetailsData, driverDetailsHeaders } from "../assets/data/dashboard";
+import { tripHeaders, tripData, driverDetailsData, driverDetailsHeaders } from "../assets/data/dashboard";
 import {
 	TableContainer,
 	TableHeading,
@@ -47,22 +46,6 @@ Object.keys(groupedTrips).forEach((driverId) => {
 	const randomStatus = possibleStatuses[randomIndex];
 	driverStatusMap[driverId] = randomStatus;
 });
-
-// Extract the latest trip and assign random status for each driver
-const driverData = Object.entries(groupedTrips).map(([, trips]) => {
-	const latestTrip = trips.reduce((latest, trip) => {
-		return trip._id > latest._id ? trip : latest;
-	});
-	const driverId = latestTrip.driver_id;
-	return {
-		driverName: latestTrip.data[1],
-		status: driverStatusMap[driverId], // Assigning the randomly generated status
-		id: latestTrip._id,
-		driver_id: driverId,
-	};
-});
-
-// console.log(extractedData);
 
 // Extract the latest trip status for each driver
 
