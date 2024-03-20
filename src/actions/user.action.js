@@ -28,7 +28,6 @@ export const userLogin = (loginDetails) => async (dispatch) => {
 		});
 	}
 };
-
 export const logoutUser = () => async (dispatch) => {
 	try {
 		dispatch({
