@@ -28,6 +28,17 @@ export const ownerReducer = createReducer(initialState, (builder) => {
 			state.loading = false;
 			state.error = action.payload;
 		})
+		.addCase("ADD_OWNER_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("ADD_OWNER_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.message = action.payload;
+		})
+		.addCase("ADD_OWNER_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
 		.addCase("CLEAR_ERRORS", (state) => {
 			state.error = null;
 		})

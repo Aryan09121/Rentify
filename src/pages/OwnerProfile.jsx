@@ -2,7 +2,7 @@
 import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
 import { Filter } from "./CarDetails";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select, { components } from "react-select";
 import { CUSTOME_STYLES } from "../assets/data/constants";
 
@@ -10,6 +10,7 @@ import { customerHeaders, customerData, ownerSortOptions } from "../assets/data/
 import { TableBody, Table, TableContainer, TableHeaders, TableHeading, OwnerRow } from "../components/TableHOC";
 import { FaSort } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 //  ?--- dropdown indicator
 
@@ -21,8 +22,59 @@ const DropdownIndicator = (props) => {
 	);
 };
 
+// {
+// 	"data": [
+// 	    "1",
+// 	    "M.S, Subramanium",
+// 	    "4 Cars",
+// 	    "Vishakhapatnam"
+// 	],
+// 	"status": "ongoing",
+// 	"_id": 1
+//  }
+
+// {
+// 	"address": {
+// 	    "street": "Indrapuri A Sector, Abadhpuri",
+// 	    "city": "Bhopal",
+// 	    "state": "Madhya Pradesh",
+// 	    "pincode": "462021"
+// 	},
+// 	"_id": "65f1367885c1e082a0c7f9f1",
+// 	"name": "Priyal Upadhyay",
+// 	"contact": "7723423484",
+// 	"gender": "female",
+// 	"email": "priyal.upadhyay@gmail.com",
+// 	"hsn": "DF65PDBR",
+// 	"pan": "DYXLI5621",
+// 	"joinedDate": "2024-03-13T05:15:36.073Z",
+// 	"avatar": {
+// 	    "fileId": "",
+// 	    "url": "https://cdn.vectorstock.com/i/1000x1000/62/59/default-avatar-photo-placeholder-profile-icon-vector-21666259.webp"
+// 	},
+// 	"cars": [
+// 	    "65f1367885c1e082a0c7f9f3",
+// 	    "65f1367885c1e082a0c7f9f7"
+// 	],
+// 	"createdAt": "2024-03-13T05:15:36.079Z",
+// 	"updatedAt": "2024-03-13T07:24:05.201Z",
+// 	"__v": 2
+//  }
+
 function OwnerProfile() {
-	const [sortedData, setSortedData] = useState(customerData);
+	const [sortedData, setSortedData] = useState([]);
+	const { owners } = useSelector((state) => state.owner);
+
+	useEffect(() => {
+		if (owners) {
+			const ownerList = owners.map((owner, idx) => ({
+				data: [idx, owner?.name, `${owner?.cars?.length} cars`, owner?.address?.city],
+				status: "ongoig",
+				_id: owner._id,
+			}));
+			setSortedData(ownerList);
+		}
+	}, [owners]);
 
 	// ? handle sorting functionalities
 	const handleSortChange = (selectedOption) => {

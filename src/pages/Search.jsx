@@ -48,9 +48,9 @@ function Search() {
 		setQuery(searchTerm);
 	};
 
-	useEffect(() => {
-		dispatch(getOwners());
-	}, []);
+	// useEffect(() => {
+	// 	dispatch(getOwners());
+	// }, []);
 
 	useEffect(() => {
 		if (owners) {

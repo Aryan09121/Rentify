@@ -73,6 +73,10 @@ const Dashboard = () => {
 		dispatch(getOwners());
 	}, [dispatch]);
 
+	useEffect(() => {
+		dispatch(getOwners());
+	}, []);
+
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
@@ -100,7 +104,7 @@ const Dashboard = () => {
 				<section className="driver-container">
 					<TableContainer className="dashboarddriverDetailsTableContainer">
 						<TableHeading>
-							<p>Driver Information</p>
+							<p>Trip Information</p>
 							<button>
 								<FaSearch /> <input type="text" placeholder="Search Driver..." />
 							</button>
@@ -138,17 +142,6 @@ const Dashboard = () => {
 									<button>Assign Trip</button>
 								</div>
 							</TableFooter>
-						</Table>
-					</TableContainer>
-
-					<TableContainer className="dashboardTableContainer">
-						<TableHeading>
-							<p>Driver List</p>
-							<BsThreeDotsVertical />
-						</TableHeading>
-						<Table>
-							<TableHeaders headers={driverHeaders} style={{ gridTemplateColumns: `repeat(${driverHeaders.length},1fr)` }} />
-							<TableBody TableRow={DriverRow} data={driverData} />
 						</Table>
 					</TableContainer>
 				</section>

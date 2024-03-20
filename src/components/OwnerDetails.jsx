@@ -11,11 +11,11 @@ import { MdLocationPin } from "react-icons/md";
 import { BiLogoGmail } from "react-icons/bi";
 import { useEffect, useState } from "react";
 
-// import Select, { components } from "react-select";
-// import { CUSTOME_STYLES } from "../assets/data/constants";
+import Select, { components } from "react-select";
+import { CUSTOME_STYLES } from "../assets/data/constants";
 
-// import { vehicleHeaders, vehicleSortOptions } from "../assets/data/owner";
-// import { CarRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
+import { vehicleHeaders, vehicleSortOptions } from "../assets/data/owner";
+import { CarRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { IoIosWarning } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,70 +24,72 @@ import { getOwnerById } from "../actions/owner.action";
 
 //  ?-- dropdown select
 
-// const DropdownIndicator = (props) => {
-// 	return (
-// 		<components.DropdownIndicator {...props}>
-// 			<FaSort />
-// 		</components.DropdownIndicator>
-// 	);
-// };
+const DropdownIndicator = (props) => {
+	return (
+		<components.DropdownIndicator {...props}>
+			<FaSort />
+		</components.DropdownIndicator>
+	);
+};
 
 function OwnerDetails() {
-	// const [cardata, setCarData] = useState([]);
+	const [cardata, setCarData] = useState([]);
 	// const [ownerdata] = useState(owner);
 	const [ownerdata, setOwnerdata] = useState({});
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const params = useParams();
 	const { owner } = useSelector((state) => state.owner);
-	// const [sortedData, setSortedData] = useState(cardata);
+	const [sortedData, setSortedData] = useState([]);
 
-	// const handleSortChange = (selectedOption) => {
-	// 	let sortedDataCopy = [...cardata];
-	// 	if (selectedOption.value === "kilometers") {
-	// 		sortedDataCopy.sort((a, b) => {
-	// 			const kilometersA = parseInt(a.data[2].replace(/ km/g, ""));
-	// 			const kilometersB = parseInt(b.data[2].replace(/ km/g, ""));
-	// 			return kilometersA - kilometersB;
-	// 		});
-	// 	} else if (selectedOption.value === "amount") {
-	// 		sortedDataCopy.sort((a, b) => a.data[5] - b.data[5]);
-	// 	} else if (selectedOption.value === "days") {
-	// 		sortedDataCopy.sort((a, b) => parseInt(a.data[4].replace(" days", "")) - parseInt(b.data[4].replace(" days", "")));
-	// 	} else if (selectedOption.value === "rate") {
-	// 		sortedDataCopy.sort((a, b) => {
-	// 			const rateA = parseFloat(a.data[3].replace("/day", ""));
-	// 			const rateB = parseFloat(b.data[3].replace("/day", ""));
-	// 			return rateA - rateB;
-	// 		});
-	// 	}
-	// 	setCarData(sortedDataCopy);
-	// };
+	const handleSortChange = (selectedOption) => {
+		let sortedDataCopy = [...cardata];
+		if (selectedOption.value === "kilometers") {
+			sortedDataCopy.sort((a, b) => {
+				const kilometersA = parseInt(a.data[2].replace(/ km/g, ""));
+				const kilometersB = parseInt(b.data[2].replace(/ km/g, ""));
+				return kilometersA - kilometersB;
+			});
+		} else if (selectedOption.value === "amount") {
+			sortedDataCopy.sort((a, b) => a.data[5] - b.data[5]);
+		} else if (selectedOption.value === "days") {
+			sortedDataCopy.sort((a, b) => parseInt(a.data[4].replace(" days", "")) - parseInt(b.data[4].replace(" days", "")));
+		} else if (selectedOption.value === "rate") {
+			sortedDataCopy.sort((a, b) => {
+				const rateA = parseFloat(a.data[3].replace("/day", ""));
+				const rateB = parseFloat(b.data[3].replace("/day", ""));
+				return rateA - rateB;
+			});
+		}
+		setCarData(sortedDataCopy);
+	};
 
 	const remindOwner = () => {
 		window.open("https://wa.me/+917440649223?text=Your Payment is Due worth 99000");
 	};
 
-	// useEffect(() => {
-	// 	if (owner) {
-	// 		const carsdata = ownerdata?.cars?.map((car, index) => {
-	// 			return {
-	// 				data: [index + 1, car.brand, car.distance, car.rate, car.days, car.amount],
-	// 				_id: car._id,
-	// 			};
-	// 		});
-	// 		console.log(carsdata);
-	// 		setCarData(carsdata);
-	// 	}
-	// }, [ownerdata]);
+	useEffect(() => {
+		if (owner) {
+			const carsdata = ownerdata?.cars?.map((car, index) => {
+				return {
+					data: [index + 1, car?.brand, car?.rate?.km, car?.rate?.date, car?.district, car?.model],
+					_id: car?._id,
+				};
+			});
+			console.log(carsdata);
+			setSortedData(carsdata);
+		}
+	}, [ownerdata]);
 
 	useEffect(() => {
 		dispatch(getOwnerById(params.id));
-	});
+	}, [dispatch]);
 
 	useEffect(() => {
 		if (owner) {
 			setOwnerdata(owner);
+			setCarData(owner.cars);
+			// setSortedData(owner.cars);
 		}
 	}, [owner]);
 
@@ -191,7 +193,7 @@ function OwnerDetails() {
 						</div>
 					</section>
 				</section>
-				{/* <TableContainer className="vehicleTableContainer">
+				<TableContainer className="vehicleTableContainer">
 					<TableHeading>
 						<p>All Bills</p>
 						<Select
@@ -203,11 +205,15 @@ function OwnerDetails() {
 							styles={CUSTOME_STYLES}
 						/>
 					</TableHeading>
-					<Table>
-						<TableHeaders style={{ gridTemplateColumns: `repeat(${vehicleHeaders.length},1fr)` }} headers={vehicleHeaders} />
-						<TableBody TableRow={CarRow} data={cardata} />
-					</Table>
-				</TableContainer> */}
+					{sortedData?.length === 0 ? (
+						<h2 style={{ textAlign: "center", margin: "1rem 0", color: "red" }}>No Cars are Found!</h2>
+					) : (
+						<Table>
+							<TableHeaders style={{ gridTemplateColumns: `repeat(${vehicleHeaders.length},1fr)` }} headers={vehicleHeaders} />
+							<TableBody TableRow={CarRow} data={sortedData} />
+						</Table>
+					)}
+				</TableContainer>
 			</main>
 		</div>
 	);
