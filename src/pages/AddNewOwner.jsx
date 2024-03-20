@@ -9,8 +9,7 @@ import Files from "react-files";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import readXlsxFile from "read-excel-file";
-import { IoClose } from "react-icons/io5";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addOwners, addSingleOwner } from "../actions/owner.action";
 
 const customStyles = {
@@ -89,13 +88,13 @@ const AddNewOwner = () => {
 	const [photo, setPhoto] = useState();
 	const [tableData, setTableData] = useState([]);
 
-	// const { user } = useSelector((state) => state.user);
+	// eslint-disable-next-line no-unused-vars
+	const { message, error, loading } = useSelector((state) => state.owner);
+	const dispatch = useDispatch();
 
 	// ? excel file
-	const [selectedOwner, setSelectedOwner] = useState("");
-	const [dialog, setDialog] = useState(false);
 	const [ownerFinal, setOwnerFinal] = useState([]);
-	const dispatch = useDispatch();
+	// const dispatch = useDispatch();
 	// const { loading, message, error } = useSelector((state) => state.owner);
 
 	// owner personal details
@@ -360,7 +359,6 @@ const AddNewOwner = () => {
 		if (ownerFinal.length === 0) {
 			console.table(owner);
 			dispatch(addSingleOwner(owner));
-			toast.success("Owner Added Successfully");
 		} else {
 			console.log("car reading...");
 		}
@@ -370,109 +368,121 @@ const AddNewOwner = () => {
 	const excelSubmitHandler = (e) => {
 		e.preventDefault();
 		dispatch(addOwners(ownerFinal));
-		toast.success("Owners Added Successfully");
 	};
+
+	useEffect(() => {
+		if (message) {
+			toast.success(message);
+			dispatch({ type: "CLEAR_MESSAGES" });
+		}
+		if (error) {
+			toast.error(error);
+			dispatch({ type: "CLEAR_ERRORS" });
+		}
+	}, [error, message]);
 
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
-			<main className="addNewForm">
-				<Bar />
-				<h2>Add Owner</h2>
-				<section className="newOwnerFormContainer">
-					<form className="formContainer" onSubmit={(e) => ownerDetailsSubmitHandler(e)}>
-						<section className="documentUploader">
-							<h3>Upload Owner&apos;s Data File</h3>
-							{ownerFinal.length !== 0 && (
-								<p className="green">
-									<TiTick /> Owner&apos;s data Uploaded Succesfully
-									<span className="red" onClick={removeOwner}>
-										<IoIosClose />
-									</span>
-								</p>
-							)}
-							<input type="file" onChange={handleOwnerFileUpload} />
-						</section>
-						{ownerFinal.length === 0 ? (
-							<>
-								<section className="ownerDetails">
-									<h3>Owner Information</h3>
-									<div className="ownerDetailsFormDiv">
-										<div className="ownerPhotoUpload">
-											{photo ? <img src={photo} alt="owner photo" /> : <img src={userImg} alt="owner profile" />}
-											<Files
-												className="files-dropzone"
-												onChange={handlePhotoChange}
-												onError={handleError}
-												accepts={["image/*"]}
-												multiple={false}
-												maxFileSize={10000000}
-												clickable
-												minFileSize={0}
-											>
-												Upload Photo
-											</Files>
-										</div>
-										<div className="ownerDataUpload">
-											<div>
-												<input
-													type="text"
-													name="name"
-													value={owner.name}
-													onChange={onInputChange}
-													placeholder="Owner Name *"
-												/>
-												<Select
-													defaultValue={genderSortOptions[0]}
-													options={genderSortOptions}
-													components={{ DropdownIndicator }}
-													// value={owner.gender}
-													styles={customStyles}
-													onChange={onSelectChange}
-													name="gender"
-												/>
+			{loading && <h1>Loadin...</h1>}
+			{!loading && (
+				<main className="addNewForm">
+					<Bar />
+					<h2>Add Owner</h2>
+					<section className="newOwnerFormContainer">
+						<form className="formContainer" onSubmit={(e) => ownerDetailsSubmitHandler(e)}>
+							<section className="documentUploader">
+								<h3>Upload Owner&apos;s Data File</h3>
+								{ownerFinal.length !== 0 && (
+									<p className="green">
+										<TiTick /> Owner&apos;s data Uploaded Succesfully
+										<span className="red" onClick={removeOwner}>
+											<IoIosClose />
+										</span>
+									</p>
+								)}
+								<input type="file" onChange={handleOwnerFileUpload} />
+							</section>
+							{ownerFinal.length === 0 ? (
+								<>
+									<section className="ownerDetails">
+										<h3>Owner Information</h3>
+										<div className="ownerDetailsFormDiv">
+											<div className="ownerPhotoUpload">
+												{photo ? <img src={photo} alt="owner photo" /> : <img src={userImg} alt="owner profile" />}
+												<Files
+													className="files-dropzone"
+													onChange={handlePhotoChange}
+													onError={handleError}
+													accepts={["image/*"]}
+													multiple={false}
+													maxFileSize={10000000}
+													clickable
+													minFileSize={0}
+												>
+													Upload Photo
+												</Files>
 											</div>
-											<div>
-												<input
-													type="text"
-													name="phone"
-													value={owner.phone}
-													placeholder="Mobile Number *"
-													onChange={onInputChange}
-													required
-													pattern="[0-9]{10}"
-												/>
-												<input
-													type="email"
-													placeholder="Email *"
-													onChange={onInputChange}
-													required
-													name="email"
-													value={owner.email}
-												/>
-											</div>
-											<div>
-												<input
-													type="text"
-													name="gst"
-													value={owner.gst}
-													onChange={onInputChange}
-													placeholder="GST Number *"
-													pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z0-9]{1}[A-Z0-9]{1}$"
-													required
-												/>
-												<input
-													type="text"
-													value={owner.pan}
-													name="pan"
-													onChange={onInputChange}
-													placeholder="PAN Card Number *"
-													pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}"
-													required
-												/>
-											</div>
-											<div>
-												{/* <textarea
+											<div className="ownerDataUpload">
+												<div>
+													<input
+														type="text"
+														name="name"
+														value={owner.name}
+														onChange={onInputChange}
+														placeholder="Owner Name *"
+													/>
+													<Select
+														defaultValue={genderSortOptions[0]}
+														options={genderSortOptions}
+														components={{ DropdownIndicator }}
+														// value={owner.gender}
+														styles={customStyles}
+														onChange={onSelectChange}
+														name="gender"
+													/>
+												</div>
+												<div>
+													<input
+														type="text"
+														name="phone"
+														value={owner.phone}
+														placeholder="Mobile Number *"
+														onChange={onInputChange}
+														required
+														pattern="[0-9]{10}"
+													/>
+													<input
+														type="email"
+														placeholder="Email *"
+														onChange={onInputChange}
+														required
+														name="email"
+														value={owner.email}
+													/>
+												</div>
+												<div>
+													<input
+														type="text"
+														name="gst"
+														value={owner.gst}
+														onChange={onInputChange}
+														placeholder="GST Number *"
+														pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z0-9]{1}[A-Z0-9]{1}$"
+														required
+													/>
+													<input
+														type="text"
+														value={owner.pan}
+														name="pan"
+														onChange={onInputChange}
+														placeholder="PAN Card Number *"
+														pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}"
+														required
+													/>
+												</div>
+												<div>
+													{/* <textarea
 													name="address"
 													onChange={onInputChange}
 													value={owner.address}
@@ -483,199 +493,204 @@ const AddNewOwner = () => {
 													title="Please enter a valid address (District, City, State, PIN)"
 													required
 												></textarea> */}
+													<input
+														type="text"
+														onChange={(e) => {
+															setOwner((curr) => {
+																return {
+																	...curr,
+																	address: {
+																		...curr.address,
+																		street: e.target.value,
+																	},
+																};
+															});
+														}}
+														value={owner.address.street}
+														placeholder="Locality"
+													/>
+													<input
+														type="text"
+														onChange={(e) => {
+															setOwner((curr) => {
+																return {
+																	...curr,
+																	address: {
+																		...curr.address,
+																		city: e.target.value,
+																	},
+																};
+															});
+														}}
+														value={owner.address.city}
+														placeholder="City"
+													/>
+												</div>
+												<div>
+													<input
+														type="text"
+														onChange={(e) => {
+															setOwner((curr) => {
+																return {
+																	...curr,
+																	address: {
+																		...curr.address,
+																		state: e.target.value,
+																	},
+																};
+															});
+														}}
+														value={owner.address.state}
+														placeholder="State"
+													/>
+													<input
+														type="text"
+														onChange={(e) => {
+															setOwner((curr) => {
+																return {
+																	...curr,
+																	address: {
+																		...curr.address,
+																		pincode: e.target.value,
+																	},
+																};
+															});
+														}}
+														value={owner.address.pincode}
+														placeholder="Pin Code"
+													/>
+												</div>
+											</div>
+										</div>
+									</section>
+								</>
+							) : null}
+							<section className="carDetails">
+								{ownerFinal.length === 0 ? (
+									<>
+										<h3>Car Information</h3>
+										<div className="carInputDiv">
+											<div>
 												<input
 													type="text"
-													onChange={(e) => {
-														setOwner((curr) => {
-															return {
-																...curr,
-																address: {
-																	...curr.address,
-																	street: e.target.value,
-																},
-															};
-														});
-													}}
-													value={owner.address.street}
-													placeholder="Locality"
-												/>
-												<input
-													type="text"
-													onChange={(e) => {
-														setOwner((curr) => {
-															return {
-																...curr,
-																address: {
-																	...curr.address,
-																	city: e.target.value,
-																},
-															};
-														});
-													}}
-													value={owner.address.city}
-													placeholder="City"
+													onChange={onInputCarChange}
+													value={cars.brand}
+													name="brand"
+													placeholder="Brand Name *"
+													pattern="[A-Za-z0-9\s\-']+"
 												/>
 											</div>
 											<div>
 												<input
 													type="text"
-													onChange={(e) => {
-														setOwner((curr) => {
-															return {
-																...curr,
-																address: {
-																	...curr.address,
-																	state: e.target.value,
-																},
-															};
-														});
-													}}
-													value={owner.address.state}
-													placeholder="State"
+													onChange={onInputCarChange}
+													value={cars.model}
+													name="model"
+													placeholder="Model Number *"
+													pattern="[A-Za-z0-9_-]+"
 												/>
 												<input
 													type="text"
-													onChange={(e) => {
-														setOwner((curr) => {
+													placeholder="Vehicle Number *"
+													onChange={onInputCarChange}
+													value={cars.registrationNo}
+													name="registrationNo"
+													title="Please enter a valid vehicle Vehicle number"
+												/>
+											</div>
+											<div>
+												<input
+													type="text"
+													onChange={onInputCarChange}
+													value={cars.frvcode}
+													name="frvcode"
+													placeholder="FRV Code"
+												/>
+												<input type="text" name="year" placeholder="Year *" required />
+												<Select
+													defaultValue={sittingSortOptions[0]}
+													options={sittingSortOptions}
+													components={{ DropdownIndicator }}
+													styles={customStyles}
+													onChange={onSelectSeaterChange}
+												/>
+											</div>
+											<div>
+												<input
+													type="text"
+													onChange={onInputCarChange}
+													value={cars.rent}
+													placeholder="Rent Charges *"
+													name="rent"
+												/>
+
+												<Select
+													defaultValue={airconditionSortOptions[0]}
+													options={airconditionSortOptions}
+													components={{ DropdownIndicator }}
+													styles={customStyles}
+													name="isAc"
+													onChange={onSelectAcChange}
+												/>
+											</div>
+											<div>
+												<input
+													type="text"
+													value={cars.start.km}
+													onChange={(e) =>
+														setCars((curr) => {
 															return {
 																...curr,
-																address: {
-																	...curr.address,
-																	pincode: e.target.value,
+																start: {
+																	...curr.start,
+																	km: e.target.value,
 																},
 															};
-														});
-													}}
-													value={owner.address.pincode}
-													placeholder="Pin Code"
+														})
+													}
+													placeholder="Start Km"
+													name="startkm"
+												/>
+												<input
+													type="date"
+													value={cars.start.date}
+													onChange={(e) =>
+														setCars((curr) => {
+															return {
+																...curr,
+																start: {
+																	...curr.start,
+																	date: e.target.value,
+																},
+															};
+														})
+													}
+													placeholder="Start Date dd/MM/YYYY"
+													name="startdate"
 												/>
 											</div>
 										</div>
-									</div>
-								</section>
-							</>
-						) : null}
-						<section className="carDetails">
-							{ownerFinal.length === 0 ? (
-								<>
-									<h3>Car Information</h3>
-									<div className="carInputDiv">
-										<div>
-											<input
-												type="text"
-												onChange={onInputCarChange}
-												value={cars.brand}
-												name="brand"
-												placeholder="Brand Name *"
-												pattern="[A-Za-z0-9\s\-']+"
-											/>
-										</div>
-										<div>
-											<input
-												type="text"
-												onChange={onInputCarChange}
-												value={cars.model}
-												name="model"
-												placeholder="Model Number *"
-												pattern="[A-Za-z0-9_-]+"
-											/>
-											<input
-												type="text"
-												placeholder="Vehicle Number *"
-												onChange={onInputCarChange}
-												value={cars.registrationNo}
-												name="registrationNo"
-												title="Please enter a valid vehicle Vehicle number"
-											/>
-										</div>
-										<div>
-											<input
-												type="text"
-												onChange={onInputCarChange}
-												value={cars.frvcode}
-												name="frvcode"
-												placeholder="FRV Code"
-											/>
-											<input type="text" name="year" placeholder="Year *" required />
-											<Select
-												defaultValue={sittingSortOptions[0]}
-												options={sittingSortOptions}
-												components={{ DropdownIndicator }}
-												styles={customStyles}
-												onChange={onSelectSeaterChange}
-											/>
-										</div>
-										<div>
-											<input
-												type="text"
-												onChange={onInputCarChange}
-												value={cars.rent}
-												placeholder="Rent Charges *"
-												name="rent"
-											/>
 
-											<Select
-												defaultValue={airconditionSortOptions[0]}
-												options={airconditionSortOptions}
-												components={{ DropdownIndicator }}
-												styles={customStyles}
-												name="isAc"
-												onChange={onSelectAcChange}
-											/>
-										</div>
-										<div>
-											<input
-												type="text"
-												value={cars.start.km}
-												onChange={(e) =>
-													setCars((curr) => {
-														return {
-															...curr,
-															start: {
-																...curr.start,
-																km: e.target.value,
-															},
-														};
-													})
-												}
-												placeholder="Start Km"
-												name="startkm"
-											/>
-											<input
-												type="date"
-												value={cars.start.date}
-												onChange={(e) =>
-													setCars((curr) => {
-														return {
-															...curr,
-															start: {
-																...curr.start,
-																date: e.target.value,
-															},
-														};
-													})
-												}
-												placeholder="Start Date dd/MM/YYYY"
-												name="startdate"
-											/>
-										</div>
-									</div>
-
-									<button onClick={carDetailsSubmitHandler}>Add Car</button>
-								</>
-							) : (
-								<>
-									<button className="carExcelBtn" onClick={() => setDialog((curr) => !curr)}>
-										<h2>Add Cars</h2>
+										<button onClick={carDetailsSubmitHandler}>Add Car</button>
+									</>
+								) : (
+									<>
+										{/* <button className="carExcelBtn"> */}
+										<h2 style={{ textAlign: "center", fontFamily: "poppins", fontSize: "1.3rem" }}>Add Cars</h2>
 										<input type="file" id="carfileupload" onChange={handleCarFileUpload} />
-									</button>
-								</>
+										{/* </button> */}
+									</>
+								)}
+							</section>
+							{ownerFinal.length === 0 ? (
+								<button type="submit">Add Owner</button>
+							) : (
+								<button onClick={excelSubmitHandler}>Add Owner</button>
 							)}
-						</section>
-						{ownerFinal.length === 0 ? <button type="submit">Add Owner</button> : <button onClick={excelSubmitHandler}>Add Owner</button>}
-					</form>
-				</section>
-			</main>
+						</form>
+					</section>
+				</main>
+			)}
 		</div>
 	);
 };

@@ -3,8 +3,7 @@ import AdminSidebar from "../components/AdminSidebar";
 import { HiTrendingUp, HiTrendingDown } from "react-icons/hi";
 import { IoIosSettings } from "react-icons/io";
 import Bar from "../components/Bar";
-import { FaSearch, FaPhoneAlt } from "react-icons/fa";
-import { BiLogoGmail } from "react-icons/bi";
+import { FaSearch } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 
 import { tripHeaders, tripData, driverDetailsData, driverDetailsHeaders } from "../assets/data/dashboard";
@@ -80,7 +79,7 @@ const Dashboard = () => {
 						<p>Trip Details</p>
 					</TableHeading>
 					<Table>
-						<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${driverDetailsHeaders.length + 1},1fr)` }} />
+						<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${driverDetailsHeaders.length},1fr)` }} />
 						<TableBody TableRow={DashboardRow} data={tripData} />
 					</Table>
 				</TableContainer>
@@ -99,29 +98,7 @@ const Dashboard = () => {
 							/>
 							<TableBody TableRow={DriverDetailsRow} isSingleData={true} data={driverDetailsData} />
 							<TableFooter footerClass="driverFooter">
-								<div className="tripDetails">
-									<div>
-										<h3>12</h3>
-										<p>Trip Completed</p>
-									</div>
-									<div>
-										<h3>145</h3>
-										<p>Total Kilometers</p>
-									</div>
-									<div>
-										<h3>00</h3>
-										<p>Accident History</p>
-									</div>
-								</div>
 								<div className="tripcalculated">
-									<div>
-										<FaPhoneAlt />
-										<p>+91 9282632726</p>
-									</div>
-									<div>
-										<BiLogoGmail />
-										<p>Javid@gmail.com</p>
-									</div>
 									<button>Assign Trip</button>
 								</div>
 							</TableFooter>
