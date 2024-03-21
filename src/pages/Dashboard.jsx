@@ -4,7 +4,7 @@ import { HiTrendingUp, HiTrendingDown } from "react-icons/hi";
 import { IoIosSettings } from "react-icons/io";
 import Bar from "../components/Bar";
 import { FaSearch } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 
 import { tripHeaders, tripData, driverDetailsData, driverDetailsHeaders } from "../assets/data/dashboard";
 import {
@@ -18,8 +18,8 @@ import {
 	DriverDetailsRow,
 	TableFooter,
 } from "../components/TableHOC";
-import { useEffect, useState } from "react";
-import { getOwners } from "../actions/owner.action";
+import { useState } from "react";
+// import { getOwners } from "../actions/owner.action";
 
 const possibleStatuses = ["On Trip", "On Leave", "Available"];
 
@@ -49,22 +49,25 @@ Object.keys(groupedTrips).forEach((driverId) => {
 // Extract the latest trip status for each driver
 
 const Dashboard = () => {
-	const dispatch = useDispatch();
+	// const dispatch = useDispatch();
 
-	useEffect(() => {
-		dispatch(getOwners());
-	}, [dispatch]);
+	// useEffect(() => {
+	// 	dispatch(getOwners());
+	// }, [dispatch]);
 
-	useEffect(() => {
-		dispatch(getOwners());
-	}, []);
+	// useEffect(() => {
+	// 	dispatch(getOwners());
+	// }, []);
 
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
 			<main className="dashboard">
 				<Bar />
-				<h2>Dashboard</h2>
+				<section className="heading">
+					<h2>Dashboard</h2>
+					<button>Assign Trip</button>
+				</section>
 
 				<section className="widget-container">
 					<WidgetItem percent={2.8} value={340000} heading="Income" color="rgba(0,115,255)" />
@@ -88,7 +91,7 @@ const Dashboard = () => {
 						<TableHeading>
 							<p>Trip Information</p>
 							<button>
-								<FaSearch /> <input type="text" placeholder="Search Driver..." />
+								<FaSearch /> <input type="text" placeholder="Search Trips..." />
 							</button>
 						</TableHeading>
 						<Table>
@@ -97,11 +100,6 @@ const Dashboard = () => {
 								style={{ gridTemplateColumns: `repeat(${driverDetailsHeaders.length},1fr)` }}
 							/>
 							<TableBody TableRow={DriverDetailsRow} isSingleData={true} data={driverDetailsData} />
-							<TableFooter footerClass="driverFooter">
-								<div className="tripcalculated">
-									<button>Assign Trip</button>
-								</div>
-							</TableFooter>
 						</Table>
 					</TableContainer>
 				</section>

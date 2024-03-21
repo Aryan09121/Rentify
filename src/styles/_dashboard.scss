@@ -3,9 +3,21 @@
 	&::-webkit-scrollbar {
 		display: none;
 	}
-	> h2 {
-		font-size: 2.2rem;
-		margin: 1rem 2rem;
+	> .heading {
+		@include flex(row, space-between, center, 0.2rem);
+		margin: 0rem 3rem;
+		margin-top: 1rem;
+		> h2 {
+			font-size: 2.2rem;
+			// margin: 1rem 2rem;
+		}
+		> button {
+			padding: 1rem 2.2rem;
+			border-radius: 5px;
+			font-size: 1.2rem;
+			background-color: #029e9d;
+			color: #fcfcfc;
+		}
 	}
 	//**  widgetcontainer
 	.widget-container {

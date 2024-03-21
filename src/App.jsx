@@ -10,6 +10,7 @@ import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
 import { loadUser } from "./actions/user.action";
+import { getOwners } from "./actions/owner.action";
 
 // ** pages lazy import()
 const Signup = lazy(() => import("./pages/Signup"));
@@ -34,6 +35,7 @@ const App = () => {
 		const token = Cookies.get("token");
 		if (token) {
 			dispatch(loadUser());
+			dispatch(getOwners());
 		}
 	}, []);
 
