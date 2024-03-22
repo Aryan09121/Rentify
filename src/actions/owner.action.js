@@ -1,6 +1,9 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
+// const URI = "http://localhost:8000";
+const URI = "https://unusual-jade-puppy.cyclic.app";
+
 export const getOwners = () => async (dispatch) => {
 	try {
 		dispatch({
@@ -15,7 +18,7 @@ export const getOwners = () => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/owners`, config);
+		const { data } = await axios.get(`${URI}/api/v1/admin/owners`, config);
 		const payload = {
 			owners: data.data,
 			message: data.message,
@@ -48,7 +51,7 @@ export const getOwnerById = (id) => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/owner?id=${id}`, config);
+		const { data } = await axios.get(`${URI}/api/v1/admin/owner?id=${id}`, config);
 		const payload = {
 			owner: data.data,
 			message: data.message,
@@ -81,7 +84,7 @@ export const addOwners = (owners) => async (dispatch) => {
 		};
 
 		for (const owner of owners) {
-			const { data } = await axios.post(`http://localhost:8000/api/v1/admin/add/owner`, owner, config);
+			const { data } = await axios.post(`${URI}/api/v1/admin/add/owner`, owner, config);
 			console.log(data); // Call addSingleOwner function for each owner
 		}
 
@@ -112,7 +115,7 @@ export const addSingleOwner = (owner) => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/add/owner`, owner, config);
+		const { data } = await axios.post(`${URI}/api/v1/admin/add/owner`, owner, config);
 		console.log(data);
 
 		const payload = {

@@ -28,6 +28,30 @@ export const carReducer = createReducer(initialState, (builder) => {
 			state.loading = false;
 			state.error = action.payload;
 		})
+		.addCase("GET_SINGLE_CAR_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("GET_SINGLE_CAR_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.car = action.payload.car;
+			state.message = action.payload.message;
+		})
+		.addCase("GET_SINGLE_CAR_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
+		.addCase("GET_GROUPED_CAR_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("GET_GROUPED_CAR_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.groupedCar = action.payload.cars;
+			state.message = action.payload.message;
+		})
+		.addCase("GET_GROUPED_CAR_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
 		.addCase("CLEAR_ERRORS", (state) => {
 			state.error = null;
 		})

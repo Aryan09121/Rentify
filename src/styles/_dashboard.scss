@@ -235,5 +235,28 @@
 				}
 			}
 		}
+		> .Table {
+			border: 1.5px solid #029e9d;
+		}
+	}
+	> .assignform {
+		@include flex(row, center, flex-start, 1rem);
+		flex-wrap: wrap;
+		width: 50%;
+		margin: 3rem auto;
+		> div {
+			@include grid(20% 80%);
+			width: 100%;
+			> label {
+				font-family: "poppins";
+				font-weight: 500;
+				font-size: 1rem;
+			}
+			> input {
+				@include inputStyles;
+				border-radius: 5px;
+				border: 2px solid #029e9d;
+			}
+		}
 	}
 }

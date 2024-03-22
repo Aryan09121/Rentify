@@ -63,6 +63,17 @@ export const DashboardRow = ({ rowdata, className = "tableContents" }) => {
 	);
 };
 
+// !-- Assign trip Row
+export const AssignRow = ({ rowdata, className = "tableContents" }) => {
+	return (
+		<div className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }}>
+			{rowdata.data.map((data) => {
+				return <h3 key={data}>{data}</h3>;
+			})}
+		</div>
+	);
+};
+
 export const DriverDetailsRow = ({ rowdata, className }) => {
 	return (
 		<Link to={`/trip/${rowdata._id}`} className={`tableContents ${className}`} style={{ gridTemplateColumns: `repeat(${5},1fr)` }}>
