@@ -19,6 +19,7 @@ import {
 	TableFooter,
 } from "../components/TableHOC";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 // import { getOwners } from "../actions/owner.action";
 
 const possibleStatuses = ["On Trip", "On Leave", "Available"];
@@ -66,7 +67,9 @@ const Dashboard = () => {
 				<Bar />
 				<section className="heading">
 					<h2>Dashboard</h2>
-					<button>Assign Trip</button>
+					<Link to="/add/trip">
+						<button>Assign Trip</button>
+					</Link>
 				</section>
 
 				<section className="widget-container">
@@ -74,9 +77,6 @@ const Dashboard = () => {
 					<WidgetItem percent={-2.5} value={400} heading="Paid" color="rgba(0,198,202)" />
 					<WidgetItem percent={4} value={23000} heading="Invoices" color="rgba(0,115,255)" />
 				</section>
-				{/* <Table className="tableContainer" data={tripData} length={tripData.length + 1} headers={tripHeaders} isDashboard={true}>
-					Tript Details
-				</Table> */}
 				<TableContainer className="dashboardTripTableContainer">
 					<TableHeading>
 						<p>Trip Details</p>

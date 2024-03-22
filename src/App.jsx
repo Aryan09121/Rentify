@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { Suspense, lazy } from "react";
 import Loader from "./components/Loader";
-import { Bounce, ToastContainer } from "react-toastify";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 import BillPdf from "./components/BillPdf";
 import { useDispatch, useSelector } from "react-redux";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import Cookies from "js-cookie";
 import { loadUser } from "./actions/user.action";
 import { getOwners } from "./actions/owner.action";
+import { getAllCars } from "./actions/car.action";
 
 // ** pages lazy import()
 const Signup = lazy(() => import("./pages/Signup"));
@@ -27,17 +28,31 @@ const BillDetails = lazy(() => import("./components/BillDetails"));
 const AddNew = lazy(() => import("./pages/AddNew"));
 const AddNewOwner = lazy(() => import("./pages/AddNewOwner"));
 const Search = lazy(() => import("./pages/Search"));
+const AssignTrip = lazy(() => import("./components/AssignTrip"));
 
 const App = () => {
 	const dispatch = useDispatch();
+	const { loading, message, error } = useSelector((state) => state.car);
 
 	useEffect(() => {
 		const token = Cookies.get("token");
 		if (token) {
 			dispatch(loadUser());
 			dispatch(getOwners());
+			dispatch(getAllCars());
 		}
 	}, []);
+
+	useEffect(() => {
+		if (error) {
+			toast.error(error);
+			dispatch({ type: "CLEAR_ERRORS" });
+		}
+		if (message) {
+			toast.success(message);
+			dispatch({ type: "CLEAR_MESSAGES" });
+		}
+	}, [message, error]);
 
 	return (
 		<Suspense fallback={<Loader />}>
@@ -60,6 +75,7 @@ const App = () => {
 					<Route path="/add/new/owner" element={<AddNewOwner />} />
 					<Route path="/add/new/driver" element={<h1>Add New Driver</h1>} />
 					<Route path="/add/new/staff" element={<h1>Add new Staff</h1>} />
+					<Route path="/add/trip" element={<AssignTrip />} />
 				</Route>
 				<Route path="*" element={<h2>Page Not Found</h2>} />
 			</Routes>

@@ -16,6 +16,18 @@ export const carReducer = createReducer(initialState, (builder) => {
 			state.loading = false;
 			state.error = action.payload;
 		})
+		.addCase("GET_ALL_CARS_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("GET_ALL_CARS_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.allcars = action.payload.cars;
+			state.message = action.payload.message;
+		})
+		.addCase("GET_ALL_CARS_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
 		.addCase("CLEAR_ERRORS", (state) => {
 			state.error = null;
 		})

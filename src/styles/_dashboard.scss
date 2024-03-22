@@ -11,12 +11,14 @@
 			font-size: 2.2rem;
 			// margin: 1rem 2rem;
 		}
-		> button {
-			padding: 1rem 2.2rem;
-			border-radius: 5px;
-			font-size: 1.2rem;
-			background-color: #029e9d;
-			color: #fcfcfc;
+		> a {
+			> button {
+				padding: 1rem 2.2rem;
+				border-radius: 5px;
+				font-size: 1.2rem;
+				background-color: #029e9d;
+				color: #fcfcfc;
+			}
 		}
 	}
 	//**  widgetcontainer
@@ -196,6 +198,40 @@
 							font-weight: 600;
 						}
 					}
+				}
+			}
+		}
+	}
+}
+
+// assign trip
+.assignTrip {
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	> h2 {
+		@include heading;
+		text-align: center;
+		margin: 2rem;
+	}
+	> .carAssignTable {
+		margin: 1rem 2rem;
+		> .tableHeading {
+			color: #fcfcfc;
+			> button {
+				border: none;
+				outline: none;
+				display: flex;
+				align-items: center;
+				padding-left: 1rem;
+				border-radius: 5px;
+				> svg {
+					font-size: 1rem;
+				}
+				> input {
+					@include inputStyles;
+					border-radius: 5px;
 				}
 			}
 		}
