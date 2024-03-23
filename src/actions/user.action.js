@@ -2,15 +2,15 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-// const URI = "http://localhost:8000";
-const URI = "https://unusual-jade-puppy.cyclic.app";
+const URI = "http://localhost:8000";
+// const URI = "https://unusual-jade-puppy.cyclic.app";
 
 export const userLogin = (loginDetails) => async (dispatch) => {
 	try {
 		dispatch({
 			type: "GET_LOGIN_REQUEST",
 		});
-		const { data } = await axios.post(`${URI}/api/v1/user/login`, loginDetails);
+		const { data } = await axios.post(`http://localhost:8000/api/v1/user/login`, loginDetails);
 
 		const payload = {
 			user: data.data.user,

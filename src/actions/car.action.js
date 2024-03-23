@@ -1,8 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-// const URI = "http://localhost:8000";
-const URI = "https://unusual-jade-puppy.cyclic.app";
+const URI = "http://localhost:8000";
+// const URI = "https://unusual-jade-puppy.cyclic.app";
 
 export const getAllCars = () => async (dispatch) => {
 	try {
