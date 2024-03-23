@@ -73,7 +73,6 @@ const expectedCarHeaders = [
 	"brand",
 	"model",
 	"Vehicle Registration Number",
-	"FRV code",
 	"Rent",
 	"Air Conditioning",
 	"Seater",
@@ -119,7 +118,6 @@ const AddNewOwner = () => {
 		brand: "",
 		model: "",
 		registrationNo: "",
-		frvcode: "",
 		rent: "",
 		year: "",
 		isAc: false,
@@ -210,15 +208,14 @@ const AddNewOwner = () => {
 								brand: car[1],
 								model: car[2],
 								registrationNo: car[3],
-								frvcode: car[4],
-								rent: car[5],
-								isAc: car[6],
-								seater: car[7],
+								rent: car[4],
+								isAc: car[5],
+								seater: car[6],
 								address: {
-									street: car[8],
-									city: car[9],
-									state: car[10],
-									pincode: car[11],
+									street: car[7],
+									city: car[8],
+									state: car[9],
+									pincode: car[10],
 								},
 							}));
 
@@ -315,9 +312,9 @@ const AddNewOwner = () => {
 	const carDetailsSubmitHandler = (e) => {
 		e.preventDefault();
 		alert("inner form submit");
-		const isCarAlreadyAdded = owner.cars.some((car) => car.registrationNo === cars.registrationNo && car.frvcode === cars.frvcode);
+		const isCarAlreadyAdded = owner.cars.some((car) => car.registrationNo === cars.registrationNo);
 		if (isCarAlreadyAdded) {
-			toast.error("Car with the same vehicle number and FRV code already exists for this owner.");
+			toast.error("Car with the same vehicle number already exists for this owner.");
 		} else {
 			setOwner((prev) => {
 				return {
@@ -328,7 +325,7 @@ const AddNewOwner = () => {
 			const updatedTableData = [
 				...tableData,
 				{
-					data: [tableData.length + 1, cars.model, cars.brand, cars.rent, cars.frvcode, cars.seater],
+					data: [tableData.length + 1, cars.model, cars.brand, cars.rent, cars.seater],
 					_id: `CAR-${tableData.length + 1}`,
 				},
 			];
@@ -340,7 +337,6 @@ const AddNewOwner = () => {
 				brand: "",
 				model: "",
 				registrationNo: "",
-				frvcode: "",
 				rent: "",
 				year: "",
 				isAc: false,
@@ -599,13 +595,6 @@ const AddNewOwner = () => {
 												/>
 											</div>
 											<div>
-												<input
-													type="text"
-													onChange={onInputCarChange}
-													value={cars.frvcode}
-													name="frvcode"
-													placeholder="FRV Code"
-												/>
 												<input type="text" name="year" placeholder="Year *" required />
 												<Select
 													defaultValue={sittingSortOptions[0]}
