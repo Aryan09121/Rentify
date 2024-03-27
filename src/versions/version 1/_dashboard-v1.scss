@@ -18,7 +18,7 @@
 			height: 14rem;
 			background-color: #029e9d;
 			box-shadow: 0 0 10px rgba(0, 0, 0, 0.132);
-			padding: 1rem;
+			padding: 1.1rem;
 			@include flex(column, flex-start, unset, 0.4rem);
 
 			> div:nth-child(1) {
