@@ -32,7 +32,7 @@ const AssignTrip = lazy(() => import("./components/AssignTrip"));
 
 const App = () => {
 	const dispatch = useDispatch();
-	const { loading, message, error } = useSelector((state) => state.car);
+	const { message, error } = useSelector((state) => state.car);
 
 	useEffect(() => {
 		const token = Cookies.get("token");

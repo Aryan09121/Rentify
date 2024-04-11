@@ -66,10 +66,11 @@ export const DashboardRow = ({ rowdata, className = "tableContents" }) => {
 // !-- Assign trip Row
 export const AssignRow = ({ rowdata, className = "tableContents" }) => {
 	return (
-		<div className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }}>
+		<div className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}>
 			{rowdata.data.map((data) => {
 				return <h3 key={data}>{data}</h3>;
 			})}
+			{rowdata.action}
 		</div>
 	);
 };

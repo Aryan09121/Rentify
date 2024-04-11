@@ -240,22 +240,62 @@
 		}
 	}
 	> .assignform {
-		@include flex(row, center, flex-start, 1rem);
+		@include flex(column, center, flex-start, 1rem);
 		flex-wrap: wrap;
 		width: 50%;
-		margin: 3rem auto;
+		margin: 1rem auto;
+		> button {
+			padding: 1rem 2.2rem;
+			display: block;
+			margin: 1rem auto;
+			font-size: 1.2rem;
+			border: 1.5px solid #029e9d;
+			border-radius: 5px;
+			color: #029e9d;
+		}
+		> .excelfilecontainer {
+			display: block;
+			width: 55%;
+			margin: 0 auto;
+			padding: 2rem;
+			@include flex(column, center, center, 1rem);
+			> input {
+				@include inputStyles;
+				width: 100%;
+				padding: 0;
+				&::-webkit-file-upload-button {
+					cursor: pointer;
+					outline: none;
+					border: none;
+					background-color: #029e9d;
+					width: 100%;
+					font-size: 1.3rem;
+					color: #fff;
+					padding: 0.6rem 1rem;
+				}
+			}
+			> h4 {
+				border-radius: 5px;
+				font-size: 1rem;
+				color: #029e9d;
+				font-size: 300;
+				font-family: "Gilroy";
+			}
+		}
 		> div {
 			@include grid(20% 80%);
+			align-items: center;
 			width: 100%;
 			> label {
 				font-family: "poppins";
 				font-weight: 500;
 				font-size: 1rem;
+				cursor: pointer;
 			}
 			> input {
 				@include inputStyles;
 				border-radius: 5px;
-				border: 2px solid #029e9d;
+				border: 1.5px solid #029e9d;
 			}
 		}
 	}
