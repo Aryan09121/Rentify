@@ -1,11 +1,13 @@
 import { FaSearch } from "react-icons/fa";
 import AdminSidebar from "./AdminSidebar";
+import readXlsxFile from "read-excel-file";
 import Bar from "./Bar";
 import { AssignRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCars } from "../actions/car.action";
 import { toast } from "react-toastify";
+import { assignTrip } from "../actions/trip.action";
 
 const carsHeaders = ["S No", "Vehicle Reg No", "Car Brand", "Car Model", "Action"];
 
@@ -114,7 +116,13 @@ const AssignTrip = () => {
 
 export default AssignTrip;
 
+const expectedTripHeaders = ["Vehicle Registration Number", "District", "Year", "FRV Code", "Start Date", "Start Km"];
+
 const AssignForm = () => {
+	const [trips, setTrips] = useState([]);
+	const dispatch = useDispatch();
+	const { message, error, loading } = useSelector((state) => state.trip);
+
 	const handleAssignTripFileChange = (event) => {
 		const file = event.target.files[0];
 		readTripDataFile(file);
@@ -125,36 +133,30 @@ const AssignForm = () => {
 		readXlsxFile(file)
 			.then((rows) => {
 				// Skip header row if necessary
-				const ownerHeaders = rows[0];
-				const ownerHeadersLower = ownerHeaders.map((header) => header.toLowerCase());
-				const ownerData = rows.slice(1);
+				const tripHeaders = rows[0];
+				const tripHeadersLower = tripHeaders.map((header) => header.toLowerCase());
+
+				const tripData = rows.slice(1);
+
 				const arraysAreEqual =
-					expectedOwnerHeaders.length === ownerHeadersLower.length &&
-					expectedOwnerHeaders.every((value, index) => value.toLowerCase() === ownerHeadersLower[index]);
+					expectedTripHeaders.length === tripHeadersLower.length &&
+					expectedTripHeaders.every((value, index) => value.toLowerCase() === tripHeadersLower[index]);
 
 				if (arraysAreEqual) {
-					// setOwnerExcelData(() => {
-					// 	return ownerData;
-					// });
-					const newarr = ownerData.map((data) => {
+					const newarr = tripData.map((data) => {
 						return {
-							name: data[0],
-							phone: data[1],
-							gender: data[2],
-							email: data[3],
-							gst: data[4],
-							pan: data[5],
-							address: {
-								street: data[6],
-								city: data[7],
-								state: data[8],
-								pincode: data[9],
+							registrationNo: data[0],
+							district: data[1],
+							year: data[2],
+							frvCode: data[3],
+							start: {
+								date: data[4],
+								km: data[5],
 							},
-							cars: [],
 						};
 					});
-					setOwnerFinal(newarr);
-					return toast.success("Owners Data Read Successfully");
+					setTrips(newarr);
+					return toast.success("Trip Data Read Successfully");
 				} else {
 					return toast.error("Invalid File Format");
 				}
@@ -163,6 +165,25 @@ const AssignForm = () => {
 				console.error("Error reading Owner Excel file:", error);
 			});
 	};
+
+	const assignTripHandler = () => {
+		if (trips) {
+			dispatch(assignTrip(trips));
+		} else {
+			toast.error("please select the excel file first");
+		}
+	};
+
+	useEffect(() => {
+		if (message) {
+			toast.success(message);
+			dispatch({ type: "CLEAR_MESSAGES" });
+		}
+		if (error) {
+			toast.error(error);
+			dispatch({ type: "CLEAR_ERRORS" });
+		}
+	}, [error, message]);
 
 	return (
 		<div className="assignform">
@@ -190,7 +211,7 @@ const AssignForm = () => {
 				<label htmlFor="startkm">Start Kilometers</label>
 				<input type="text" id="startkm" placeholder="start Kilometers" />
 			</div> */}
-			<button>Assign Trip</button>
+			<button onClick={assignTripHandler}>Assign Trip</button>
 		</div>
 	);
 };
