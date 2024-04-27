@@ -3,23 +3,13 @@ import AdminSidebar from "../components/AdminSidebar";
 import { HiTrendingUp, HiTrendingDown } from "react-icons/hi";
 import { IoIosSettings } from "react-icons/io";
 import Bar from "../components/Bar";
-import { FaSearch } from "react-icons/fa";
 // import { useDispatch } from "react-redux";
 
-import { tripHeaders, tripData, driverDetailsData, driverDetailsHeaders } from "../assets/data/dashboard";
-import {
-	TableContainer,
-	TableHeading,
-	Table,
-	TableHeaders,
-	TableBody,
-	DriverRow,
-	DashboardRow,
-	DriverDetailsRow,
-	TableFooter,
-} from "../components/TableHOC";
-import { useState } from "react";
+import { tripHeaders, tripData, driverDetailsData, tripDetailsHeaders } from "../assets/data/dashboard";
+import { TableContainer, TableHeading, Table, TableHeaders, TableBody, DashboardRow, tripDetailsRow, TableFooter } from "../components/TableHOC";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 // import { getOwners } from "../actions/owner.action";
 
 const possibleStatuses = ["On Trip", "On Leave", "Available"];
@@ -50,16 +40,26 @@ Object.keys(groupedTrips).forEach((driverId) => {
 // Extract the latest trip status for each driver
 
 const Dashboard = () => {
-	// const dispatch = useDispatch();
+	const { trips } = useSelector((state) => state.trip);
+	const [tripdata, setTripdata] = useState([]);
+	const [selectedTrip, setSelectedTrip] = useState();
 
-	// useEffect(() => {
-	// 	dispatch(getOwners());
-	// }, [dispatch]);
+	const onSelectTrip = (trip) => {
+		setSelectedTrip(trip.trip);
+		console.log(trip.trip);
+	};
 
-	// useEffect(() => {
-	// 	dispatch(getOwners());
-	// }, []);
-
+	useEffect(() => {
+		if (trips.length !== 0) {
+			const data = trips?.map((trip) => ({
+				data: [trip?.tripId, trip?.car?.model, trip?.car?.registrationNo, trip?.district],
+				status: trip.status,
+				_id: trip?._id,
+				trip: trip,
+			}));
+			setTripdata(data);
+		}
+	}, [trips]);
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
@@ -77,32 +77,47 @@ const Dashboard = () => {
 					<WidgetItem percent={-2.5} value={400} heading="Paid" color="rgba(0,198,202)" />
 					<WidgetItem percent={4} value={23000} heading="Invoices" color="rgba(0,115,255)" />
 				</section>
+				<section className="driver-container">
+					{selectedTrip && (
+						<TableContainer className="dashboarddriverDetailsTableContainer">
+							<TableHeading>
+								<p>Trip Information</p>
+							</TableHeading>
+							<Table>
+								<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${tripHeaders.length},1fr)` }} />
+								<TableBody TableRow={tripDetailsRow} isSingleData={true} data={selectedTrip} />
+							</Table>
+							<TableFooter footerClass="tripDetailsFooter">
+								<div>
+									<p>{selectedTrip?.year}</p>
+									<h4>Year</h4>
+								</div>
+								<div>
+									<p>{selectedTrip?.frvCode}</p>
+									<h4>FRV Code</h4>
+								</div>
+								<div>
+									<p>{new Date(selectedTrip?.start?.date).toLocaleDateString()}</p>
+									<h4>Start Date</h4>
+								</div>
+								<div>
+									<p>{selectedTrip?.start?.km} km</p>
+									<h4>Start Kilometers</h4>
+								</div>
+								<button>Complete Trip</button>
+							</TableFooter>
+						</TableContainer>
+					)}
+				</section>
 				<TableContainer className="dashboardTripTableContainer">
 					<TableHeading>
 						<p>Trip Details</p>
 					</TableHeading>
 					<Table>
-						<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${driverDetailsHeaders.length},1fr)` }} />
-						<TableBody TableRow={DashboardRow} data={tripData} />
+						<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${tripHeaders.length},1fr)` }} />
+						<TableBody onClick={onSelectTrip} TableRow={DashboardRow} data={tripdata} />
 					</Table>
 				</TableContainer>
-				<section className="driver-container">
-					<TableContainer className="dashboarddriverDetailsTableContainer">
-						<TableHeading>
-							<p>Trip Information</p>
-							<button>
-								<FaSearch /> <input type="text" placeholder="Search Trips..." />
-							</button>
-						</TableHeading>
-						<Table>
-							<TableHeaders
-								headers={driverDetailsHeaders}
-								style={{ gridTemplateColumns: `repeat(${driverDetailsHeaders.length},1fr)` }}
-							/>
-							<TableBody TableRow={DriverDetailsRow} isSingleData={true} data={driverDetailsData} />
-						</Table>
-					</TableContainer>
-				</section>
 			</main>
 		</div>
 	);

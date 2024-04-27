@@ -47,19 +47,19 @@ export const TableFooter = ({ children, footerClass = "billTotal" }) => {
 };
 
 // !-- Dashboard Row
-export const DashboardRow = ({ rowdata, className = "tableContents" }) => {
+export const DashboardRow = ({ rowdata, className = "tableContents", onClick }) => {
 	return (
-		<Link to={`/trip/${rowdata._id}`} className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}>
+		<div onClick={() => onClick(rowdata)} className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}>
 			{rowdata.data.map((data) => {
 				return <h3 key={data}>{data}</h3>;
 			})}
 
 			<button
-				className={rowdata.status === "Ongoing" ? "tableBtn greenbg" : rowdata.status === "Reached" ? "tableBtn redbg" : "tableBtn yellowbg"}
+				className={rowdata.status === "ongoing" ? "tableBtn greenbg" : rowdata.status === "Reached" ? "tableBtn redbg" : "tableBtn yellowbg"}
 			>
 				{rowdata.status}
 			</button>
-		</Link>
+		</div>
 	);
 };
 
@@ -75,20 +75,14 @@ export const AssignRow = ({ rowdata, className = "tableContents" }) => {
 	);
 };
 
-export const DriverDetailsRow = ({ rowdata, className }) => {
+export const tripDetailsRow = ({ rowdata, className }) => {
 	return (
 		<Link to={`/trip/${rowdata._id}`} className={`tableContents ${className}`} style={{ gridTemplateColumns: `repeat(${5},1fr)` }}>
-			<h3>{rowdata.name}</h3>
-			<h3>{rowdata.carno}</h3>
-			<h3>{rowdata.cartype}</h3>
-			<h3>{rowdata.tripDetails}</h3>
-			<button
-				className={
-					rowdata.status === "ongoing" ? "tableBtn purplebg" : rowdata.status === "completed" ? "tableBtn greenbg" : "tableBtn purplebg"
-				}
-			>
-				{rowdata.status}
-			</button>
+			<h3>{rowdata.tripId}</h3>
+			<h3>{rowdata.car.model}</h3>
+			<h3>{rowdata.car.registrationNo}</h3>
+			<h3>{rowdata.district}</h3>
+			<button className={rowdata.status === "ongoing" ? "tableBtn purplebg" : "tableBtn greenbg"}>{rowdata.status}</button>
 		</Link>
 	);
 };

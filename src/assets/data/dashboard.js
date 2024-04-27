@@ -1,4 +1,4 @@
-export const tripHeaders = ["Serial No", "Car Type", "Car Number", "Trip Route", "Status"];
+export const tripHeaders = ["Trip Id", "Car Model", "Car Number", "District", "Status"];
 
 export const tripData = [
 	{
@@ -33,7 +33,7 @@ export const tripData = [
 	},
 ];
 
-export const driverDetailsHeaders = ["Name", "Car No", "Car Type", "Trip Details", "Status"];
+export const tripDetailsHeaders = ["Name", "Car No", "Car Type", "Trip Details", "Status"];
 
 export const driverDetailsData = {
 	name: "Javid Sheikh",
