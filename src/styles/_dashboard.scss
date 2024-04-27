@@ -200,102 +200,32 @@
 					}
 				}
 			}
-		}
-	}
-}
-
-// assign trip
-.assignTrip {
-	overflow-y: auto;
-	&::-webkit-scrollbar {
-		display: none;
-	}
-	> h2 {
-		@include heading;
-		text-align: center;
-		margin: 2rem;
-	}
-	> .carAssignTable {
-		margin: 1rem 2rem;
-		> .tableHeading {
-			color: #fcfcfc;
-			> button {
-				border: none;
-				outline: none;
-				display: flex;
-				align-items: center;
-				padding-left: 1rem;
-				border-radius: 5px;
-				> svg {
-					font-size: 1rem;
-				}
-				> input {
-					@include inputStyles;
-					border-radius: 5px;
-				}
-			}
-		}
-		> .Table {
-			border: 1.5px solid #029e9d;
-		}
-	}
-	> .assignform {
-		@include flex(column, center, flex-start, 1rem);
-		flex-wrap: wrap;
-		width: 50%;
-		margin: 1rem auto;
-		> button {
-			padding: 1rem 2.2rem;
-			display: block;
-			margin: 1rem auto;
-			font-size: 1.2rem;
-			border: 1.5px solid #029e9d;
-			border-radius: 5px;
-			color: #029e9d;
-		}
-		> .excelfilecontainer {
-			display: block;
-			width: 55%;
-			margin: 0 auto;
-			padding: 2rem;
-			@include flex(column, center, center, 1rem);
-			> input {
-				@include inputStyles;
-				width: 100%;
-				padding: 0;
-				&::-webkit-file-upload-button {
-					cursor: pointer;
-					outline: none;
-					border: none;
-					background-color: #029e9d;
-					width: 100%;
-					font-size: 1.3rem;
+			> .tripDetailsFooter {
+				padding: 1rem 2rem;
+				border: 2px solid #979595;
+				border-top: 1px solid #029e9d;
+				@include flex(row, space-around, flex-start, 1.5rem);
+				flex-wrap: wrap;
+				> button {
+					margin-left: auto;
+					padding: 1rem 2.2rem;
+					border-radius: 4px;
 					color: #fff;
-					padding: 0.6rem 1rem;
+					font-size: 1.2rem;
+					background-color: #029e9d;
 				}
-			}
-			> h4 {
-				border-radius: 5px;
-				font-size: 1rem;
-				color: #029e9d;
-				font-size: 300;
-				font-family: "Gilroy";
-			}
-		}
-		> div {
-			@include grid(20% 80%);
-			align-items: center;
-			width: 100%;
-			> label {
-				font-family: "poppins";
-				font-weight: 500;
-				font-size: 1rem;
-				cursor: pointer;
-			}
-			> input {
-				@include inputStyles;
-				border-radius: 5px;
-				border: 1.5px solid #029e9d;
+				> div {
+					@include flex(column, center, center, 0.2rem);
+					padding: 1rem 2rem;
+					> p {
+						color: #029e9d;
+					}
+					> h4 {
+						font-size: 1.3rem;
+						text-transform: capitalize;
+						letter-spacing: 2px;
+					}
+				}
 			}
 		}
 	}
