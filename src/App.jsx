@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import { loadUser } from "./actions/user.action";
 import { getOwners } from "./actions/owner.action";
 import { getAllCars } from "./actions/car.action";
+import { getAllTrips } from "./actions/trip.action";
 
 // ** pages lazy import()
 const Signup = lazy(() => import("./pages/Signup"));
@@ -33,6 +34,7 @@ const AssignTrip = lazy(() => import("./components/AssignTrip"));
 const App = () => {
 	const dispatch = useDispatch();
 	const { message, error } = useSelector((state) => state.car);
+	const { message: tripMessage, error: tripError } = useSelector((state) => state.trip);
 
 	useEffect(() => {
 		const token = Cookies.get("token");
@@ -40,6 +42,7 @@ const App = () => {
 			dispatch(loadUser());
 			dispatch(getOwners());
 			dispatch(getAllCars());
+			dispatch(getAllTrips());
 		}
 	}, []);
 
@@ -53,6 +56,17 @@ const App = () => {
 			dispatch({ type: "CLEAR_MESSAGES" });
 		}
 	}, [message, error]);
+
+	useEffect(() => {
+		if (tripMessage) {
+			toast.success(tripMessage);
+			dispatch({ type: "CLEAR_MESSAGES" });
+		}
+		if (tripError) {
+			toast.error(tripError);
+			dispatch({ type: "CLEAR_ERRORS" });
+		}
+	}, [tripMessage, tripError]);
 
 	return (
 		<Suspense fallback={<Loader />}>
