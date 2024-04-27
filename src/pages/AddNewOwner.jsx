@@ -68,19 +68,7 @@ const DropdownIndicator = (props) => {
 // const ownersCarHeaders = ["Serial No", "Brand Name", "Kilometers", "Rate", "Total Days", "Amount"];
 
 const expectedOwnerHeaders = ["Name", "Phone Number", "Gender", "Email Id", "GSTIN Number", "PAN Number", "street", "city", "state", "pincode"];
-const expectedCarHeaders = [
-	"gmail",
-	"brand",
-	"model",
-	"Vehicle Registration Number",
-	"Rent",
-	"Air Conditioning",
-	"Seater",
-	"year",
-	"isAc",
-	"km",
-	"date",
-];
+const expectedCarHeaders = ["gmail", "Brand", "Model", "Vehicle Registration Number", "km", "date", "rate (date)", "rate (km)"];
 
 const AddNewOwner = () => {
 	// ? states
@@ -115,18 +103,17 @@ const AddNewOwner = () => {
 	});
 
 	const [cars, setCars] = useState({
+		registrationNo: "",
 		brand: "",
 		model: "",
-		registrationNo: "",
-		rent: "",
-		year: "",
-		isAc: false,
-		seater: 4,
 		start: {
 			km: 0,
 			date: "",
 		},
-		district: "",
+		rate: {
+			date: "",
+			km: "",
+		},
 	});
 
 	//  ? handlers
@@ -208,16 +195,20 @@ const AddNewOwner = () => {
 								brand: car[1],
 								model: car[2],
 								registrationNo: car[3],
-								rent: car[4],
-								isAc: car[5],
-								seater: car[6],
-								address: {
-									street: car[7],
-									city: car[8],
-									state: car[9],
-									pincode: car[10],
+								start: {
+									date: car[5],
+									km: car[4],
+								},
+								rate: {
+									date: car[6],
+									km: car[7],
 								},
 							}));
+
+							console.log({
+								...owner,
+								cars: owner.cars.concat(cars),
+							});
 
 							return {
 								...owner,

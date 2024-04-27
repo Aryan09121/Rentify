@@ -15,6 +15,19 @@ export const tripReducer = createReducer(initialState, (builder) => {
 			state.loading = false;
 			state.error = action.payload;
 		})
+		.addCase("GET_ALL_TRIPS_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("GET_ALL_TRIPS_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.message = action.payload.message;
+			state.trips = action.payload.trips;
+		})
+		.addCase("GET_ALL_TRIPS_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+			state.trips = null;
+		})
 		.addCase("CLEAR_ERRORS", (state) => {
 			state.error = null;
 		})
