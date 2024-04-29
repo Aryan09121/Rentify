@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
-import { loadUser } from "../actions/user.action";
+import { loadUser } from "../redux/actions";
 import Cookies from "js-cookie";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 
 const ProtectedRoute = () => {
 	const dispatch = useDispatch();
@@ -21,7 +21,7 @@ const ProtectedRoute = () => {
 
 	useEffect(() => {
 		if (!isAuthenticated) {
-			toast.error("You are not Authenticated to visit this Page");
+			// toast.error("You are not Authenticated to visit this Page");
 			navigate("/");
 		}
 	}, [isAuthenticated]);

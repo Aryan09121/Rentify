@@ -5,11 +5,12 @@ import { IoIosSettings } from "react-icons/io";
 import Bar from "../components/Bar";
 // import { useDispatch } from "react-redux";
 
-import { tripHeaders, tripData, driverDetailsData, tripDetailsHeaders } from "../assets/data/dashboard";
+import { tripHeaders, tripData } from "../assets/data/dashboard";
 import { TableContainer, TableHeading, Table, TableHeaders, TableBody, DashboardRow, tripDetailsRow, TableFooter } from "../components/TableHOC";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllTrips } from "../redux/actions";
 // import { getOwners } from "../actions/owner.action";
 
 const possibleStatuses = ["On Trip", "On Leave", "Available"];
@@ -43,14 +44,14 @@ const Dashboard = () => {
 	const { trips } = useSelector((state) => state.trip);
 	const [tripdata, setTripdata] = useState([]);
 	const [selectedTrip, setSelectedTrip] = useState();
+	const dispatch = useDispatch();
 
 	const onSelectTrip = (trip) => {
 		setSelectedTrip(trip.trip);
-		console.log(trip.trip);
 	};
 
 	useEffect(() => {
-		if (trips.length !== 0) {
+		if (trips?.length !== 0) {
 			const data = trips?.map((trip) => ({
 				data: [trip?.tripId, trip?.car?.model, trip?.car?.registrationNo, trip?.district],
 				status: trip.status,
@@ -60,6 +61,10 @@ const Dashboard = () => {
 			setTripdata(data);
 		}
 	}, [trips]);
+
+	useEffect(() => {
+		dispatch(getAllTrips());
+	}, []);
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
@@ -109,15 +114,17 @@ const Dashboard = () => {
 						</TableContainer>
 					)}
 				</section>
-				<TableContainer className="dashboardTripTableContainer">
-					<TableHeading>
-						<p>Trip Details</p>
-					</TableHeading>
-					<Table>
-						<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${tripHeaders.length},1fr)` }} />
-						<TableBody onClick={onSelectTrip} TableRow={DashboardRow} data={tripdata} />
-					</Table>
-				</TableContainer>
+				{tripdata?.length > 0 && (
+					<TableContainer className="dashboardTripTableContainer">
+						<TableHeading>
+							<p>Trip Details</p>
+						</TableHeading>
+						<Table>
+							<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${tripHeaders.length},1fr)` }} />
+							<TableBody onClick={onSelectTrip} TableRow={DashboardRow} data={tripdata} />
+						</Table>
+					</TableContainer>
+				)}
 			</main>
 		</div>
 	);

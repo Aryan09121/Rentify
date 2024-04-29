@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { userLogin } from "../actions/user.action";
+import { userLogin } from "../redux/actions";
 
 function SignUp() {
 	const navigate = useNavigate();
