@@ -10,10 +10,13 @@ import { FaPlus, FaSearch, FaUpload } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import NewInvoice from "../components/NewInvoice";
-import { invoice } from "../assets/data/bill";
+// import { invoice } from "../assets/data/bill";
 // eslint-disable-next-line no-unused-vars
 import { generatePdf } from "../components/PdfGenerator";
 import { useNavigate } from "react-router-dom";
+import { getAllInvoices } from "../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const analyticsFilterOptions = [
 	{ value: "month", label: "Monthly" },
@@ -72,6 +75,8 @@ const Invoice = () => {
 	const [invoiceData, setInvoiceData] = useState([]);
 	const [searchQuery, setSearchQuery] = useState(""); // State to hold search input value
 	const [isOpen, setIsOpen] = useState(false);
+	const { invoices, message, error } = useSelector((state) => state.invoice);
+	const dispatch = useDispatch();
 
 	const navigate = useNavigate();
 
@@ -103,28 +108,18 @@ const Invoice = () => {
 		setFilteredInvoiceData(filteredData);
 	};
 
-	const generatePdf1 = (id) => {
-		// console.log(filteredInvoiceData);
-		// const data = filteredInvoiceData.filter((invoice) => invoice._id === id);
+	const generatePdf1 = (invoices, owner) => {
+		// Convert the invoices array to a JSON string
+		const invoicesJson = JSON.stringify(invoices);
+		const ownerJson = JSON.stringify(owner);
 
-		// console.log(newdata);
-		navigate(`/Bill/${id}`);
-		// generatePdf();
+		// Encode the JSON string to include it in the URL as a query parameter
+		const encodedInvoices = encodeURIComponent(invoicesJson);
+		const encodedOwner = encodeURIComponent(ownerJson);
+
+		// Navigate to the route with the encoded invoices as a query parameter
+		navigate(`/Bill?invoices=${encodedInvoices}&owner=${encodedOwner}`);
 	};
-
-	useEffect(() => {
-		const invoices = invoice.map((invoice) => {
-			const { _id, amount, status, owner, issuedate } = invoice;
-			const { name, email } = owner;
-			return {
-				data: [_id, name, email, issuedate, amount],
-				_id,
-				status,
-			};
-		});
-		setInvoiceData(invoices);
-		setFilteredInvoiceData(invoices);
-	}, []); // Re-run filterInvoiceData when selectedInvoice changes
 
 	useEffect(() => {
 		filterInvoiceData(selectedInvoice, searchQuery);
@@ -150,80 +145,116 @@ const Invoice = () => {
 		XLSX.writeFile(workbook, "invoices.xlsx");
 	};
 
-	const closeDropdown = (e) => {
-		e.stopPropagation();
-		if (e.target.id === "svg") {
-			return;
+	useEffect(() => {
+		dispatch(getAllInvoices());
+	}, []);
+	useEffect(() => {
+		if (invoices) {
+			console.log(invoices);
+			const data = invoices.map((invoice, idx) => {
+				const { owner } = invoice;
+				const { _id, name, email, createdAt } = owner;
+				return {
+					data: ["INV-10" + idx, name, email, createdAt, 2345],
+					_id,
+					owner: owner,
+					status: owner?.status,
+					invoices: invoice.invoices,
+				};
+			});
+			setInvoiceData(data);
+			setFilteredInvoiceData(data);
 		}
-		setShowDropdown(false);
-	};
+	}, [invoices]);
+
+	useEffect(() => {
+		if (error) {
+			toast.error(error);
+			dispatch({ type: "CLEAR_ERRORS" });
+		}
+		if (message) {
+			toast.success(message);
+			dispatch({ type: "CLEAR_MESSAGES" });
+		}
+	}, [message, error]);
 
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
 			<main className="invoice">
 				<Bar />
-				<section className="invoice_filter">
-					<h2>Invoices</h2>
-					<Select
-						className="filter"
-						defaultValue={analyticsFilterOptions[0]}
-						options={analyticsFilterOptions}
-						components={{ DropdownIndicator }}
-						styles={customStyles}
-					/>
-				</section>
-				<section className="invoice_widget_container">
-					<WidgetItem designation="All Invoices" value={283000} percent={2.8} />
-					<WidgetItem designation="Draft" value={143} percent={2.8} />
-					<WidgetItem designation="Paid Invoices" value={243} percent={-2.8} />
-				</section>
-				<TableContainer className="invoice_table_container">
-					<TableHeading>
-						<h5>All Invoices</h5>
-						<div className="invoice_options">
-							<button onClick={() => setIsOpen((curr) => !curr)}>
-								Create Invoice <FaPlus />
-							</button>
-						</div>
-					</TableHeading>
-					<TableHeading className="invoice_functionality">
-						<div className="invoice_functionality_sort">
-							<h4 className={selectedInvoice === "all" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("all")}>
-								All Invoices
-							</h4>
-							<h4 className={selectedInvoice === "pending" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("pending")}>
-								Pending
-							</h4>
-							<h4 className={selectedInvoice === "paid" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("paid")}>
-								Paid
-							</h4>
-							<h4 className={selectedInvoice === "unpaid" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("unpaid")}>
-								Unpaid Invoices
-							</h4>
-						</div>
-						<div className="invoice_functionality_search">
-							<button>
-								<FaSearch />
-								<input
-									type="text"
-									placeholder="Search by Email, Name"
-									value={searchQuery}
-									onChange={(e) => setSearchQuery(e.target.value)}
-								/>
-							</button>
-							<button onClick={exportToExcel}>
-								<FaUpload />
-								Export
-							</button>
-						</div>
-					</TableHeading>
-					<Table>
-						<TableHeaders style={{ gridTemplateColumns: `repeat(${invoiceHeaders.length},1fr)` }} headers={invoiceHeaders} />
-						<TableBody TableRow={InvoiceRow} data={filteredInvoiceData} onClick={generatePdf1} />
-					</Table>
-				</TableContainer>
-				<NewInvoice isOpen={isOpen} setIsOpen={setIsOpen} />
+				{isOpen ? (
+					<NewInvoice setIsOpen={setIsOpen} />
+				) : (
+					<>
+						<section className="invoice_filter">
+							<h2>Invoices</h2>
+							<Select
+								className="filter"
+								defaultValue={analyticsFilterOptions[0]}
+								options={analyticsFilterOptions}
+								components={{ DropdownIndicator }}
+								styles={customStyles}
+							/>
+						</section>
+						<section className="invoice_widget_container">
+							<WidgetItem designation="All Invoices" value={283000} percent={2.8} />
+							<WidgetItem designation="Draft" value={143} percent={2.8} />
+							<WidgetItem designation="Paid Invoices" value={243} percent={-2.8} />
+						</section>
+						<TableContainer className="invoice_table_container">
+							<TableHeading>
+								<h5>All Invoices</h5>
+								<div className="invoice_options">
+									<button onClick={() => setIsOpen((curr) => !curr)}>
+										Create Invoice <FaPlus />
+									</button>
+								</div>
+							</TableHeading>
+							<TableHeading className="invoice_functionality">
+								<div className="invoice_functionality_sort">
+									<h4 className={selectedInvoice === "all" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("all")}>
+										All Invoices
+									</h4>
+									{/* <h4
+										className={selectedInvoice === "pending" ? "selected_invoice" : ""}
+										onClick={() => setSelectedInvoice("pending")}
+									>
+										Pending
+									</h4> */}
+									<h4 className={selectedInvoice === "paid" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("paid")}>
+										Paid
+									</h4>
+									<h4
+										className={selectedInvoice === "unpaid" ? "selected_invoice" : ""}
+										onClick={() => setSelectedInvoice("unpaid")}
+									>
+										Unpaid Invoices
+									</h4>
+								</div>
+								<div className="invoice_functionality_search">
+									<button>
+										<FaSearch />
+										<input
+											type="text"
+											placeholder="Search by Email, Name"
+											value={searchQuery}
+											onChange={(e) => setSearchQuery(e.target.value)}
+										/>
+									</button>
+									<button onClick={exportToExcel}>
+										<FaUpload />
+										Export
+									</button>
+								</div>
+							</TableHeading>
+							<Table>
+								<TableHeaders style={{ gridTemplateColumns: `repeat(${invoiceHeaders.length},1fr)` }} headers={invoiceHeaders} />
+								<TableBody TableRow={InvoiceRow} data={filteredInvoiceData} onClick={generatePdf1} />
+							</Table>
+						</TableContainer>
+					</>
+				)}
 			</main>
 		</div>
 	);
