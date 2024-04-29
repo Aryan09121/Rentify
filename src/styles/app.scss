@@ -343,9 +343,11 @@ a {
 }
 .Table {
 	width: 100%;
+	border: 1.5px solid #979595;
 	> .headers {
 		background-color: #d4e5d2;
 		padding: 2rem 0;
+		padding-right: 1rem;
 		width: 100%;
 		display: grid;
 		gap: 1rem;
@@ -366,6 +368,7 @@ a {
 	> .tableContentBody .tableContents {
 		border-top: 1px solid #666;
 		padding: 1.2rem 0;
+		padding-right: 1rem;
 		width: 100%;
 		cursor: pointer;
 		transition: all 0.3s;

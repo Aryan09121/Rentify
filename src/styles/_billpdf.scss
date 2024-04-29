@@ -21,262 +21,168 @@
 	.pdf {
 		background-color: white;
 		position: relative;
-		min-height: 150%;
-		width: 98%;
-		margin: 0 auto;
-		padding: 2rem 3rem;
-		> header {
-			@include flex(row, space-between, center, 1rem);
-			padding: 1rem;
-			border-bottom: 11px solid #029e9d;
-			> div {
-				@include flex(row, flex-start, flex-start, 1rem);
+		margin: 3rem auto;
+		width: 210mm; /* A4 width */
+		height: 297mm; /* A4 height */
+		padding: 5mm 10mm;
+		> .header {
+			height: 20mm;
+			width: 100%;
+			// background-color: #029e9d;
+		}
+		> .footer {
+			height: 20mm;
+			// background-color: #029e9d;
+			width: 100%;
+		}
+		> .pdfBody {
+			height: 252mm;
+			width: 100%;
+			// background-color: rgb(214, 227, 214);
+			> h2 {
+				font-family: "poppins", arial;
+				font-weight: 400;
+				text-align: center;
+				font-size: 1rem;
 			}
-			> .companyDetails {
-				align-items: center;
-				> img {
-					width: 34%;
-				}
-				> .details {
+			> .basicDetails {
+				margin-top: 1px;
+				font-family: "poppins", arial;
+				padding-bottom: 5px;
+				font-weight: 500;
+				@include flex(row, space-between, flex-start, 0);
+				> div {
 					@include flex(column, flex-start, flex-start, 0);
-					font-size: 0.9rem;
-					border-left: 1px solid #029e9d;
-					padding-left: 1rem;
-					> h3,
-					h4 {
-						font-size: 0.8rem;
-						font-weight: 400;
+					> p {
+						font-size: 0.6rem;
 					}
 				}
 			}
-			> .invoiceDetails {
-				flex-direction: column;
-				gap: 0;
-				> h3 {
-					font-size: 0.9rem;
-					font-weight: 400;
-				}
-			}
 		}
-		> main {
-			padding-top: 2rem;
-			position: relative;
-			padding-bottom: 7rem;
-			> .gstin {
-				position: absolute;
-				top: 2%;
-				right: 1%;
-				font-size: 1rem;
-				font-family: "poppins";
-				@include heading;
-				font-weight: 400;
-				> span {
-					color: #029e9d;
-				}
+	}
+}
+
+.inviceContainer {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	// padding-top: 0.4rem;
+
+	border: 1.4px solid #828181;
+	> .invoiceHeaders {
+		@include grid(3fr 2fr, 0);
+		border-bottom: 1.4px solid #828181;
+		width: 100%;
+		> div {
+			font-family: "poppins", Arial, Helvetica, sans-serif;
+			> h3 {
+				font-size: 0.8rem;
+				padding: 0.5rem;
+				font-weight: 500;
+				border-right: 1.5px solid #828181;
+				border-bottom: 1.5px solid #828181;
 			}
-			> h2 {
-				font-size: 2.5rem;
-				color: #029e9d;
-				@include heading;
+			> h4 {
+				font-size: 0.9rem;
+				font-weight: 500;
+				border-right: 1.5px solid #828181;
+				padding: 0.3rem;
+			}
+			&:nth-child(2) {
+				@include flex(column, center, center, 0.4rem);
 			}
 			> p {
-				font-size: 1rem;
-				font-weight: 300;
-				width: 50%;
+				text-align: center;
+				width: 75%;
+				font-size: 0.79rem;
+				font-weight: 500;
 			}
-			> .ownerDetails {
-				margin-top: 2rem;
-				border-bottom: 1px solid #029e9d;
-				padding-bottom: 1rem;
-				> h2 {
-					padding: 0;
-					margin: 0;
-					font-size: 1.3rem;
-					@include heading;
-					margin-bottom: 1rem;
-				}
-				> .details {
-					@include flex(row, flex-start, flex-start, 0.5rem);
-					flex-wrap: wrap;
-					> h3 {
-						width: clamp(200px, fit-content, 290px);
-						margin-right: 3rem;
-						font-size: 1rem;
-						font-family: monospace;
-						font-weight: 500;
-						> span {
-							color: #029e9d;
-						}
-						// font-family: "poppins";
-					}
-				}
+		}
+	}
+	> .invoiceBody {
+		// margin-top: 0.1rem;
+		border-bottom: 1.4px solid #828181;
+		width: 100%;
+		// border: 1.4px solid #828181;
+		> div {
+			border-bottom: 1.4px solid #828181;
+			&:last-child {
+				border: none;
 			}
-			> .bills {
-				width: 100%;
-				margin-top: 2rem;
-				h2 {
-					font-size: 1.2rem;
-					@include heading;
-					width: fit-content;
-					border-bottom: 2px solid #029e9d;
-				}
-				.table {
-					border-collapse: 10%;
-					// padding: 2rem;
-
-					width: 100%;
-					th,
-					td {
-						padding: 8px;
-						text-align: left;
-						vertical-align: left;
-					}
-					th {
-						font-weight: bold;
-						color: #000000cd;
-						border-bottom: 2px solid #029e9d;
-						font-size: 1rem;
-						font-family: monospace;
-						padding: 1rem 1rem;
-						user-select: none;
+			width: 100%;
+			@include grid(3fr 2fr, 0);
+			> div {
+				&:nth-child(1) {
+					@include grid(1fr 10fr, 0);
+					align-content: start;
+					border-right: 1.4px solid #828181;
+					> p {
+						// place-self: center;
+						width: 100%;
+						border-right: 1.4px solid #828181;
 						text-align: center;
-						@include heading(1px);
-						font-weight: 800;
+					}
+					> article {
+						padding-left: 0.5rem;
+						padding-top: 0.2rem;
+						padding-bottom: 0.2rem;
+						padding-right: 0.2rem;
+						font-size: 0.7rem;
+						font-family: "poppins", arial;
+					}
+				}
+				&:nth-child(2) {
+					@include grid(2fr 2fr 2fr 3fr, 0);
+					place-items: center;
+					> p {
+						width: 100%;
+						text-align: center;
+						font-size: 0.7rem;
+						font-family: "poppins", arial;
+						height: 100%;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						white-space: pre-wrap; /* Ensures that the content breaks into lines */
+						word-break: break-word;
+						padding-left: 0.1rem;
+						padding-right: 0.1rem;
 						&:first-child {
-							width: 70%;
-							text-align: left;
+							border-right: 1.4px solid #828181;
 						}
-					}
-					tbody {
-						tr {
-							cursor: pointer;
-							width: 100%;
+						&:last-child {
+							border-left: 1.4px solid #828181;
 						}
-
-						td {
-							border-bottom: 2px solid #029e9d;
-							// border-right: 2px solid #029e9d;
-							border-left: 2px solid #029e9d;
-							padding: 0.7rem;
-							text-align: center;
-							font-size: 0.9rem;
-							font-family: monospace, Gilroy;
-							&:first-child {
-								width: 70%;
-								text-align: left;
-							}
-
-							img {
-								width: 4rem;
-								height: 4rem;
-								object-fit: contain;
-								border-radius: 50%;
-							}
-
-							a {
-								text-decoration: none;
-								background-color: rgba(44, 104, 255, 0.455);
-								color: rgba(44, 104, 255);
-								padding: 0.25rem 0.5rem;
-								border-radius: 10px;
-								font-weight: 200;
-							}
-
-							button {
-								width: 2rem;
-								height: 2rem;
-								font-size: 1.1rem;
-								border: none;
-								outline: none;
-								background-color: transparent;
-								cursor: pointer;
-								color: rgb(255, 44, 44);
-								&:hover {
-									opacity: 0.6;
-								}
-							}
-
-							&:first-child {
-								border-left: none;
-							}
-
-							&:last-child {
-								border-right: none;
-							}
-							> svg {
-								color: #029e9d;
-								display: block;
-								text-align: center;
-								cursor: pointer;
-								font-size: 1.4rem;
-								width: 100%;
-							}
-						}
-					}
-				}
-
-				.table-pagination {
-					@include flex(row, center, center, 2rem);
-					padding: 2rem 1rem;
-					> button {
-						padding: 1rem 2.2rem;
-						background-color: #f0f0f0;
-						border-radius: 5px;
-						font-weight: 700;
-						cursor: pointer;
-						&:hover {
-							opacity: 0.7;
-						}
-					}
-				}
-			}
-			> .billTotal {
-				margin-top: 4rem;
-				> h2 {
-					font-size: 1.5rem;
-					@include heading;
-					width: fit-content;
-					border-bottom: 2px solid #029e9d;
-					margin-bottom: 1rem;
-				}
-				> div {
-					@include flex(row, space-between, center, 0);
-					padding: 0.4rem 0.3rem;
-					border-bottom: 1.5px solid #bbb8b8;
-					> h3 {
-						font-size: 1.2rem;
-						font-family: "poppins";
-						font-weight: 400;
-					}
-					> h5 {
-						font-size: 1.2rem;
-						font-family: "poppins";
-						font-weight: 400;
-					}
-					&:last-child {
-						border: none;
-						border-top: 3px solid #029e9d;
-						padding-top: 1rem;
-						> h3 {
-							font-size: 1.5rem;
-							font-family: "poppins";
-							font-weight: 600;
-						}
-						> h5 {
-							font-size: 1.4rem;
-							font-family: "poppins";
-							font-weight: 600;
+						&:nth-child(3) {
+							border-left: 1.4px solid #828181;
 						}
 					}
 				}
 			}
 		}
-		> footer {
-			margin-top: 4rem;
-			width: 100%;
-			position: absolute;
-			bottom: 2%;
-			text-align: center;
+	}
+	> .invoiceFooter {
+		> div {
+			@include grid(7fr 2fr, 0);
+			border-bottom: 1.4px solid #828181;
+			> p {
+				&:first-child {
+					border-right: 1.4px solid #828181;
+				}
+				font-size: 0.7rem;
+				font-weight: 600;
+				padding: 0.2rem;
+				&:first-child {
+					text-align: end;
+				}
+				&:last-child {
+					text-align: center;
+				}
+				font-family: "poppins", arial;
+			}
+			&:last-child {
+				border: none;
+			}
 		}
 	}
 }

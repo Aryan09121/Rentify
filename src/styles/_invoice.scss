@@ -149,22 +149,51 @@
 			}
 		}
 	}
+}
 
-	> .newInvoiceDropdown {
+.invoice {
+	position: relative;
+	> .newInvoiceDialogue {
+		overflow-y: auto;
+		&::-webkit-scrollbar {
+			display: none;
+		}
 		position: absolute;
 		top: 50%;
 		left: 50%;
+		overflow: hidden;
 		transform: translate(-50%, -50%);
-		width: 40%;
-		height: 80%;
-		border: 2px solid #029e9d;
+		width: 100%;
+		height: 100%;
+		// border: 2px solid #029e9d;
+		border: none;
 		// box-shadow: 0 0 2px #029e9d;
 		background-color: #f8fafa;
 		border-radius: 5px;
+
 		> div {
 			padding-top: 2rem;
 			> h2 {
 				font-size: 2rem;
+			}
+			> .createInvoiceTable {
+				width: 100%;
+				padding: 0 2rem;
+				> .tableHeading {
+					> button {
+						padding-left: 1.2rem;
+						@include flex(row, center, center, 0.5rem);
+						font-weight: 600;
+						color: #666;
+						font-size: 1.1rem;
+						width: 40%;
+						border-radius: 2px;
+						background-color: #fff;
+						> input {
+							@include inputStyles;
+						}
+					}
+				}
 			}
 			@include flex(column, flex-start, center, 1rem);
 			height: 100%;
@@ -178,32 +207,60 @@
 				font-size: 2rem;
 				color: #d70372;
 			}
-			> form {
-				@include flex(column, flex-start, center, 1rem);
-				padding: 2rem;
-				height: 100%;
+			> div {
 				width: 100%;
-				padding-top: 2rem;
-				> div {
-					width: 100%;
-					@include grid(30% 70%);
-					align-items: center;
-					> input {
-						@include inputStyles;
-						border: 1.5px solid #029e9d;
-						border-radius: 5px;
-					}
-				}
-				> button {
-					margin-top: 2rem;
-					padding: 1rem 2.2rem;
-					border-radius: 5px;
-					font-size: 1.2rem;
-					background-color: #029e9d;
-					transition: all 0.3s;
-					&:hover {
-						background-color: #029e9ed6;
+				padding: 1rem 2rem;
+				> .invoiceFormTable {
+					border: 1.5px solid #939393;
+					border-radius: 7px;
+					> .tableHeading {
+						border: none;
 						color: #fcfcfc;
+					}
+					> .tableForm {
+						display: grid;
+						gap: 1rem;
+						place-items: center;
+						padding: 1rem 2rem;
+						border-bottom: 1px solid #939393;
+						grid-template-columns: 1fr 1fr 1fr 2fr 2fr 2fr 1fr;
+						> div {
+							display: flex;
+							align-items: center;
+							flex-direction: column;
+							justify-content: center;
+							// width: 100%;
+							gap: 0.4rem;
+							> input {
+								@include inputStyles;
+								border: 1.5px solid #029e9d;
+								border-radius: 5px;
+								padding: 0.5rem 1rem;
+								// min-width: 200px;
+								&[type="checkbox"] {
+									cursor: pointer;
+									padding: 1rem;
+									border-radius: 50%;
+								}
+							}
+							> h5 {
+								font-size: 0.8rem;
+								font-weight: 600;
+								font-family: "poppins";
+							}
+							> p {
+								font-size: 0.8rem;
+								font-weight: 400;
+								font-family: "poppins";
+							}
+							> button {
+								padding: 0.6rem 1rem;
+								font-size: 0.8rem;
+								color: #fcfcfc;
+								background-color: #029e9d;
+								border-radius: 4px;
+							}
+						}
 					}
 				}
 			}
