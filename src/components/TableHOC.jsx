@@ -122,7 +122,11 @@ export const OwnerRow = ({ rowdata, className = "tableContents" }) => {
 
 export const InvoiceRow = ({ rowdata, className = "tableContents", onClick }) => {
 	return (
-		<div onClick={() => onClick(rowdata._id)} className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}>
+		<div
+			onClick={() => onClick(rowdata?.invoices, rowdata?.owner)}
+			className={className}
+			style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}
+		>
 			{rowdata.data.map((data) => {
 				return <h3 key={rowdata._id}>{data}</h3>;
 			})}

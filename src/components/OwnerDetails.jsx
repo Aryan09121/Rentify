@@ -19,7 +19,7 @@ import { CarRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } 
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { IoIosWarning } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
-import { getOwnerById } from "../actions/owner.action";
+import { getOwnerById } from "../redux/actions";
 // import UpdateOwner from "./UpdateOwner";
 
 //  ?-- dropdown select

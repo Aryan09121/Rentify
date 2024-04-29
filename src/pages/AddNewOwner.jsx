@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import readXlsxFile from "read-excel-file";
 import { useDispatch, useSelector } from "react-redux";
-import { addOwners, addSingleOwner } from "../actions/owner.action";
+import { addOwners, addSingleOwner } from "../redux/actions";
 
 const customStyles = {
 	control: (provided) => ({
@@ -218,7 +218,7 @@ const AddNewOwner = () => {
 							return owner;
 						}
 					});
-
+					console.log(updatedOwners);
 					setOwnerFinal(updatedOwners);
 					toast.success("Cars Data Reads Successfully");
 				} else {
