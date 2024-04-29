@@ -10,7 +10,7 @@ import { BsFileText } from "react-icons/bs";
 import userImg from "../assets/userImage.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../actions/user.action";
+import { logoutUser } from "../redux/actions";
 import { toast } from "react-toastify";
 
 const AdminSidebar = () => {
