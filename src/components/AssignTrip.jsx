@@ -5,9 +5,8 @@ import Bar from "./Bar";
 import { AssignRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllCars } from "../actions/car.action";
 import { toast } from "react-toastify";
-import { assignSingleTrip, assignTrip } from "../actions/trip.action";
+import { assignSingleTrip, assignTrip, getAllCars } from "../redux/actions";
 
 const carsHeaders = ["S No", "Vehicle Reg No", "Car Brand", "Car Model", "Action"];
 
@@ -58,10 +57,10 @@ const AssignTrip = () => {
 	}, [allcars]);
 
 	useEffect(() => {
-		const data = carsdata.filter((car, idx) => {
-			if (idx <= 9) {
-				return { ...car };
-			}
+		const data = carsdata.filter((car) => {
+			// if (idx <= 9) {
+			return { ...car };
+			// }
 		});
 		setTableCardata(data);
 	}, [carsdata]);
@@ -76,6 +75,10 @@ const AssignTrip = () => {
 			dispatch({ type: "CLEAR_ERRORS" });
 		}
 	}, [message, error, dispatch]);
+
+	useEffect(() => {
+		dispatch(getAllCars());
+	}, []);
 
 	return (
 		<>
