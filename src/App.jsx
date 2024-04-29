@@ -9,10 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
-import { loadUser } from "./actions/user.action";
-import { getOwners } from "./actions/owner.action";
-import { getAllCars } from "./actions/car.action";
-import { getAllTrips } from "./actions/trip.action";
+import { getOwners, loadUser } from "./redux/actions";
 
 // ** pages lazy import()
 const Signup = lazy(() => import("./pages/Signup"));
@@ -41,8 +38,6 @@ const App = () => {
 		if (token) {
 			dispatch(loadUser());
 			dispatch(getOwners());
-			dispatch(getAllCars());
-			dispatch(getAllTrips());
 		}
 	}, []);
 
@@ -76,7 +71,7 @@ const App = () => {
 					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/invoice" element={<Invoice />} />
 					<Route path="/cars/:id" element={<CarDetails />} />
-					<Route path="/bill/:id" element={<BillPdf />} />
+					<Route path="/bill" element={<BillPdf />} />
 					<Route path="/cars" element={<SearchCars />} />
 					<Route path="/profile/owner" element={<OwnerProfile />} />
 					<Route path="/profile/owner/edit/:id" element={<UpdateOwner />} />
