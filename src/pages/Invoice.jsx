@@ -31,6 +31,30 @@ const DropdownIndicator = (props) => {
 	);
 };
 
+function formatDate(date, d = false) {
+	// Ensure date is in the correct format
+	if (!(date instanceof Date)) {
+		date = new Date(date);
+	}
+
+	// Array of month names
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+	// Get components of the date
+	const year = date.getFullYear();
+	const month = date.getMonth();
+	const day = date.getDate();
+	let formattedDate;
+	// Format the date
+	if (d === false) {
+		formattedDate = `${day}, ${months[month]}, ${year}`;
+	} else {
+		formattedDate = day;
+	}
+
+	return formattedDate;
+}
+
 const customStyles = {
 	control: (provided) => ({
 		...provided,
@@ -94,15 +118,11 @@ const Invoice = () => {
 
 		if (query) {
 			const lowercaseQuery = query.toLowerCase();
-			console.log("query is : " + lowercaseQuery);
 			filteredData = filteredData.filter((invoice) => {
-				console.log(invoice);
 				return invoice.data.some((cell) => {
-					console.log(cell);
-					return cell.toLowerCase().includes(lowercaseQuery);
+					return cell?.toString()?.toLowerCase()?.includes(lowercaseQuery);
 				});
 			});
-			console.log(filteredData);
 		}
 
 		setFilteredInvoiceData(filteredData);
@@ -150,12 +170,12 @@ const Invoice = () => {
 	}, []);
 	useEffect(() => {
 		if (invoices) {
-			console.log(invoices);
+			// console.log(invoices);
 			const data = invoices.map((invoice, idx) => {
 				const { owner } = invoice;
 				const { _id, name, email, createdAt } = owner;
 				return {
-					data: ["INV-10" + idx, name, email, createdAt, 2345],
+					data: ["INV-10" + idx, name, email, formatDate(createdAt), 2345],
 					_id,
 					owner: owner,
 					status: owner?.status,
