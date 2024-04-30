@@ -3,7 +3,11 @@ import AdminSidebar from "../components/AdminSidebar";
 import TableSearchTOC from "../components/TableSearchHOC";
 import Bar from "../components/CarBar";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import { getIndividualInvoices } from "../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
+import Select, { components } from "react-select";
+import { IoIosArrowDown } from "react-icons/io";
 
 const columns = [
 	{
@@ -64,206 +68,99 @@ const columns = [
 	},
 ];
 
-const arr = [
-	{
-		sno: 1,
-		district: "Bhopal",
-		registrationno: "MP67C1469",
-		make: "Mahindra",
-		model: "Bolero",
-		year: 2016,
-		frv: "Ask-03",
-		month: "July",
-		start: 655,
-		end: 1755,
-		qty: 10,
-		unit: "km",
-		rate: 100,
-		amount: 76343,
-	},
-	{
-		sno: 2,
-		district: "Indore",
-		registrationno: "MP55D2890",
-		make: "Maruti",
-		model: "Swift",
-		year: 2018,
-		frv: "Bsk-01",
-		month: "June",
-		start: 400,
-		end: 1800,
-		qty: 14,
-		unit: "km",
-		rate: 120,
-		amount: 100800,
-	},
-	{
-		sno: 3,
-		district: "Gwalior",
-		registrationno: "MP29F5678",
-		make: "Hyundai",
-		model: "i20",
-		year: 2019,
-		frv: "Csk-05",
-		month: "September",
-		start: 300,
-		end: 1500,
-		qty: 12,
-		unit: "km",
-		rate: 110,
-		amount: 87120,
-	},
-	{
-		sno: 4,
-		district: "Jabalpur",
-		registrationno: "MP43G4897",
-		make: "Toyota",
-		model: "Innova",
-		year: 2017,
-		frv: "Dsk-02",
-		month: "April",
-		start: 800,
-		end: 2500,
-		qty: 18,
-		unit: "km",
-		rate: 130,
-		amount: 152100,
-	},
-	{
-		sno: 5,
-		district: "Ujjain",
-		registrationno: "MP89H6785",
-		make: "Honda",
-		model: "City",
-		year: 2015,
-		frv: "Esk-04",
-		month: "February",
-		start: 500,
-		end: 2000,
-		qty: 15,
-		unit: "km",
-		rate: 115,
-		amount: 92100,
-	},
-	{
-		sno: 6,
-		district: "Rewa",
-		registrationno: "MP32J2345",
-		make: "Ford",
-		model: "Ecosport",
-		year: 2020,
-		frv: "Fsk-07",
-		month: "November",
-		start: 200,
-		end: 1200,
-		qty: 10,
-		unit: "km",
-		rate: 105,
-		amount: 66150,
-	},
-	{
-		sno: 7,
-		district: "Sagar",
-		registrationno: "MP76K9876",
-		make: "Volkswagen",
-		model: "Polo",
-		year: 2018,
-		frv: "Gsk-06",
-		month: "October",
-		start: 350,
-		end: 1800,
-		qty: 13,
-		unit: "km",
-		rate: 125,
-		amount: 86750,
-	},
-	{
-		sno: 8,
-		district: "Chhindwara",
-		registrationno: "MP21L7654",
-		make: "Tata",
-		model: "Tiago",
-		year: 2019,
-		frv: "Hsk-08",
-		month: "December",
-		start: 600,
-		end: 2100,
-		qty: 16,
-		unit: "km",
-		rate: 110,
-		amount: 100100,
-	},
-	{
-		sno: 9,
-		district: "Satna",
-		registrationno: "MP87M4567",
-		make: "Renault",
-		model: "Kwid",
-		year: 2017,
-		frv: "Isk-09",
-		month: "August",
-		start: 450,
-		end: 1900,
-		qty: 14,
-		unit: "km",
-		rate: 120,
-		amount: 97080,
-	},
-	{
-		sno: 10,
-		district: "Ratlam",
-		registrationno: "MP34N9876",
-		make: "Chevrolet",
-		model: "Beat",
-		year: 2016,
-		frv: "Jsk-10",
-		month: "May",
-		start: 700,
-		end: 2200,
-		qty: 17,
-		unit: "km",
-		rate: 130,
-		amount: 115600,
-	},
-	{
-		sno: 11,
-		district: "Damoh",
-		registrationno: "MP90P5432",
-		make: "Skoda",
-		model: "Rapid",
-		year: 2018,
-		frv: "Ksk-11",
-		month: "January",
-		start: 400,
-		end: 1800,
-		qty: 13,
-		unit: "km",
-		rate: 125,
-		amount: 91125,
-	},
-	{
-		sno: 12,
-		district: "Sehore",
-		registrationno: "MP56Q3210",
-		make: "Nissan",
-		model: "Micra",
-		year: 2019,
-		frv: "Lsk-12",
-		month: "April",
-		start: 550,
-		end: 1950,
-		qty: 15,
-		unit: "km",
-		rate: 115,
-		amount: 86325,
-	},
+const unitOptions = [
+	{ value: "date", label: "DATE" },
+	{ value: "km", label: "KM" },
 ];
+
+const DropdownIndicator = (props) => {
+	return (
+		<components.DropdownIndicator {...props}>
+			<IoIosArrowDown />
+		</components.DropdownIndicator>
+	);
+};
+
+const customStyles = {
+	control: (provided) => ({
+		...provided,
+		// padding: "0.3rem 0.6rem",
+		cursor: "pointer",
+		width: "150px",
+		marginLeft: "auto",
+		marginRight: "2rem",
+		backgroundColor: "#fff",
+		transition: "all 0.3s ease-in-out",
+		border: "2.5px solid rgb(2, 158, 157)",
+		Outline: "none",
+		"&:hover, &:focus": {
+			backgroundColor: "#fff",
+			// padding: "0.2rem",
+			color: "rgb(2, 158, 157)",
+		},
+	}),
+	singleValue: (provided) => ({
+		...provided,
+		padding: "0.1rem",
+		Outline: "none",
+		borderRadius: "10px",
+		fontSize: "1rem",
+		marginRight: "2rem",
+		width: "fit-content",
+		opacity: "0.8",
+		transition: "all 0.3s ease-in-out",
+		"&:hover, &:focus": {
+			// padding: "0.3rem 0.6rem",
+			color: "rgb(2, 158, 157)",
+		},
+	}),
+	dropdownIndicator: (provided) => ({
+		...provided,
+		color: "#000",
+		width: "fit-content",
+		fontSize: "1rem",
+		"&:hover, &:focus": {
+			color: "rgb(2, 158, 157)",
+		},
+	}),
+};
+
+function formatDate(date) {
+	// Ensure date is in the correct format
+	if (!(date instanceof Date)) {
+		date = new Date(date);
+	}
+
+	// Array of month names
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+	// Get components of the date
+	const year = date.getFullYear();
+	const month = date.getMonth();
+	const day = date.getDate();
+
+	// Format the date
+	const formattedDate = `${day}, ${months[month]}, ${year}`;
+
+	return formattedDate;
+}
+
+function extractYearMonthInWords(dateString) {
+	const date = new Date(dateString);
+	const year = date.getFullYear();
+	// Add 1 to month since getMonth() returns zero-based index
+	const month = date.toLocaleString("default", { month: "long" });
+	return { year, month };
+}
 
 const SearchCars = () => {
 	const [query, setQuery] = useState("");
+	const [unit, setUnit] = useState("date");
+	const { allinvoices } = useSelector((state) => state.invoice);
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
-	const [data, setData] = useState(arr);
+	const [data, setData] = useState([]);
 
 	const handleSearch = (e) => {
 		const searchTerm = e.target.value;
@@ -277,7 +174,7 @@ const SearchCars = () => {
 	};
 
 	useEffect(() => {
-		const filteredData = arr.filter(
+		const filteredData = data?.filter(
 			(item) =>
 				item.district.toLowerCase().includes(query.toLowerCase()) ||
 				item.registrationno.toLowerCase().includes(query.toLowerCase()) ||
@@ -292,16 +189,73 @@ const SearchCars = () => {
 				item.unit.toLowerCase().includes(query.toLowerCase()) ||
 				item.rate.toString().toLowerCase().includes(query.toLowerCase())
 		);
-		console.log(filteredData);
+		// console.log(filteredData);
 		setData(filteredData);
 	}, [query]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const Table = useCallback(TableSearchTOC(columns, data, "dashboard-product-box", "", true, 50, handleRowClick), [data]);
+
+	useEffect(() => {
+		dispatch(getIndividualInvoices());
+	}, []);
+
+	useEffect(() => {
+		if (allinvoices?.length > 0) {
+			const data = allinvoices?.map((inv, idx) => {
+				const { year, month } = extractYearMonthInWords(inv.invoiceDate);
+				return {
+					sno: idx + 1,
+					district: inv.trip.district,
+					registrationno: inv?.car?.registrationNo,
+					make: inv?.car?.brand,
+					model: inv?.car?.model,
+					year: year,
+					frv: inv?.trip?.frvCode,
+					month: `${month.substring(0, 3)}-${year}`,
+					start: unit === "km" ? `${inv?.fromkm} km` : formatDate(inv?.from),
+					end: unit === "km" ? `${inv?.tokm} km` : formatDate(inv?.to),
+					qty: unit === "km" ? inv?.kmQty : inv?.dayQty,
+					unit: unit,
+					rate: unit === "km" ? inv?.kmRate : inv?.dayRate,
+					amount: unit === "km" ? inv?.kmAmount : inv?.dayAmount,
+				};
+			});
+
+			// Create a copy of data with original sno order
+			const sortedData = data.map((item) => ({ ...item }));
+
+			// Sort the copied array based on model
+			sortedData.sort((a, b) => a.model.localeCompare(b.model));
+
+			// Update sno property to maintain original order
+			sortedData.forEach((item, idx) => {
+				item.sno = idx + 1;
+			});
+
+			setData(sortedData);
+		}
+	}, [allinvoices, unit]);
+
 	return (
 		<section className="admin-container">
 			<AdminSidebar />
 			<main className="searchCars">
 				<Bar query={query} handleSearch={handleSearch} />
-				<h2>Cars</h2>
+
+				<h2 style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 2rem" }}>
+					{unit === "date" ? "Hiring Charges On Per Day Basis" : "Minor maintainance Charges On on actual KM reading Basis"}{" "}
+					<Select
+						className="filter"
+						defaultValue={unitOptions[0]}
+						options={unitOptions}
+						components={{ DropdownIndicator }}
+						styles={customStyles}
+						onChange={(e) => {
+							setUnit(e.value);
+						}}
+					/>
+				</h2>
+
 				{Table()}
 			</main>
 		</section>
