@@ -96,7 +96,7 @@ const DivOne = ({ location }) => (
 		<ul>
 			<Li url="/dashboard" text="Dashboard" Icon={RiDashboardFill} location={location} />
 			<Li url="/invoice" text="Invoices" Icon={BsFileText} location={location} />
-			<Li url="/cars" text="Search Cars" Icon={AiTwotoneCar} location={location} />
+			<Li url="/cars" text="Charges" Icon={AiTwotoneCar} location={location} />
 			<Li url="/profile/owner" text="Profile" Icon={AiFillFileText} location={location} />
 			<Li url="/billings" text="Billings" Icon={AiFillFileText} location={location} />
 			<Li url="/add/new" text="Add New" Icon={IoPersonAdd} location={location} />
