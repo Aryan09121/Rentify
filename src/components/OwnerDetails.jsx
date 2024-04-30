@@ -32,6 +32,47 @@ const DropdownIndicator = (props) => {
 	);
 };
 
+function formatDate(date, d = false) {
+	// Ensure date is in the correct format
+	if (!(date instanceof Date)) {
+		date = new Date(date);
+	}
+
+	// Array of month names
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+	// Get components of the date
+	const year = date.getFullYear();
+	const month = date.getMonth();
+	const day = date.getDate();
+	let formattedDate;
+	// Format the date
+	if (d === false) {
+		formattedDate = `${day}, ${months[month]}, ${year}`;
+	} else {
+		formattedDate = day;
+	}
+
+	return formattedDate;
+}
+
+function findTotalDays(date) {
+	const givenDate = new Date(date);
+	const today = new Date();
+	const differenceMs = today - givenDate;
+	const differenceDays = differenceMs / (1000 * 60 * 60 * 24);
+	return Math.abs(Math.round(differenceDays));
+}
+
+const fixed = (n) => {
+	return parseFloat(Number(n).toFixed(2));
+};
+
+const unitOptions = [
+	{ value: "date", label: "DATE" },
+	{ value: "km", label: "KM" },
+];
+
 function OwnerDetails() {
 	const [cardata, setCarData] = useState([]);
 	// const [ownerdata] = useState(owner);
@@ -41,6 +82,9 @@ function OwnerDetails() {
 	const params = useParams();
 	const { owner } = useSelector((state) => state.owner);
 	const [sortedData, setSortedData] = useState([]);
+	const [totalkm, setTotalKm] = useState();
+	const [unit, setUnit] = useState("km");
+	const [carHeaders, setCarHeaders] = useState([]);
 
 	const handleSortChange = (selectedOption) => {
 		let sortedDataCopy = [...cardata];
@@ -69,17 +113,25 @@ function OwnerDetails() {
 	};
 
 	useEffect(() => {
-		if (owner) {
+		if (ownerdata) {
 			const carsdata = ownerdata?.cars?.map((car, index) => {
 				return {
-					data: [index + 1, car?.brand, car?.rate?.km, car?.rate?.date, car?.district, car?.model],
+					data: [
+						index + 1,
+						car?.brand,
+						unit === "km" ? (car.totalkm === 0 ? 0 : car?.totalkm - car?.start?.km) : findTotalDays(car?.createdAt),
+						unit === "km" ? `${car?.rate?.km} km` : car?.rate?.date,
+						unit === "km" ? fixed(car?.kmAmount) : fixed(car?.dayAmount),
+						fixed(car?.amount),
+					],
 					_id: car?._id,
 				};
 			});
-			console.log(carsdata);
+			const headers = ["Serial.No", "Brand Name", unit === "km" ? "Kilometers" : "Total Days", "Rate", "Sub Total", "Total Amount"];
+			setCarHeaders(headers);
 			setSortedData(carsdata);
 		}
-	}, [ownerdata]);
+	}, [ownerdata, unit]);
 
 	useEffect(() => {
 		dispatch(getOwnerById(params.id));
@@ -87,6 +139,23 @@ function OwnerDetails() {
 
 	useEffect(() => {
 		if (owner) {
+			console.log(owner);
+			const totalkm = owner.cars.reduce((acc, car) => {
+				if (car.totalkm === 0) {
+					return acc;
+				} else {
+					return acc + (car?.totalkm - car?.start?.km);
+				}
+			}, 0);
+
+			// const totalAmount = owner.cars.reduce((acc, car) => {
+			// 	if (car.totalkm === 0) {
+			// 		return acc;
+			// 	} else {
+			// 		return acc + (car?.totalkm - car?.start?.km);
+			// 	}
+			// }, 0);
+			setTotalKm(totalkm);
 			setOwnerdata(owner);
 			setCarData(owner.cars);
 			// setSortedData(owner.cars);
@@ -164,7 +233,7 @@ function OwnerDetails() {
 						<div className="body">
 							<div className="detialRow">
 								<h4 className="heading">GST Number:</h4>
-								<h4 className="value">{ownerdata.gstin}</h4>
+								<h4 className="value">{ownerdata.gst}</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">HSN No:</h4>
@@ -176,31 +245,31 @@ function OwnerDetails() {
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Total Km:</h4>
-								<h4 className="value">{ownerdata.totalKm}</h4>
+								<h4 className="value">{totalkm ? totalkm : 0}</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Joined Date:</h4>
-								<h4 className="value">{ownerdata.joining}</h4>
+								<h4 className="value">{formatDate(ownerdata.createdAt)}</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Amount Paid:</h4>
-								<h4 className="value">24,000.000</h4>
+								<h4 className="value">0</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Pending Amount:</h4>
-								<h4 className="value">36,000.00</h4>
+								<h4 className="value">0</h4>
 							</div>
 						</div>
 					</section>
 				</section>
 				<TableContainer className="vehicleTableContainer">
 					<TableHeading>
-						<p>Owner Details</p>
+						<p style={{ color: "#fcfcfc" }}>Car Details</p>
 						<Select
-							defaultValue={vehicleSortOptions[0]}
-							options={vehicleSortOptions}
+							defaultValue={unitOptions[1]}
+							options={unitOptions}
 							components={{ DropdownIndicator }}
-							onChange={handleSortChange}
+							onChange={(e) => setUnit(e.value)}
 							// onChange={handleSortChange}
 							styles={CUSTOME_STYLES}
 						/>
@@ -209,7 +278,7 @@ function OwnerDetails() {
 						<h2 style={{ textAlign: "center", margin: "1rem 0", color: "red" }}>No Cars are Found!</h2>
 					) : (
 						<Table>
-							<TableHeaders style={{ gridTemplateColumns: `repeat(${vehicleHeaders.length},1fr)` }} headers={vehicleHeaders} />
+							<TableHeaders style={{ gridTemplateColumns: `repeat(${carHeaders?.length},1fr)` }} headers={carHeaders} />
 							<TableBody TableRow={CarRow} data={sortedData} />
 						</Table>
 					)}

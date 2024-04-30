@@ -22,6 +22,7 @@ import { tripHeaders } from "../assets/data/dashboard";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import TxtLoader from "../components/TxtLoader";
 
 // Extract the latest trip status for each driver
 
@@ -102,7 +103,7 @@ const Dashboard = () => {
 				{tripdata?.length > 0 && (
 					<TableContainer className="dashboardTripTableContainer">
 						<TableHeading>
-							<p>Trip Details</p>
+							<p>Trip Details </p>
 						</TableHeading>
 						<Table>
 							<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${tripHeaders.length},1fr)` }} />
@@ -127,6 +128,7 @@ export const WidgetItem = ({ heading, value, percent }) => {
 					<IoIosSettings />
 				</i>
 				<h4>{heading}</h4>
+
 				<p>
 					<select value={selectedOption} onChange={handleOptionChange}>
 						<option value="Today">Today</option>
