@@ -5,7 +5,7 @@ const CUSTOME_STYLES = {
 		cursor: "pointer",
 		backgroundColor: "#fff",
 		"&:hover, &:focus": {
-			backgroundColor: "#029e9d",
+			// backgroundColor: "#029e9d",
 			padding: "0.3rem 0.6rem",
 			color: "#fcfcfc",
 		},
