@@ -141,7 +141,7 @@ function OwnerProfile() {
 				<Filter isOwnerProfile={true} onClickSearchHandler={searchOwner} />
 				<TableContainer>
 					<TableHeading>
-						<p>All Bills</p>
+						<p>Owner Profile</p>
 						<Select
 							defaultValue={ownerSortOptions[0]}
 							options={ownerSortOptions}

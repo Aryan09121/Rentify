@@ -1,42 +1,27 @@
 /* eslint-disable react/prop-types */
-import AdminSidebar from "../components/AdminSidebar";
+import {
+	AdminSidebar,
+	Bar,
+	TableContainer,
+	TableHeading,
+	Table,
+	TableHeaders,
+	TableBody,
+	DashboardRow,
+	tripDetailsRow,
+	TableFooter,
+} from "../components/";
+import { getAllTrips } from "../redux/actions";
+
 import { HiTrendingUp, HiTrendingDown } from "react-icons/hi";
 import { IoIosSettings } from "react-icons/io";
-import Bar from "../components/Bar";
 // import { useDispatch } from "react-redux";
 
-import { tripHeaders, tripData } from "../assets/data/dashboard";
-import { TableContainer, TableHeading, Table, TableHeaders, TableBody, DashboardRow, tripDetailsRow, TableFooter } from "../components/TableHOC";
+import { tripHeaders } from "../assets/data/dashboard";
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllTrips } from "../redux/actions";
-// import { getOwners } from "../actions/owner.action";
-
-const possibleStatuses = ["On Trip", "On Leave", "Available"];
-
-// Group trips by driver id
-const groupedTrips = tripData.reduce((acc, trip) => {
-	const driverId = trip.driver_id;
-	if (!acc[driverId]) {
-		acc[driverId] = [];
-	}
-	acc[driverId].push(trip);
-	return acc;
-}, {});
-
-// Generate random status for each driver
-const driverStatusMap = {
-	101: "On Trip",
-	102: "On Leave",
-	103: "Available",
-	104: "On Trip",
-};
-Object.keys(groupedTrips).forEach((driverId) => {
-	const randomIndex = Math.floor(Math.random() * possibleStatuses.length);
-	const randomStatus = possibleStatuses[randomIndex];
-	driverStatusMap[driverId] = randomStatus;
-});
 
 // Extract the latest trip status for each driver
 

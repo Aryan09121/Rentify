@@ -195,7 +195,7 @@ function OwnerDetails() {
 				</section>
 				<TableContainer className="vehicleTableContainer">
 					<TableHeading>
-						<p>All Bills</p>
+						<p>Owner Details</p>
 						<Select
 							defaultValue={vehicleSortOptions[0]}
 							options={vehicleSortOptions}
