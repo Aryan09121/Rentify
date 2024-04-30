@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { FaSearch } from "react-icons/fa";
 import AdminSidebar from "./AdminSidebar";
 import readXlsxFile from "read-excel-file";

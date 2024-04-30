@@ -15,6 +15,17 @@ export const invoiceReducer = createReducer(initialState, (builder) => {
 			state.loading = false;
 			state.error = action.payload;
 		})
+		.addCase("GET_INDIVIDUAL_INVOICES_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("GET_INDIVIDUAL_INVOICES_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.allinvoices = action.payload;
+		})
+		.addCase("GET_INDIVIDUAL_INVOICES_FAILURE", (state) => {
+			state.loading = false;
+			state.allinvoices = [];
+		})
 		.addCase("GET_ALL_INVOICES_REQUEST", (state) => {
 			state.loading = true;
 		})
