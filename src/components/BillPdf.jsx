@@ -240,7 +240,7 @@ function BillPdf() {
 												<p>{invoice.totalDayQty}</p>
 												<p>Days</p>
 												<p>{invoice.dayRate}</p>
-												<p>{invoice.totalDayAmount}</p>
+												<p>{invoice.totalDayAmount.toFixed(2)}</p>
 											</div>
 										</div>
 									);
@@ -265,7 +265,7 @@ function BillPdf() {
 												<p>{invoice.totalKmQty}</p>
 												<p>KM</p>
 												<p>{invoice.kmRate}</p>
-												<p>{invoice.totalKmAmount}</p>
+												<p>{invoice.totalKmAmount.toFixed(2)}</p>
 											</div>
 										</div>
 									);
