@@ -5,10 +5,14 @@ import Select, { components } from "react-select";
 import { FaFilter, FaIndianRupeeSign } from "react-icons/fa6";
 import { FaCar, FaSearch } from "react-icons/fa";
 import { CUSTOME_STYLES } from "../assets/data/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosSnow } from "react-icons/io";
 import { BsSpeedometer } from "react-icons/bs";
 import { car } from "../assets/data/car";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { getSingleCar } from "../redux/actions";
+import TxtLoader from "../components/TxtLoader";
 
 const options = [
 	{ value: "", label: "Filter" },
@@ -25,7 +29,67 @@ const DropdownIndicator = (props) => {
 	);
 };
 
+function findTotalDays(date) {
+	const givenDate = new Date(date);
+	const today = new Date();
+	const differenceMs = today - givenDate;
+	const differenceDays = differenceMs / (1000 * 60 * 60 * 24);
+	return Math.abs(Math.round(differenceDays));
+}
+
+function formatDate(date, d = false) {
+	// Ensure date is in the correct format
+	if (!(date instanceof Date)) {
+		date = new Date(date);
+	}
+
+	// Array of month names
+	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+	// Get components of the date
+	const year = date.getFullYear();
+	const month = date.getMonth();
+	const day = date.getDate();
+	let formattedDate;
+	// Format the date
+	if (d === false) {
+		formattedDate = `${day}, ${months[month]}, ${year}`;
+	} else {
+		formattedDate = day;
+	}
+
+	return formattedDate;
+}
+
+function getDatePart(date, part) {
+	const d = new Date(date);
+	switch (part) {
+		case "day":
+			return d.getDate();
+		case "month":
+			return d.getMonth() + 1; // Month is zero-based, so add 1
+		case "year":
+			return d.getFullYear();
+		default:
+			throw new Error('Invalid part provided. Must be "day", "month", or "year".');
+	}
+}
+
 function CarDetails() {
+	const { car, loading } = useSelector((state) => state.car);
+	const dispatch = useDispatch();
+	const params = useParams();
+
+	useEffect(() => {
+		if (car) {
+			console.log(car);
+		}
+	}, [car]);
+
+	useEffect(() => {
+		dispatch(getSingleCar(params?.id));
+	}, []);
+
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
@@ -36,11 +100,11 @@ function CarDetails() {
 				<div className="invoiceHeader">
 					<div>
 						<h3>Invoice No: 051</h3>
-						<h3>Pan Card No: DYD35532</h3>
+						<h3>Pan Card No: {car?.owner?.pan}</h3>
 					</div>
-					<h3>Rent from: 14/02/2024</h3>
+					<h3>Rent from: {formatDate(car?.trip[0]?.createdAt ? car?.trip[0]?.createdAt : car?.createdAt)}</h3>
 				</div>
-				<CarDetailCard />
+				{loading ? <TxtLoader /> : <CarDetailCard />}
 			</main>
 		</div>
 	);
@@ -66,23 +130,34 @@ export const Filter = ({ isOwnerProfile = false, onClickSearchHandler }) => {
 };
 
 export const CarDetailCard = () => {
+	const { car } = useSelector((state) => state.car);
 	return (
 		<div className="carDetailCard">
 			<header>
 				<div>
 					<h3>
-						Owner Name: <span>{car.owner.name}</span>
+						Owner Name: <span>{car?.owner?.name}</span>
 					</h3>
 					<h3 className="address">
-						Address: <span>{car.owner.address}</span>
+						Address:{" "}
+						<span>
+							{car?.owner?.address?.street +
+								", " +
+								car?.owner?.address?.city +
+								", " +
+								car?.owner?.address?.state +
+								", " +
+								car?.owner?.address?.pincode +
+								", India"}
+						</span>
 					</h3>
 				</div>
 				<div>
 					<h3>
-						Mobile Number: <span>{car.owner.phone}</span>
+						Mobile Number: <span>{car?.owner?.contact}</span>
 					</h3>
 					<h3>
-						Car Number: <span>{car.carnumber}</span>
+						Car Number: <span>{car?.registrationNo}</span>
 					</h3>
 				</div>
 			</header>
@@ -90,46 +165,41 @@ export const CarDetailCard = () => {
 				<section className="basicDetails">
 					<div>
 						<h3>
-							Brand Name: <span>{car.brand}</span>
+							Brand Name: <span>{car?.brand}</span>
 						</h3>
 						<h3>
-							Year: <span>{car.year}</span>
+							Year: <span>{getDatePart(car?.createdAt, "year")}</span>
 						</h3>
 					</div>
 					<div>
 						<h3>
-							Model: <span>{car.model}</span>
+							Model: <span>{car?.model}</span>
 						</h3>
 						<h3>
-							Rent From: <span>{car.onboardon}</span>
+							Rent From: <span>{formatDate(car?.trip[0]?.createdAt ? car?.trip[0]?.createdAt : car?.createdAt)}</span>
 						</h3>
 					</div>
-				</section>
-				<section className="tagContainer">
-					<Tag Icon={FaCar} heading="Capacity" content={`${car.features.capacity}`} />
-					<Tag Icon={IoIosSnow} heading="Type" content={`${car.features.type}`} />
-					<Tag Icon={BsSpeedometer} heading="Max Speed" content={`${car.features.maxspeed}`} />
 				</section>
 				<section className="advDetails">
 					<h4>Rent Description</h4>
 					<article>
 						<div>
 							<h3>
-								Total Days: <span>{car.rentdescription.days} days</span>
+								Total Days: <span>{findTotalDays(car?.createdAt)} days</span>
 							</h3>
 							<h3>
-								Total Kilometer: <span>{car.rentdescription.distance}km</span>
+								Total Kilometer: <span>{car?.totalkm}km</span>
 							</h3>
 							<h3>
-								Period From: <span>{car.rentdescription.period}</span>
+								Period From: <span>{car?.rentdescription?.period}</span>
 							</h3>
 						</div>
 						<div>
 							<h3>
-								Rent Cost: <span>{car.rentdescription.cost}₹/days</span>
+								Rent Cost: <span>{car?.rentdescription?.cost}₹/days</span>
 							</h3>
 							<h3>
-								Sub Total: <span>{car.rentdescription.total}</span>
+								Sub Total: <span>{car?.rentdescription?.total}</span>
 							</h3>
 						</div>
 					</article>
@@ -139,7 +209,7 @@ export const CarDetailCard = () => {
 					<h3>
 						<span>with @GST</span>
 						<FaIndianRupeeSign />
-						{car.rentdescription.total + (car.rentdescription.total * 18) / 100}
+						{car?.rentdescription?.total + (car?.rentdescription?.total * 18) / 100}
 					</h3>
 				</section>
 			</main>

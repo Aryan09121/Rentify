@@ -40,9 +40,8 @@ export const getAllCars = () => async (dispatch) => {
 export const getSingleCar = (id) => async (dispatch) => {
 	try {
 		dispatch({
-			type: "GET_ALL_CARS_REQUEST",
+			type: "GET_SINGLE_CAR_REQUEST",
 		});
-
 		const token = Cookies.get("token"); // Get the token from the cookie
 
 		const config = {
@@ -58,13 +57,13 @@ export const getSingleCar = (id) => async (dispatch) => {
 		};
 
 		dispatch({
-			type: "GET_ALL_CARS_SUCCESS",
+			type: "GET_SINGLE_CAR_SUCCESS",
 			payload,
 		});
 	} catch (error) {
 		console.log(error);
 		dispatch({
-			type: "GET_ALL_CARS_FAILURE",
+			type: "GET_SINGLE_CAR_FAILURE",
 			payload: error.response.data.message,
 		});
 	}
