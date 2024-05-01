@@ -22,52 +22,13 @@ const DropdownIndicator = (props) => {
 	);
 };
 
-// {
-// 	"data": [
-// 	    "1",
-// 	    "M.S, Subramanium",
-// 	    "4 Cars",
-// 	    "Vishakhapatnam"
-// 	],
-// 	"status": "ongoing",
-// 	"_id": 1
-//  }
-
-// {
-// 	"address": {
-// 	    "street": "Indrapuri A Sector, Abadhpuri",
-// 	    "city": "Bhopal",
-// 	    "state": "Madhya Pradesh",
-// 	    "pincode": "462021"
-// 	},
-// 	"_id": "65f1367885c1e082a0c7f9f1",
-// 	"name": "Priyal Upadhyay",
-// 	"contact": "7723423484",
-// 	"gender": "female",
-// 	"email": "priyal.upadhyay@gmail.com",
-// 	"hsn": "DF65PDBR",
-// 	"pan": "DYXLI5621",
-// 	"joinedDate": "2024-03-13T05:15:36.073Z",
-// 	"avatar": {
-// 	    "fileId": "",
-// 	    "url": "https://cdn.vectorstock.com/i/1000x1000/62/59/default-avatar-photo-placeholder-profile-icon-vector-21666259.webp"
-// 	},
-// 	"cars": [
-// 	    "65f1367885c1e082a0c7f9f3",
-// 	    "65f1367885c1e082a0c7f9f7"
-// 	],
-// 	"createdAt": "2024-03-13T05:15:36.079Z",
-// 	"updatedAt": "2024-03-13T07:24:05.201Z",
-// 	"__v": 2
-//  }
-
 function OwnerProfile() {
 	const [sortedData, setSortedData] = useState([]);
 	const { owners } = useSelector((state) => state.owner);
 
 	useEffect(() => {
 		if (owners) {
-			console.log(owners);
+			// console.log(owners);
 			const ownerList = owners.map((owner, idx) => ({
 				data: [idx, owner?.name, `${owner?.cars?.length} cars`, owner?.address?.city],
 				status: owner?.status,
@@ -114,24 +75,6 @@ function OwnerProfile() {
 		}
 		setSortedData(() => filteredData);
 	};
-
-	// useEffect(() => {
-	// 	const filteredData = customerData.filter((item) => {
-	// 		// Adjust this condition based on your data structure
-	// 		// Here assumed item.data[1] contains the field to search
-	// 		const searchData = item.data.map((value) => value.toLowerCase());
-	// 		return searchData.some((value) => value.includes(query.toLowerCase()));
-	// 	});
-	// 	console.log(filteredData);
-	// 	const id = setTimeout(() => {
-	// 		setSortedData(() => filteredData);
-	// 	}, 1000);
-
-	// 	return () => {
-	// 		clearInterval(id);
-	// 		// setSortedData(customerData);
-	// 	};
-	// }, [query, sortedData]);
 
 	return (
 		<div className="admin-container">
