@@ -170,7 +170,7 @@ export const BillDetailsRow = ({ rowdata, className = "tableContents", onClick }
 // ?-- Default Row
 export const CarRow = ({ rowdata, className = "tableContents" }) => {
 	return (
-		<Link to={`/cars/${rowdata._id}`} style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }} className={className}>
+		<Link style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }} className={className}>
 			{rowdata.data.map((data) => {
 				return (
 					<h3 style={{ textWrap: "balance", textAlign: "left" }} key={rowdata._id}>
