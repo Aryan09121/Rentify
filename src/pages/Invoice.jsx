@@ -170,16 +170,33 @@ const Invoice = () => {
 	}, []);
 	useEffect(() => {
 		if (invoices) {
-			// console.log(invoices);
+			console.log(invoices);
 			const data = invoices.map((invoice, idx) => {
 				const { owner } = invoice;
 				const { _id, name, email, createdAt } = owner;
+
+				const modelInvoices = invoice.invoices;
+
+				let status = "unpaid";
+				let allPaid = true;
+
+				for (const modelInvoice of modelInvoices) {
+					const someUnpaid = modelInvoice.invoice.some((invoice) => invoice.status === "unpaid");
+					if (someUnpaid) {
+						allPaid = false;
+						break;
+					}
+				}
+
+				if (allPaid) {
+					status = "paid";
+				}
 				return {
 					data: ["INV-10" + idx, name, email, formatDate(createdAt), 2345],
 					_id,
 					owner: owner,
-					status: owner?.status,
 					invoices: invoice.invoices,
+					status,
 				};
 			});
 			setInvoiceData(data);

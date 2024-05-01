@@ -38,6 +38,30 @@ export const invoiceReducer = createReducer(initialState, (builder) => {
 			state.loading = false;
 			// state.error = action.payload;
 		})
+		.addCase("PAY_INVOICE_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("PAY_INVOICE_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.message = action.payload.message;
+			state.invoice = action.payload.invoice;
+		})
+		.addCase("PAY_INVOICE_FAILURE", (state, action) => {
+			state.loading = false;
+			state.invoice = null;
+			state.error = action.payload;
+		})
+		.addCase("GET_SINGLE_INVOICE_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("GET_SINGLE_INVOICE_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.invoice = action.payload;
+		})
+		.addCase("GET_SINGLE_INVOICE_FAILURE", (state) => {
+			state.loading = false;
+			state.invoice = null;
+		})
 		.addCase("CLEAR_ERRORS", (state) => {
 			state.error = null;
 		})

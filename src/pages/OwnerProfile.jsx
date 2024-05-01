@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
-import { Filter } from "./CarDetails";
+import { Filter } from "./InvoiceDetails";
 import { useEffect, useState } from "react";
 import Select, { components } from "react-select";
 import { CUSTOME_STYLES } from "../assets/data/constants";
@@ -67,9 +67,10 @@ function OwnerProfile() {
 
 	useEffect(() => {
 		if (owners) {
+			console.log(owners);
 			const ownerList = owners.map((owner, idx) => ({
 				data: [idx, owner?.name, `${owner?.cars?.length} cars`, owner?.address?.city],
-				status: "ongoig",
+				status: owner?.status,
 				_id: owner._id,
 			}));
 			setSortedData(ownerList);

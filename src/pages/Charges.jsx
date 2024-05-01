@@ -169,8 +169,9 @@ const SearchCars = () => {
 
 	const handleRowClick = (row) => {
 		// Access _id property from the row's original data and redirect to the desired page
-		const { _id } = row.original;
-		navigate(`/cars/${_id}`);
+		const { invoice } = row.original;
+
+		navigate(`/charges/details?id=${invoice._id}`);
 	};
 
 	useEffect(() => {
@@ -202,8 +203,11 @@ const SearchCars = () => {
 	useEffect(() => {
 		if (allinvoices?.length > 0) {
 			const data = allinvoices?.map((inv, idx) => {
+				console.log(inv);
 				const { year, month } = extractYearMonthInWords(inv.invoiceDate);
 				return {
+					_id: inv?.car?._id,
+					invoice: inv,
 					sno: idx + 1,
 					district: inv.trip.district,
 					registrationno: inv?.car?.registrationNo,

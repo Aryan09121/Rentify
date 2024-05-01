@@ -104,3 +104,70 @@ export const getIndividualInvoices = () => async (dispatch) => {
 		});
 	}
 };
+
+export const getSingleInvoice = (id) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "GET_SINGLE_INVOICE_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		// eslint-disable-next-line no-unused-vars
+		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/get/invoice?id=${id}`, { id }, config);
+
+		const payload = data.data;
+
+		dispatch({
+			type: "GET_SINGLE_INVOICE_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "GET_SINGLE_INVOICE_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
+
+export const payInvoice = (id) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "PAY_INVOICE_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		// eslint-disable-next-line no-unused-vars
+		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/pay/invoice?id=${id}`, { id }, config);
+
+		const payload = {
+			message: data.message,
+			invoice: data.data,
+		};
+
+		dispatch({
+			type: "PAY_INVOICE_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "PAY_INVOICE_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
