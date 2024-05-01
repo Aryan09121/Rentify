@@ -275,17 +275,17 @@ function BillPdf() {
 								<div>
 									<p>Taxable Value (Rs): </p>
 									{/* <p>2882549.64</p> */}
-									<p>{total?.totalAmount}</p>
+									<p>{Number(total?.totalAmount).toFixed(2)}</p>
 								</div>
 								<div>
 									<p>GST 5%: </p>
 									{/* <p>144127.48</p> */}
-									<p>{total?.gstAmount}</p>
+									<p>{Number(total?.gstAmount).toFixed(2)}</p>
 								</div>
 								<div>
 									<p>Total (Rs): </p>
 									{/* <p>3026677.12</p> */}
-									<p>{total?.billTotal}</p>
+									<p>{Number(total?.billTotal).toFixed(2)}</p>
 								</div>
 							</div>
 						</div>
