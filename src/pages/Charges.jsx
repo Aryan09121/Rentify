@@ -66,6 +66,10 @@ const columns = [
 		Header: "Amount",
 		accessor: "amount",
 	},
+	{
+		Header: "Status",
+		accessor: "status",
+	},
 ];
 
 const unitOptions = [
@@ -222,6 +226,7 @@ const SearchCars = () => {
 					unit: unit,
 					rate: unit === "km" ? inv?.kmRate : inv?.dayRate,
 					amount: unit === "km" ? inv?.kmAmount : inv?.dayAmount,
+					status: <p style={inv?.status === "paid" ? { color: "green" } : { color: "red" }}>{inv?.status}</p>,
 				};
 			});
 
