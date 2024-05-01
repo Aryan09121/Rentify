@@ -14,8 +14,8 @@ import { getOwners, loadUser } from "./redux/actions";
 // ** pages lazy import()
 const Signup = lazy(() => import("./pages/Signup"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
-const CarDetails = lazy(() => import("./pages/CarDetails"));
-const SearchCars = lazy(() => import("./pages/SearchCars"));
+const InvoiceDetails = lazy(() => import("./pages/InvoiceDetails"));
+const Charges = lazy(() => import("./pages/Charges"));
 const OwnerProfile = lazy(() => import("./pages/OwnerProfile"));
 const OwnerDetails = lazy(() => import("./components/OwnerDetails"));
 const UpdateOwner = lazy(() => import("./components/UpdateOwner"));
@@ -69,10 +69,10 @@ const App = () => {
 				<Route path="/" element={<Signup />} />
 				<Route element={<ProtectedRoute />}>
 					<Route path="/dashboard" element={<Dashboard />} />
-					<Route path="/invoice" element={<Invoice />} />
-					<Route path="/cars/:id" element={<CarDetails />} />
+					<Route path="/invoices" element={<Invoice />} />
+					<Route path="/charges/details" element={<InvoiceDetails />} />
 					<Route path="/bill" element={<BillPdf />} />
-					<Route path="/cars" element={<SearchCars />} />
+					<Route path="/charges" element={<Charges />} />
 					<Route path="/profile/owner" element={<OwnerProfile />} />
 					<Route path="/profile/owner/edit/:id" element={<UpdateOwner />} />
 					<Route path="/profile/owner/:id" element={<OwnerDetails />} />
