@@ -1,4 +1,4 @@
-import { Filter } from "../pages/CarDetails";
+import { Filter } from "../pages/InvoiceDetails";
 import AdminSidebar from "./AdminSidebar";
 import Bar from "./Bar";
 // import Table from "./Table";
