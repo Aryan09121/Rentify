@@ -3,6 +3,7 @@ import { Bar, TxtLoader, AdminSidebar } from "../components";
 import Select, { components } from "react-select";
 import { FaFilter, FaIndianRupeeSign } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
+import generatePDF, { usePDF, Resolution, Margin } from "react-to-pdf";
 import { CUSTOME_STYLES } from "../assets/data/constants";
 import { useEffect, useState } from "react";
 // import { car } from "../assets/data/car";
@@ -65,22 +66,25 @@ function getDatePart(date, part) {
 	}
 }
 
+const pdfOptions = {
+	filename: "Invoice.pdf",
+	method: "open",
+	resolution: Resolution.MEDIUM,
+	page: {
+		margin: Margin.SMALL,
+		format: "A7",
+		orientation: "landscape",
+	},
+};
+
 function CarDetails() {
+	const { targetRef } = usePDF();
 	const { invoice, loading, message, error } = useSelector((state) => state.invoice);
 	const [isOpen, setIsOpen] = useState(false);
 	const dispatch = useDispatch();
-	// const params = useParams();
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const id = searchParams.get("id");
-
-	const onConfirm = () => {
-		setIsOpen(true);
-	};
-
-	const payBill = (invoice) => {
-		dispatch(payInvoice(invoice._id));
-	};
 
 	useEffect(() => {
 		dispatch(getSingleInvoice(id));
@@ -97,14 +101,27 @@ function CarDetails() {
 		}
 	}, [message, error]);
 
+	const generate = () => {
+		generatePDF(targetRef, pdfOptions);
+	};
+
+	const onConfirm = () => {
+		setIsOpen(true);
+	};
+
+	const payBill = (invoice) => {
+		dispatch(payInvoice(invoice._id));
+	};
+
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
 			<main className="carDetails">
 				<Bar />
 				<h2>Invoice Details</h2>
-				{/* <Filter /> */}
-				{!invoice ? (
+				{loading ? (
+					<TxtLoader />
+				) : !invoice ? (
 					<h5 style={{ textAlign: "center", color: "red", marginTop: "3rem", fontSize: "1.5rem" }}>
 						OOPS!! What Happened ⚠️ <br />
 						Invoice Details Not Found !! 😨 ‼️
@@ -118,11 +135,14 @@ function CarDetails() {
 							</div>
 							<h3>Rent from: {formatDate(invoice?.from)}</h3>
 						</div>
-						<CarDetailCard invoice={invoice} />
-						<button onClick={() => onConfirm(invoice)} style={{ padding: "1rem 2.2rem", marginTop: "-1.2rem" }}>
-							{loading ? `Loading... ${(<TxtLoader />)}` : "Pay Bill"}
+						<CarDetailCard invoice={invoice} targetRef={targetRef} />
+						<button onClick={onConfirm} style={{ padding: "1rem 2.2rem", marginTop: "-1.2rem" }}>
+							{loading ? `Loading...` : "Pay Bill"}
 						</button>
-						<Confirm open={isOpen} setIsOpen={setIsOpen} onPayBill={payBill} invoice={invoice} />
+						<button onClick={generate} style={{ padding: "1rem 2.2rem", marginTop: "-1.2rem" }}>
+							Generate PDF
+						</button>
+						<Confirm open={isOpen} setIsOpen={setIsOpen} invoice={invoice} onPayBill={payBill} />
 					</>
 				)}
 			</main>
@@ -170,9 +190,9 @@ export const Filter = ({ isOwnerProfile = false, onClickSearchHandler }) => {
 	);
 };
 
-export const CarDetailCard = ({ invoice }) => {
+export const CarDetailCard = ({ invoice, targetRef }) => {
 	return (
-		<div className="carDetailCard">
+		<div className="carDetailCard" ref={targetRef}>
 			<header>
 				<div>
 					<h3>
@@ -240,6 +260,9 @@ export const CarDetailCard = ({ invoice }) => {
 						<div>
 							<h3>
 								Rent Cost: <span>₹ {invoice?.dayRate}/day</span>
+							</h3>
+							<h3>
+								Maintainance Cost: <span>₹ {invoice?.kmRate}/km</span>
 							</h3>
 							<h3>
 								Sub Total: <span>{invoice?.totalAmount}</span>
