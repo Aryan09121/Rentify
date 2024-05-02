@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
-import { getOwners, loadUser } from "./redux/actions";
+import { loadUser } from "./redux/actions";
 
 // ** pages lazy import()
 const Signup = lazy(() => import("./pages/Signup"));
@@ -37,7 +37,6 @@ const App = () => {
 		const token = Cookies.get("token");
 		if (token) {
 			dispatch(loadUser());
-			dispatch(getOwners());
 		}
 	}, []);
 
@@ -76,9 +75,9 @@ const App = () => {
 					<Route path="/profile/owner" element={<OwnerProfile />} />
 					<Route path="/profile/owner/edit/:id" element={<UpdateOwner />} />
 					<Route path="/profile/owner/:id" element={<OwnerDetails />} />
-					<Route path="/billings" element={<Billings />} />
 					<Route path="/settings" element={<Settings />} />
 					<Route path="/search" element={<Search />} />
+					<Route path="/billings" element={<Billings />} />
 					<Route path="/billings/:id" element={<BillDetails />} />
 					<Route path="/add/new" element={<AddNew />} />
 					<Route path="/add/new/owner" element={<AddNewOwner />} />
