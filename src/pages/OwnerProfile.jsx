@@ -10,7 +10,8 @@ import { customerHeaders, customerData, ownerSortOptions } from "../assets/data/
 import { TableBody, Table, TableContainer, TableHeaders, TableHeading, OwnerRow } from "../components/TableHOC";
 import { FaSort } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getOwners } from "../redux/actions";
 
 //  ?--- dropdown indicator
 
@@ -25,18 +26,39 @@ const DropdownIndicator = (props) => {
 function OwnerProfile() {
 	const [sortedData, setSortedData] = useState([]);
 	const { owners } = useSelector((state) => state.owner);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		if (owners) {
 			// console.log(owners);
-			const ownerList = owners.map((owner, idx) => ({
-				data: [idx, owner?.name, `${owner?.cars?.length} cars`, owner?.address?.city],
-				status: owner?.status,
-				_id: owner._id,
-			}));
+
+			const ownerList = owners.map((owner, idx) => {
+				let status = "unpaid";
+				let allPaid = true;
+
+				const someUnpaid = owner.invoices.some((invoice) => invoice.status === "unpaid");
+				if (someUnpaid) {
+					allPaid = false;
+				}
+
+				if (allPaid) {
+					status = "paid";
+				}
+
+				return {
+					data: [idx, owner?.name, `${owner?.cars?.length} cars`, owner?.address?.city],
+					status,
+					_id: owner._id,
+				};
+			});
+
 			setSortedData(ownerList);
 		}
 	}, [owners]);
+
+	useEffect(() => {
+		dispatch(getOwners());
+	}, []);
 
 	// ? handle sorting functionalities
 	const handleSortChange = (selectedOption) => {
