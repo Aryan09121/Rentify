@@ -6,6 +6,7 @@ import { HiMenuAlt4 } from "react-icons/hi";
 import { RiDashboardFill } from "react-icons/ri";
 import { IoPersonAdd } from "react-icons/io5";
 import { BsFileText } from "react-icons/bs";
+import { AiTwotoneShop } from "react-icons/ai";
 // eslint-disable-next-line no-unused-vars
 import userImg from "../assets/userImage.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -97,6 +98,7 @@ const DivOne = ({ location }) => (
 			<Li url="/dashboard" text="Dashboard" Icon={RiDashboardFill} location={location} />
 			<Li url="/invoices" text="Invoices" Icon={BsFileText} location={location} />
 			<Li url="/charges" text="Charges" Icon={AiTwotoneCar} location={location} />
+			{/* <Li url="/vendor" text="Vendors" Icon={AiTwotoneShop} location={location} /> */}
 			<Li url="/profile/owner" text="Profile" Icon={AiFillFileText} location={location} />
 			<Li url="/billings" text="Billings" Icon={AiFillFileText} location={location} />
 			<Li url="/add/new" text="Add New" Icon={IoPersonAdd} location={location} />
