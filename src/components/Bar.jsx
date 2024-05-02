@@ -2,6 +2,7 @@
 import { BsSearch } from "react-icons/bs";
 import userImg from "../assets/userImage.png";
 import { IoIosSettings, IoMdMail } from "react-icons/io";
+import { IoLogOut } from "react-icons/io5";
 import { FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -25,7 +26,7 @@ function Bar({ query, handleSearch }) {
 					<IoIosSettings />
 				</i>
 				<i>
-					<FaBell />
+					<IoLogOut />
 				</i>
 				<img src={userImg} alt="user iamge" />
 				<div>
