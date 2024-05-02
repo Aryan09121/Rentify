@@ -14,7 +14,7 @@ import NewInvoice from "../components/NewInvoice";
 // eslint-disable-next-line no-unused-vars
 import { generatePdf } from "../components/PdfGenerator";
 import { useNavigate } from "react-router-dom";
-import { getAllInvoices } from "../redux/actions";
+import { getAllInvoices, getIndividualInvoices } from "../redux/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -99,7 +99,7 @@ const Invoice = () => {
 	const [invoiceData, setInvoiceData] = useState([]);
 	const [searchQuery, setSearchQuery] = useState(""); // State to hold search input value
 	const [isOpen, setIsOpen] = useState(false);
-	const { invoices, message, error } = useSelector((state) => state.invoice);
+	const { invoices, allinvoices, message, error } = useSelector((state) => state.invoice);
 	const dispatch = useDispatch();
 
 	const navigate = useNavigate();
@@ -167,13 +167,24 @@ const Invoice = () => {
 
 	useEffect(() => {
 		dispatch(getAllInvoices());
+		dispatch(getIndividualInvoices());
 	}, []);
+
 	useEffect(() => {
 		if (invoices) {
-			console.log(invoices);
+			// console.log(invoices);
 			const data = invoices.map((invoice, idx) => {
 				const { owner } = invoice;
 				const { _id, name, email, createdAt } = owner;
+
+				let totalAmount = 0; // Initialize totalAmount for each owner
+
+				// Iterate through each invoice for the current owner
+				invoice.invoices.forEach((invoice) => {
+					invoice.invoice.forEach((inv) => {
+						totalAmount += inv.totalAmount; // Sum up the totalAmount of each invoice
+					});
+				});
 
 				const modelInvoices = invoice.invoices;
 
@@ -192,7 +203,7 @@ const Invoice = () => {
 					status = "paid";
 				}
 				return {
-					data: ["INV-10" + idx, name, email, formatDate(createdAt), 2345],
+					data: ["INV-10" + idx, name, email, formatDate(createdAt), totalAmount.toFixed(2)],
 					_id,
 					owner: owner,
 					invoices: invoice.invoices,
@@ -235,9 +246,9 @@ const Invoice = () => {
 							/>
 						</section>
 						<section className="invoice_widget_container">
-							<WidgetItem designation="All Invoices" value={283000} percent={2.8} />
-							<WidgetItem designation="Draft" value={143} percent={2.8} />
-							<WidgetItem designation="Paid Invoices" value={243} percent={-2.8} />
+							<WidgetItem designation="All Invoices" value={allinvoices?.length ? allinvoices?.length : 0} />
+							<WidgetItem designation="Unpaid Invoices" value={allinvoices?.filter((i) => i.status !== "paid")?.length || 2} />
+							<WidgetItem designation="Paid Invoices" value={allinvoices?.filter((i) => i.status === "paid")?.length || 0} />
 						</section>
 						<TableContainer className="invoice_table_container">
 							<TableHeading>
@@ -357,17 +368,19 @@ const WidgetItem = ({ value, designation, percent }) => {
 				)}
 			</div>
 			<h2>{Math.abs(value)}</h2>
-			<div className="invoice_widget_trends">
-				{percent > 0 ? (
-					<h5 className="green">
-						<HiTrendingUp /> {percent}%
-					</h5>
-				) : (
-					<h5 className="red">
-						<HiTrendingDown /> {Math.abs(percent)}%
-					</h5>
-				)}
-			</div>
+			{percent && (
+				<div className="invoice_widget_trends">
+					{percent > 0 ? (
+						<h5 className="green">
+							<HiTrendingUp /> {percent}%
+						</h5>
+					) : (
+						<h5 className="red">
+							<HiTrendingDown /> {Math.abs(percent)}%
+						</h5>
+					)}
+				</div>
+			)}
 		</article>
 	);
 };
