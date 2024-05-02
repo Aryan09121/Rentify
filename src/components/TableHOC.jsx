@@ -110,11 +110,7 @@ export const OwnerRow = ({ rowdata, className = "tableContents" }) => {
 			{rowdata.data.map((data) => {
 				return <h3 key={rowdata._id}>{data}</h3>;
 			})}
-			<button
-				className={rowdata.status === "ongoing" ? "tableBtn purplebg" : rowdata.status === "pending" ? "tableBtn redbg" : "tableBtn greenbg"}
-			>
-				{rowdata.status}
-			</button>
+			<button className={rowdata.status === "paid" ? "tableBtn greenbg" : "tableBtn redbg"}>{rowdata.status}</button>
 		</Link>
 	);
 };
@@ -141,13 +137,13 @@ export const InvoiceRow = ({ rowdata, className = "tableContents", onClick }) =>
 
 // ?-- Bill List Row
 
-export const BillListRow = ({ rowdata, className = "tableContents" }) => {
+export const BillListRow = ({ rowdata, className = "tableContents", onClick }) => {
 	return (
-		<Link to={`/billings/${rowdata._id}`} className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }}>
+		<div onClick={() => onClick(rowdata)} className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }}>
 			{rowdata.data.map((data) => {
 				return <h3 key={rowdata._id}>{data}</h3>;
 			})}
-		</Link>
+		</div>
 	);
 };
 
