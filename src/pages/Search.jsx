@@ -4,8 +4,9 @@ import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
 import TableSearchTOC from "../components/TableSearchHOC";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import userImg from "../assets/userImage.png";
+import { getOwners } from "../redux/actions";
 
 const columns = [
 	{
@@ -36,6 +37,7 @@ function Search() {
 	const { owners } = useSelector((state) => state.owner);
 	const [data, setData] = useState([]);
 	const [ownersdata, setOwnersdata] = useState();
+	const dispatch = useDispatch();
 	const handleRowClick = (row) => {
 		// Access _id property from the row's original data and redirect to the desired page
 		const { _id } = row.original;
@@ -47,9 +49,9 @@ function Search() {
 		setQuery(searchTerm);
 	};
 
-	// useEffect(() => {
-	// 	dispatch(getOwners());
-	// }, []);
+	useEffect(() => {
+		dispatch(getOwners());
+	}, []);
 
 	useEffect(() => {
 		if (owners) {
