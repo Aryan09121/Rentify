@@ -58,7 +58,7 @@ export const billDetailsData = [
 	},
 ];
 
-export const billDetailsHeaders = ["Serial No", "Car Details", "Total Days", "Unit", "Rate (Per Day)", "Total Amount"];
+export const billDetailsHeaders = ["Serial No", "Car Details", "Total", "Unit", "Rate", "Total Amount"];
 
 export const invoice = [
 	{
