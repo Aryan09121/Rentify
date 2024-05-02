@@ -171,3 +171,44 @@ export const payInvoice = (id) => async (dispatch) => {
 		});
 	}
 };
+
+export const payAllInvoice = (ids) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "PAY__ALL_INVOICE_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		let dt;
+
+		// eslint-disable-next-line no-unused-vars
+		for (const id of ids) {
+			dt = await axios.post(`http://localhost:8000/api/v1/admin/pay/invoice?id=${id}`, { id }, config);
+		}
+
+		const { data } = dt;
+
+		const payload = {
+			message: data.message,
+			invoice: data.data,
+		};
+
+		dispatch({
+			type: "PAY__ALL_INVOICE_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "PAY__ALL_INVOICE_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
