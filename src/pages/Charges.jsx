@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import AdminSidebar from "../components/AdminSidebar";
+import { AdminSidebar, TxtLoader } from "../components";
 import TableSearchTOC from "../components/TableSearchHOC";
 import Bar from "../components/CarBar";
 import { useCallback, useEffect, useState } from "react";
@@ -160,7 +160,7 @@ function extractYearMonthInWords(dateString) {
 const SearchCars = () => {
 	const [query, setQuery] = useState("");
 	const [unit, setUnit] = useState("date");
-	const { allinvoices } = useSelector((state) => state.invoice);
+	const { allinvoices, loading } = useSelector((state) => state.invoice);
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
