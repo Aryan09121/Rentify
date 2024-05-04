@@ -27,6 +27,7 @@ const AddNew = lazy(() => import("./pages/AddNew"));
 const AddNewOwner = lazy(() => import("./pages/AddNewOwner"));
 const Search = lazy(() => import("./pages/Search"));
 const AssignTrip = lazy(() => import("./components/AssignTrip"));
+const Error = lazy(() => import("./pages/Error"));
 
 const App = () => {
 	const dispatch = useDispatch();
@@ -85,7 +86,7 @@ const App = () => {
 					<Route path="/add/new/staff" element={<h1>Add new Staff</h1>} />
 					<Route path="/add/trip" element={<AssignTrip />} />
 				</Route>
-				<Route path="*" element={<h2>Page Not Found</h2>} />
+				<Route path="*" element={<Error />} />
 			</Routes>
 			<ToastContainer
 				position="bottom-center"
