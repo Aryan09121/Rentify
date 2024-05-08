@@ -26,7 +26,7 @@
 		height: 297mm; /* A4 height */
 		padding: 5mm 10mm;
 		> .header {
-			height: 20mm;
+			height: 30mm;
 			width: 100%;
 			// background-color: #029e9d;
 		}
@@ -36,7 +36,7 @@
 			width: 100%;
 		}
 		> .pdfBody {
-			height: 252mm;
+			height: 242mm;
 			width: 100%;
 			// background-color: rgb(214, 227, 214);
 			> h2 {
@@ -100,7 +100,6 @@
 		}
 	}
 	> .invoiceBody {
-		// margin-top: 0.1rem;
 		border-bottom: 1.4px solid #828181;
 		width: 100%;
 		// border: 1.4px solid #828181;
@@ -127,7 +126,7 @@
 						padding-top: 0.2rem;
 						padding-bottom: 0.2rem;
 						padding-right: 0.2rem;
-						font-size: 0.7rem;
+						font-size: 0.6rem;
 						font-family: "poppins", arial;
 					}
 				}

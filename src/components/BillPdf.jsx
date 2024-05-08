@@ -270,6 +270,56 @@ function BillPdf() {
 										</div>
 									);
 								})}
+								{invoices?.map((invoice, idx) => {
+									return (
+										<div key={invoice.from + idx}>
+											<div>
+												<p>{invoice?.length + idx + 1}</p>
+												<article>
+													Minor Maint Charges - {invoice.model}
+													<br />
+													Description: Minor maintainance charges for {invoice.model} Vehicles on actual per KM reading
+													basis
+													<br />
+													Vehicle Count - {invoice.count} Nos
+													<br />
+													Period - {invoice.periodFrom} To {invoice.periodTo}
+												</article>
+											</div>
+											<div>
+												<p>{invoice.totalKmQty}</p>
+												<p>KM</p>
+												<p>{invoice.kmRate}</p>
+												<p>{invoice.totalKmAmount.toFixed(2)}</p>
+											</div>
+										</div>
+									);
+								})}
+								{invoices?.map((invoice, idx) => {
+									return (
+										<div key={invoice.from + idx}>
+											<div>
+												<p>{invoice?.length + idx + 1}</p>
+												<article>
+													Minor Maint Charges - {invoice.model}
+													<br />
+													Description: Minor maintainance charges for {invoice.model} Vehicles on actual per KM reading
+													basis
+													<br />
+													Vehicle Count - {invoice.count} Nos
+													<br />
+													Period - {invoice.periodFrom} To {invoice.periodTo}
+												</article>
+											</div>
+											<div>
+												<p>{invoice.totalKmQty}</p>
+												<p>KM</p>
+												<p>{invoice.kmRate}</p>
+												<p>{invoice.totalKmAmount.toFixed(2)}</p>
+											</div>
+										</div>
+									);
+								})}
 							</div>
 							<div className="invoiceFooter">
 								<div>
