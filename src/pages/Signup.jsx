@@ -10,15 +10,9 @@ import { userLogin } from "../redux/actions";
 
 function SignUp() {
 	const navigate = useNavigate();
-	const [isLoginPage, setIsLoginPage] = useState(true);
 	const [loginDetails, setLoginDetails] = useState({
 		username: "",
 		password: "",
-	});
-	const [signupDetails, setSignupDetails] = useState({
-		username: "",
-		password: "",
-		phone: "",
 	});
 	const { error, message, loading, user, isAuthenticated } = useSelector((state) => state.user);
 
@@ -27,19 +21,12 @@ function SignUp() {
 	const onChangeHandler = (e) => {
 		const name = e.target.name;
 		const value = e.target.value;
-		if (isLoginPage) {
-			setLoginDetails({ ...loginDetails, [name]: value });
-		} else {
-			setSignupDetails({ ...loginDetails, [name]: value });
-		}
+		setLoginDetails({ ...loginDetails, [name]: value });
 	};
 
 	const loginSubmitHandler = (e) => {
 		e.preventDefault();
 		dispatch(userLogin(loginDetails));
-	};
-	const signupSubmitHandler = (e) => {
-		e.preventDefault();
 	};
 
 	useEffect(() => {
@@ -61,51 +48,22 @@ function SignUp() {
 
 	return (
 		<div className="signup">
-			<nav className="login-nav">
-				<img src={travelsImg} alt="travels image" />
-				<button>Sign Up</button>
-			</nav>
 			<main className="login-main">
 				<section>
-					<img src={signupImg} alt="sign up image" />
-					<form onSubmit={isLoginPage ? loginSubmitHandler : signupSubmitHandler}>
-						<h2>{isLoginPage ? "Log In" : "Sign Up"}</h2>
+					<form onSubmit={loginSubmitHandler}>
+						<h2>{"Log In"}</h2>
 						<p>Please Enter your details</p>
 						<input
-							value={isLoginPage ? loginDetails.username : signupDetails.username}
+							value={loginDetails.username}
 							onChange={onChangeHandler}
 							name="username"
 							type="text"
 							placeholder="Email or Phone Number ..."
 						/>
-						{isLoginPage ? null : (
-							<input onChange={onChangeHandler} value={signupDetails.phone} name="phone" type="text" placeholder="Phone Number" />
-						)}
-						<input
-							onChange={onChangeHandler}
-							value={isLoginPage ? loginDetails.password : signupDetails.password}
-							name="password"
-							type="password"
-							placeholder="password"
-						/>
+						<input onChange={onChangeHandler} value={loginDetails.password} name="password" type="password" placeholder="password" />
 						<button className="submitBtn" type="submit">
-							{loading ? "Loading..." : isLoginPage ? "Log In" : "Sign Up"}
+							{loading ? "Loading..." : "Log In"}
 						</button>
-						<aside>OR</aside>
-						<div>
-							<button>
-								<FaGoogle />
-								{isLoginPage ? "Log In" : "Sign Up"} with Google
-							</button>
-							<button>
-								<FaFacebookF />
-								{isLoginPage ? "Log In" : "Sign Up"} with Facebook
-							</button>
-						</div>
-						<p className="account">
-							{isLoginPage ? "Don't" : "Already"} have an Account?{" "}
-							<span onClick={() => setIsLoginPage((curr) => !curr)}>{isLoginPage ? "Sign Up" : "Log In"}</span>
-						</p>
 					</form>
 				</section>
 			</main>
