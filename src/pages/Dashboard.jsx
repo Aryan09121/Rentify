@@ -36,6 +36,10 @@ const Dashboard = () => {
 		setSelectedTrip(trip.trip);
 	};
 
+	const completeTrip = (trip) => {
+		alert(trip._id);
+	};
+
 	useEffect(() => {
 		if (trips?.length !== 0) {
 			const data = trips?.map((trip) => ({
@@ -95,7 +99,7 @@ const Dashboard = () => {
 									<p>{selectedTrip?.start?.km} km</p>
 									<h4>Start Kilometers</h4>
 								</div>
-								<button>Complete Trip</button>
+								<button onClick={() => completeTrip(selectedTrip)}>Complete Trip</button>
 							</TableFooter>
 						</TableContainer>
 					)}
