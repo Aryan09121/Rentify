@@ -18,19 +18,6 @@ import { getAllInvoices, getIndividualInvoices } from "../redux/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-const analyticsFilterOptions = [
-	{ value: "month", label: "Monthly" },
-	{ value: "all", label: "Annualy" },
-];
-
-const DropdownIndicator = (props) => {
-	return (
-		<components.DropdownIndicator {...props}>
-			<IoIosArrowDown />
-		</components.DropdownIndicator>
-	);
-};
-
 function formatDate(date, d = false) {
 	// Ensure date is in the correct format
 	if (!(date instanceof Date)) {
@@ -54,42 +41,6 @@ function formatDate(date, d = false) {
 
 	return formattedDate;
 }
-
-const customStyles = {
-	control: (provided) => ({
-		...provided,
-		// padding: "0.3rem 0.6rem",
-		cursor: "pointer",
-		backgroundColor: "#fff",
-		transition: "all 0.3s ease-in-out",
-		border: "2.5px solid rgb(2, 158, 157)",
-		"&:hover, &:focus": {
-			backgroundColor: "#fff",
-			// padding: "0.2rem",
-			color: "rgb(2, 158, 157)",
-		},
-	}),
-	singleValue: (provided) => ({
-		...provided,
-		padding: "0.2rem",
-		borderRadius: "10px",
-		fontSize: "1.1rem",
-		opacity: "0.8",
-		transition: "all 0.3s ease-in-out",
-		"&:hover, &:focus": {
-			// padding: "0.3rem 0.6rem",
-			color: "rgb(2, 158, 157)",
-		},
-	}),
-	dropdownIndicator: (provided) => ({
-		...provided,
-		color: "#000",
-		fontSize: "2rem",
-		"&:hover, &:focus": {
-			color: "rgb(2, 158, 157)",
-		},
-	}),
-};
 
 const invoiceHeaders = ["Invoice ID", "Vehicle Owner", "Email", "Issue Date", "Amount", "Status"];
 
@@ -237,13 +188,6 @@ const Invoice = () => {
 					<>
 						<section className="invoice_filter">
 							<h2>Invoices</h2>
-							<Select
-								className="filter"
-								defaultValue={analyticsFilterOptions[0]}
-								options={analyticsFilterOptions}
-								components={{ DropdownIndicator }}
-								styles={customStyles}
-							/>
 						</section>
 						<section className="invoice_widget_container">
 							<WidgetItem designation="All Invoices" value={allinvoices?.length ? allinvoices?.length : 0} />
@@ -309,26 +253,8 @@ const Invoice = () => {
 };
 
 const WidgetItem = ({ value, designation, percent }) => {
-	const [showDropdown, setShowDropdown] = useState(false);
-	const [selectedOption, setSelectedOption] = useState(1);
-
-	const handleDropdownClick = () => {
-		setShowDropdown(!showDropdown);
-	};
-
-	const closeDropdown = (e) => {
-		if (e.target.id === "svg") {
-			return;
-		}
-		setShowDropdown(false);
-	};
-
-	useEffect(() => {
-		setShowDropdown(false);
-	}, [selectedOption]);
-
 	return (
-		<article className="invoice_widget" onClick={closeDropdown}>
+		<article className="invoice_widget">
 			<div className="invoice_widget_header">
 				<span>
 					<svg width="18" height="19" viewBox="0 0 18 19" xmlns="http://www.w3.org/2000/svg">
@@ -336,36 +262,6 @@ const WidgetItem = ({ value, designation, percent }) => {
 					</svg>
 					{designation}
 				</span>
-				<BsThreeDotsVertical id="svg" onClick={handleDropdownClick} />
-				{showDropdown && (
-					<div className="dropdown-menu">
-						{/* Dropdown items */}
-						<div
-							style={selectedOption === 1 ? { backgroundColor: "#d70372" } : { backgroundColor: "white" }}
-							onClick={() => {
-								setSelectedOption(1);
-							}}
-						>
-							Option 1
-						</div>
-						<div
-							style={selectedOption === 2 ? { backgroundColor: "#d70372" } : { backgroundColor: "white" }}
-							onClick={() => {
-								setSelectedOption(2);
-							}}
-						>
-							Option 2
-						</div>
-						<div
-							style={selectedOption === 3 ? { backgroundColor: "#d70372" } : { backgroundColor: "white" }}
-							onClick={() => {
-								setSelectedOption(3);
-							}}
-						>
-							Option 3
-						</div>
-					</div>
-				)}
 			</div>
 			<h2>{Math.abs(value)}</h2>
 			{percent && (

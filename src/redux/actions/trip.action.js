@@ -106,3 +106,66 @@ export const getAllTrips = () => async (dispatch) => {
 		});
 	}
 };
+
+export const completeTrip = (id, end) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "COMPLETE_TRIPS_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/complete/trip?id=${id}`, { end }, config);
+
+		const payload = data.message;
+
+		dispatch({
+			type: "COMPLETE_TRIPS_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "COMPLETE_TRIPS_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
+
+export const updateOffroad = (id, offroad) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "UPDATE_OFFROAD_REQUEST",
+		});
+		console.log(offroad);
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/update/offroad?id=${id}`, { offroad }, config);
+
+		const payload = data.message;
+
+		dispatch({
+			type: "UPDATE_OFFROAD_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "UPDATE_OFFROAD_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};

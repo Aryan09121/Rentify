@@ -77,13 +77,13 @@ export const AssignRow = ({ rowdata, className = "tableContents" }) => {
 
 export const tripDetailsRow = ({ rowdata, className }) => {
 	return (
-		<Link to={`/trip/${rowdata._id}`} className={`tableContents ${className}`} style={{ gridTemplateColumns: `repeat(${5},1fr)` }}>
+		<div className={`tableContents ${className}`} style={{ gridTemplateColumns: `repeat(${5},1fr)` }}>
 			<h3>{rowdata.tripId}</h3>
 			<h3>{rowdata.car.model}</h3>
 			<h3>{rowdata.car.registrationNo}</h3>
 			<h3>{rowdata.district}</h3>
 			<button className={rowdata.status === "ongoing" ? "tableBtn purplebg" : "tableBtn greenbg"}>{rowdata.status}</button>
-		</Link>
+		</div>
 	);
 };
 

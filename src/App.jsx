@@ -25,6 +25,7 @@ const Settings = lazy(() => import("./pages/Settings"));
 const BillDetails = lazy(() => import("./components/BillDetails"));
 const AddNew = lazy(() => import("./pages/AddNew"));
 const AddNewOwner = lazy(() => import("./pages/AddNewOwner"));
+const AddNewComapny = lazy(() => import("./pages/AddNewCompany"));
 const Search = lazy(() => import("./pages/Search"));
 const AssignTrip = lazy(() => import("./components/AssignTrip"));
 const Error = lazy(() => import("./pages/Error"));
@@ -82,8 +83,7 @@ const App = () => {
 					<Route path="/billings/:id" element={<BillDetails />} />
 					<Route path="/add/new" element={<AddNew />} />
 					<Route path="/add/new/owner" element={<AddNewOwner />} />
-					<Route path="/add/new/driver" element={<h1>Add New Driver</h1>} />
-					<Route path="/add/new/staff" element={<h1>Add new Staff</h1>} />
+					<Route path="/add/new/company" element={<AddNewComapny />} />
 					<Route path="/add/trip" element={<AssignTrip />} />
 				</Route>
 				<Route path="*" element={<Error />} />

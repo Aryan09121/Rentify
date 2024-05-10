@@ -207,7 +207,10 @@
 				@include flex(row, space-around, flex-start, 1.5rem);
 				flex-wrap: wrap;
 				> button {
-					margin-left: auto;
+					&:nth-child(5) {
+						margin-left: auto;
+					}
+					// margin-left: auto;
 					padding: 1rem 2.2rem;
 					border-radius: 4px;
 					color: #fff;
@@ -227,6 +230,62 @@
 					}
 				}
 			}
+		}
+	}
+}
+
+// confirmDateBox
+
+.confirmDateBox {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	// height: 100px;
+	border-radius: 5px;
+	border: 1.2px solid #029e9d;
+
+	> div {
+		padding: 2rem;
+		height: 100%;
+		width: 100%;
+		display: flex;
+		align-items: flex-start;
+		justify-content: flex-start;
+		flex-direction: column;
+
+		> h5 {
+			font-size: 1.2rem;
+		}
+		> div {
+			// width: 100%;
+			margin-top: 1rem;
+			margin-left: auto;
+			> button {
+				padding: 0.6rem 1.4rem;
+				font-size: 1.2rem;
+				border-radius: 5px;
+				color: #fcfcfc;
+				&:first-child {
+					background-color: #029e9d;
+				}
+				&:last-child {
+					background-color: #d70372;
+					margin-left: 1rem;
+				}
+			}
+		}
+	}
+}
+
+.css-b62m3t-container {
+	width: 100% !important;
+}
+
+.selectdatediv {
+	> .filter {
+		.css-b62m3t-container {
+			width: 100% !important;
 		}
 	}
 }

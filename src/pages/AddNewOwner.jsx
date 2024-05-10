@@ -395,21 +395,6 @@ const AddNewOwner = () => {
 									<section className="ownerDetails">
 										<h3>Owner Information</h3>
 										<div className="ownerDetailsFormDiv">
-											<div className="ownerPhotoUpload">
-												{photo ? <img src={photo} alt="owner photo" /> : <img src={userImg} alt="owner profile" />}
-												<Files
-													className="files-dropzone"
-													onChange={handlePhotoChange}
-													onError={handleError}
-													accepts={["image/*"]}
-													multiple={false}
-													maxFileSize={10000000}
-													clickable
-													minFileSize={0}
-												>
-													Upload Photo
-												</Files>
-											</div>
 											<div className="ownerDataUpload">
 												<div>
 													<input

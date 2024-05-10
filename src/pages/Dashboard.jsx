@@ -10,11 +10,14 @@ import {
 	DashboardRow,
 	tripDetailsRow,
 	TableFooter,
+	Loader,
 } from "../components/";
 import { getAllTrips } from "../redux/actions";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import { HiTrendingUp, HiTrendingDown } from "react-icons/hi";
-import { IoIosSettings } from "react-icons/io";
+import { IoIosArrowDown, IoIosCalendar, IoIosClose, IoIosSettings } from "react-icons/io";
 // import { useDispatch } from "react-redux";
 
 import { tripHeaders } from "../assets/data/dashboard";
@@ -23,21 +26,71 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import TxtLoader from "../components/TxtLoader";
+import { toast } from "react-toastify";
+import Select, { components } from "react-select";
+import { completeTrip, updateOffroad } from "../redux/actions/trip.action";
+
+const DropdownIndicator = (props) => {
+	return (
+		<components.DropdownIndicator {...props}>
+			<IoIosArrowDown />
+		</components.DropdownIndicator>
+	);
+};
+
+const customStyles = {
+	control: (provided) => ({
+		...provided,
+		// padding: "0.3rem 0.6rem",
+		cursor: "pointer",
+		backgroundColor: "#fff",
+		width: "100%",
+		transition: "all 0.3s ease-in-out",
+		border: "2.5px solid rgb(2, 158, 157)",
+		"&:hover, &:focus": {
+			backgroundColor: "#fff",
+		},
+	}),
+	singleValue: (provided) => ({
+		...provided,
+		padding: "0.2rem",
+		borderRadius: "10px",
+		width: "100%",
+		fontSize: "1.1rem",
+		opacity: "0.8",
+		transition: "all 0.3s ease-in-out",
+		"&:hover, &:focus": {
+			// padding: "0.3rem 0.6rem",
+		},
+	}),
+	dropdownIndicator: (provided) => ({
+		...provided,
+		color: "#000",
+		fontSize: "2rem",
+		"&:hover, &:focus": {
+			color: "rgb(2, 158, 157)",
+		},
+	}),
+};
 
 // Extract the latest trip status for each driver
 
 const Dashboard = () => {
-	const { trips } = useSelector((state) => state.trip);
+	const { trips, loading } = useSelector((state) => state.trip);
 	const [tripdata, setTripdata] = useState([]);
 	const [selectedTrip, setSelectedTrip] = useState();
+	const [isOpen, setIsOpen] = useState(false);
+	const [isShown, setIsShown] = useState(false);
+
+	// const [isOpen, setIsOpen] = useState(false);
 	const dispatch = useDispatch();
 
 	const onSelectTrip = (trip) => {
 		setSelectedTrip(trip.trip);
 	};
 
-	const completeTrip = (trip) => {
-		alert(trip._id);
+	const offroadHandler = () => {
+		alert("offroad");
 	};
 
 	useEffect(() => {
@@ -55,6 +108,11 @@ const Dashboard = () => {
 	useEffect(() => {
 		dispatch(getAllTrips());
 	}, []);
+
+	if (loading) {
+		return <Loader />;
+	}
+
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
@@ -99,7 +157,8 @@ const Dashboard = () => {
 									<p>{selectedTrip?.start?.km} km</p>
 									<h4>Start Kilometers</h4>
 								</div>
-								<button onClick={() => completeTrip(selectedTrip)}>Complete Trip</button>
+								{selectedTrip?.status !== "completed" && <button onClick={() => setIsShown(true)}>Update offroad</button>}
+								{selectedTrip?.status !== "completed" && <button onClick={() => setIsOpen(true)}>Complete Trip</button>}
 							</TableFooter>
 						</TableContainer>
 					)}
@@ -115,8 +174,172 @@ const Dashboard = () => {
 						</Table>
 					</TableContainer>
 				)}
+				{selectedTrip && <Confirm setSelectedTrip={setSelectedTrip} open={isOpen} setIsOpen={setIsOpen} trip={selectedTrip} />}
+				{selectedTrip && <ConfirmDate open={isShown} setIsOpen={setIsShown} trip={selectedTrip} />}
 			</main>
 		</div>
+	);
+};
+
+const ConfirmDate = ({ open, setIsOpen, trip }) => {
+	const [dates, setDates] = useState([]);
+	const [date, setDate] = useState();
+	const dispatch = useDispatch();
+
+	const handleDateSelect = () => {
+		// alert("date selected");
+	};
+
+	const deleteDate = (value) => {
+		setDates((prevDates) => prevDates.filter((date) => date.value !== value));
+	};
+
+	const onDateChange = (e) => {
+		setDate(e.toLocaleDateString());
+		setDates((prev) => {
+			return [
+				...prev,
+				{
+					value: e + 1,
+					label: (
+						<p style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+							{e.toLocaleDateString()}
+							<IoIosClose
+								style={{ fontSize: "1.7rem", cursor: "pointer", color: "red" }}
+								onClick={() => deleteDate(e.toLocaleDateString())}
+							/>
+						</p>
+					),
+				},
+			];
+		});
+	};
+
+	const update = (trip) => {
+		if (dates.length > 0) {
+			const offroad = {
+				count: dates.length,
+				dates: dates.map((date) => date.value),
+			};
+			// console.log(offroad);
+			dispatch(updateOffroad(trip._id, offroad));
+			dispatch(getAllTrips());
+			setIsOpen(false);
+		}
+	};
+
+	return (
+		<dialog className="confirmDateBox" open={open}>
+			<div style={{ padding: "2rem" }}>
+				<IoIosClose
+					style={{ position: "absolute", right: "3%", top: "3%", fontSize: "2rem", cursor: "pointer", color: "red" }}
+					onClick={() => setIsOpen(false)}
+				/>
+				<h5>Update Offroad Days</h5>
+
+				<div
+					className="selectdatediv"
+					style={{
+						width: "100%",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						gap: "1rem",
+						flexDirection: "column",
+						fontFamily: "poppins",
+					}}
+				>
+					<div
+						style={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "flex-start",
+							gap: "1rem",
+							placeItems: "center",
+							width: "100%",
+						}}
+					>
+						<label style={{ width: "40%", textAlign: "left", fontSize: "1rem", fontWeight: 300 }}>Select Dates</label>
+						<DatePicker
+							showIcon
+							icon={IoIosCalendar}
+							selected={date}
+							onChange={onDateChange}
+							dateFormat="Pp"
+							toggleCalendarOnIconClick
+							onSelect={handleDateSelect}
+						/>
+					</div>
+					{dates.length > 0 && (
+						<Select className="filter" defaultValue={dates[0]} options={dates} components={{ DropdownIndicator }} styles={customStyles} />
+					)}
+					<button onClick={() => update(trip)}>Add offroad</button>
+				</div>
+			</div>
+		</dialog>
+	);
+};
+
+const Confirm = ({ open, setSelectedTrip, setIsOpen, trip }) => {
+	const [endKm, setEndKm] = useState(false);
+	const dispatch = useDispatch();
+
+	const onCompleteTrip = async (trip, end) => {
+		await dispatch(completeTrip(trip._id, end));
+		await setSelectedTrip(null);
+		dispatch(getAllTrips());
+	};
+
+	return (
+		<dialog className="confirmBox" open={open}>
+			<div style={{ padding: "2rem" }}>
+				<IoIosClose
+					style={{ position: "absolute", right: "3%", top: "3%", fontSize: "2rem", cursor: "pointer", color: "red" }}
+					onClick={() => setIsOpen(false)}
+				/>
+				<h5>Are you want to end the trip??</h5>
+				<h6>Fill the neccessary details</h6>
+
+				<div
+					style={{
+						width: "100%",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						gap: "1rem",
+						flexDirection: "column",
+						fontFamily: "poppins",
+					}}
+				>
+					<div
+						style={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "flex-start",
+							gap: "1rem",
+							placeItems: "center",
+							width: "100%",
+						}}
+					>
+						<label style={{ width: "40%", textAlign: "left", fontSize: "1rem", fontWeight: 300 }}>End Kilometer</label>
+						<input
+							style={{ width: "100%", padding: ".4rem 1rem", borderRadius: "3px" }}
+							type="number"
+							value={endKm}
+							onChange={(e) => setEndKm(e.target.value)}
+						/>
+					</div>
+					<button
+						onClick={() => {
+							onCompleteTrip(trip, { date: new Date(), km: endKm });
+							setIsOpen(false);
+						}}
+					>
+						Complete Trip
+					</button>
+				</div>
+			</div>
+		</dialog>
 	);
 };
 

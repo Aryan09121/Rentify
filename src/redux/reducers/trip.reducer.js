@@ -15,6 +15,28 @@ export const tripReducer = createReducer(initialState, (builder) => {
 			state.loading = false;
 			state.error = action.payload;
 		})
+		.addCase("UPDATE_OFFROAD_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("UPDATE_OFFROAD_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.message = action.payload;
+		})
+		.addCase("UPDATE_OFFROAD_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
+		.addCase("COMPLETE_TRIPS_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("COMPLETE_TRIPS_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.message = action.payload;
+		})
+		.addCase("COMPLETE_TRIPS_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
 		.addCase("GET_ALL_TRIPS_REQUEST", (state) => {
 			state.loading = true;
 		})

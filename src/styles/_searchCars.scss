@@ -133,6 +133,11 @@
 	font-size: 1rem;
 	// width: fit-content;
 }
-.css-1nmdiq5-menu {
-	width: 150px !important;
+h2 {
+	> .filter {
+		> .css-1nmdiq5-menu {
+			width: 150px !important;
+			right: 4.2%;
+		}
+	}
 }

@@ -52,8 +52,8 @@ const AddNew = () => {
 				<Bar />
 				<h2>Add Owner</h2>
 				<section className="widget-container">
-					<WidgetItem designation="Owner" percent={2.8} value={243} />
-					{/* <WidgetItem designation="Driver" percent={-2.5} value={143} /> */}
+					<WidgetItem designation="Owner" value={4} />
+					<WidgetItem designation="company" percent={5} value={13} />
 					{/* <WidgetItem designation="Staff" percent={4} value={243} /> */}
 				</section>
 				<section className="barChartContainer">

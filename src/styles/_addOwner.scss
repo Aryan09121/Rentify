@@ -93,30 +93,8 @@
 }
 
 .ownerDetailsFormDiv {
-	> .ownerPhotoUpload {
-		@include flex(column, center, center, 1rem);
-		padding: 2rem 1rem;
-		width: 25%;
-		border: 2px solid #029e9d;
-		border-radius: 3px;
-		> img {
-			width: 70%;
-			border-radius: 50%;
-			@include square(9rem);
-		}
-		> .files-dropzone {
-			color: #fcfcfc;
-			background-color: #029e9d;
-			text-align: center;
-			padding: 1rem 1rem;
-			width: fit-content;
-			margin: 0 auto;
-			margin-top: 1rem;
-			border-radius: 3px;
-		}
-	}
 	> .ownerDataUpload {
-		width: 75%;
+		width: 100%;
 		padding: 0 2rem;
 		// background-color: cyan;
 		@include flex(column, center, center, 1rem);
@@ -131,7 +109,7 @@
 			@include inputStyles;
 			border: 1.5px solid #029e9d;
 			border-radius: 3px;
-			width: 65%;
+			width: 100%;
 		}
 		> .css-b62m3t-container {
 			width: 35%;

@@ -134,7 +134,7 @@ function BillDetails() {
 				};
 			});
 			const kmdata = invdata.map((inv, idx) => {
-				console.log(inv);
+				// console.log(inv);
 				// Calculate dayQty - offroad and then sum of all dayQty
 				const totalDayQty = inv.invoice.reduce((total, current) => {
 					return total + (current.dayQty - current.offroad);
@@ -192,7 +192,7 @@ function BillDetails() {
 				};
 			});
 			const data = invdata.map((inv, idx) => {
-				console.log(inv);
+				// console.log(inv);
 				// Calculate dayQty - offroad and then sum of all dayQty
 				const totalDayQty = inv.invoice.reduce((total, current) => {
 					return total + (current.dayQty - current.offroad);
