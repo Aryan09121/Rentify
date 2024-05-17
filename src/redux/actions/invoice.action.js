@@ -1,8 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-// const URI = "http://localhost:8000";
-// const URI = "https://unusual-jade-puppy.cyclic.app";
+const URI = import.meta.env.VITE_API_URL;
 
 export const generateInvoice = (invoice) => async (dispatch) => {
 	try {
@@ -19,7 +18,7 @@ export const generateInvoice = (invoice) => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/generate/invoice`, invoice, config);
+		const { data } = await axios.post(`${URI}/generate/invoice`, invoice, config);
 
 		const payload = {
 			message: data.message,
@@ -53,7 +52,7 @@ export const getAllInvoices = (invoice) => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/get/invoices`, invoice, config);
+		const { data } = await axios.get(`${URI}/get/invoices`, invoice, config);
 
 		const payload = {
 			message: data.message,
@@ -88,7 +87,7 @@ export const getAllOwnerInvoices = (invoice) => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/get/owner/invoices`, invoice, config);
+		const { data } = await axios.get(`${URI}/get/owner/invoices`, invoice, config);
 
 		const payload = {
 			message: data.message,
@@ -123,7 +122,7 @@ export const getVendorsInvoices = (invoice) => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/get/vendors/invoices`, invoice, config);
+		const { data } = await axios.get(`${URI}/get/vendors/invoices`, invoice, config);
 
 		const payload = {
 			message: data.message,
@@ -158,7 +157,7 @@ export const getIndividualInvoices = () => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/get/individual/invoices`, config);
+		const { data } = await axios.get(`${URI}/get/individual/invoices`, config);
 
 		const payload = data.data;
 
@@ -190,7 +189,7 @@ export const getSingleInvoice = (id) => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/get/invoice?id=${id}`, { id }, config);
+		const { data } = await axios.get(`${URI}/get/invoice?id=${id}`, { id }, config);
 
 		const payload = data.data;
 
@@ -222,7 +221,7 @@ export const payInvoice = (id) => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/pay/invoice?id=${id}`, { id }, config);
+		const { data } = await axios.post(`${URI}/pay/invoice?id=${id}`, { id }, config);
 
 		const payload = {
 			message: data.message,
@@ -260,7 +259,7 @@ export const payAllInvoice = (ids) => async (dispatch) => {
 
 		// eslint-disable-next-line no-unused-vars
 		for (const id of ids) {
-			dt = await axios.post(`http://localhost:8000/api/v1/admin/pay/invoice?id=${id}`, { id }, config);
+			dt = await axios.post(`${URI}/pay/invoice?id=${id}`, { id }, config);
 		}
 
 		const { data } = dt;
@@ -298,7 +297,7 @@ export const payOwnerBill = (id, transaction) => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/pay/owner?id=${id}`, { transaction }, config);
+		const { data } = await axios.post(`${URI}/pay/owner?id=${id}`, { transaction }, config);
 
 		const payload = {
 			message: data.message,

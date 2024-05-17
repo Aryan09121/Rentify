@@ -1,8 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-// const URI = "http://localhost:8000";
-// const URI = "https://unusual-jade-puppy.cyclic.app";
+const URI = import.meta.env.VITE_API_URL;
 
 export const assignSingleTrip = (trip) => async (dispatch) => {
 	try {
@@ -19,7 +18,7 @@ export const assignSingleTrip = (trip) => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/add/trip`, trip, config);
+		const { data } = await axios.post(`${URI}/add/trip`, trip, config);
 
 		const payload = {
 			message: "Trips Assigned Successfully",
@@ -53,7 +52,7 @@ export const assignTrip = (trips) => async (dispatch) => {
 		};
 		trips.forEach(async (trip) => {
 			// eslint-disable-next-line no-unused-vars
-			const { data } = await axios.post(`http://localhost:8000/api/v1/admin/add/trip`, trip, config);
+			const { data } = await axios.post(`${URI}/add/trip`, trip, config);
 		});
 		dispatch({
 			type: "ASSIGN_TRIPS_SUCCESS",
@@ -82,7 +81,7 @@ export const getAllTrips = () => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/get/trips`, config);
+		const { data } = await axios.get(`${URI}/get/trips`, config);
 
 		const payload = {
 			trips: data.data,
@@ -116,7 +115,7 @@ export const completeTrip = (id, end) => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/complete/trip?id=${id}`, { end }, config);
+		const { data } = await axios.post(`${URI}/complete/trip?id=${id}`, { end }, config);
 
 		const payload = data.message;
 
@@ -148,7 +147,7 @@ export const updateOffroad = (id, offroad) => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/update/offroad?id=${id}`, { offroad }, config);
+		const { data } = await axios.post(`${URI}/update/offroad?id=${id}`, { offroad }, config);
 
 		const payload = data.message;
 

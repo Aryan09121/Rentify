@@ -1,8 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const URI = "http://localhost:8000";
-// const URI = "https://unusual-jade-puppy.cyclic.app";
+const URI = import.meta.env.VITE_API_URL;
 
 export const getAllCars = () => async (dispatch) => {
 	try {
@@ -18,7 +17,7 @@ export const getAllCars = () => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/cars`, config);
+		const { data } = await axios.get(`${URI}/cars`, config);
 		const payload = {
 			cars: data.data,
 			message: data.message,
@@ -50,7 +49,7 @@ export const getSingleCar = (id) => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.get(`${URI}/api/v1/admin/singleCar?id=${id}`, config);
+		const { data } = await axios.get(`${URI}/singleCar?id=${id}`, config);
 		const payload = {
 			car: data.data,
 			message: data.message,
@@ -82,7 +81,7 @@ export const getGroupedCar = (param) => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.get(`${URI}/api/v1/admin/get/car/brand?param=${param}`, config);
+		const { data } = await axios.get(`${URI}/get/car/brand?param=${param}`, config);
 		const payload = {
 			cars: data.data,
 			message: data.message,
@@ -100,36 +99,3 @@ export const getGroupedCar = (param) => async (dispatch) => {
 		});
 	}
 };
-
-// export const getCarsByOwnerId = () => async (dispatch) => {
-// 	try {
-// 		dispatch({
-// 			type: "GET_CARS_BY_OWNER_ID_REQUEST",
-// 		});
-
-// 		const token = Cookies.get("token"); // Get the token from the cookie
-
-// 		const config = {
-// 			headers: {
-// 				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-// 			},
-// 		};
-
-// 		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/owners`, config);
-// 		const payload = {
-// 			owners: data.data,
-// 			message: data.message,
-// 		};
-
-// 		dispatch({
-// 			type: "GET_CARS_BY_OWNER_ID_SUCCESS",
-// 			payload,
-// 		});
-// 	} catch (error) {
-// 		console.log(error);
-// 		dispatch({
-// 			type: "GET_CARS_BY_OWNER_ID_FAILURE",
-// 			payload: error.response.data.message,
-// 		});
-// 	}
-// };

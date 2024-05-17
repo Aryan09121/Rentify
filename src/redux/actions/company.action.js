@@ -1,8 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const URI = "http://localhost:8000";
-// const URI = "https://unusu/al-jade-puppy.cyclic.app";
+const URI = import.meta.env.VITE_API_URL;
 
 export const addCompanies = (companies) => async (dispatch) => {
 	try {
@@ -19,7 +18,7 @@ export const addCompanies = (companies) => async (dispatch) => {
 		};
 
 		for (const company of companies) {
-			await axios.post(`${URI}/api/v1/admin/add/company`, company, config);
+			await axios.post(`${URI}/add/company`, company, config);
 		}
 
 		dispatch({
@@ -49,7 +48,7 @@ export const addSingleComapny = (company) => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.post(`${URI}/api/v1/admin/add/company`, company, config);
+		const { data } = await axios.post(`${URI}/add/company`, company, config);
 		// console.log(data);
 
 		const payload = data.message;
@@ -81,7 +80,7 @@ export const getAllCompanies = () => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.get(`${URI}/api/v1/admin/get/companies`, config);
+		const { data } = await axios.get(`${URI}/get/companies`, config);
 
 		const payload = data.data;
 

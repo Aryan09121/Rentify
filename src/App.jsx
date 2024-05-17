@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Route, Routes } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
@@ -29,7 +30,7 @@ const AddNewComapny = lazy(() => import("./pages/AddNewCompany"));
 const Search = lazy(() => import("./pages/Search"));
 const AssignTrip = lazy(() => import("./components/AssignTrip"));
 const Vendors = lazy(() => import("./pages/Vendors"));
-const OwnerPdf = lazy(() => import("./components/ownerPdf"));
+const OwnerPdf = lazy(() => import("./components/OwnerPdf"));
 const Error = lazy(() => import("./pages/Error"));
 
 const App = () => {

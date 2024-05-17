@@ -1,8 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const URI = "http://localhost:8000";
-// const URI = "https://unusual-jade-puppy.cyclic.app";
+const URI = import.meta.env.VITE_API_URL;
 
 export const modifyGst = (gst) => async (dispatch) => {
 	try {
@@ -18,7 +17,7 @@ export const modifyGst = (gst) => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.post(`${URI}/api/v1/admin/update/gst`, { gstValue: gst }, config);
+		const { data } = await axios.post(`${URI}/update/gst`, { gstValue: gst }, config);
 		const payload = {
 			cars: data.data,
 			message: data.message,
@@ -51,7 +50,7 @@ export const getGst = () => async (dispatch) => {
 			},
 		};
 
-		const { data } = await axios.get(`${URI}/api/v1/admin/get/gst`, config);
+		const { data } = await axios.get(`${URI}/get/gst`, config);
 		const payload = data.data;
 
 		dispatch({
@@ -83,9 +82,9 @@ export const updateRate = (rate, type) => async (dispatch) => {
 
 		let data;
 		if (type === "day") {
-			data = await axios.post(`${URI}/api/v1/admin/update/car/dayrate`, { model: rate.model, rate: rate.rate }, config);
+			data = await axios.post(`${URI}/update/car/dayrate`, { model: rate.model, rate: rate.rate }, config);
 		} else {
-			data = await axios.post(`${URI}/api/v1/admin/update/car/kmrate`, { model: rate.model, rate: rate.rate }, config);
+			data = await axios.post(`${URI}/update/car/kmrate`, { model: rate.model, rate: rate.rate }, config);
 		}
 		const payload = data.data.message;
 
