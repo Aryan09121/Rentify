@@ -75,7 +75,6 @@ const AdminSidebar = () => {
 			>
 				{/* <h2>Logo.</h2> */}
 				<img src={logo} alt="user image" />
-				<h2>{user?.name}</h2>
 				<h5>Admin</h5>
 				<DivOne location={location} />
 

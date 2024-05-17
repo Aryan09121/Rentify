@@ -38,7 +38,7 @@ function Bar({ query, handleSearch }) {
 				</i>
 				<img src={userImg} alt="user iamge" />
 				<div>
-					<h5>{user?.name}</h5>
+					<h5>Perfect Travels</h5>
 					<p>Admin</p>
 				</div>
 			</article>
