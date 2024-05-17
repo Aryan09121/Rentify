@@ -120,7 +120,6 @@ const Dashboard = () => {
 						<button>Assign Trip</button>
 					</Link>
 				</section>
-
 				{/* <section className="widget-container">
 					<WidgetItem percent={2.8} value={340000} heading="Income" color="rgba(0,115,255)" />
 					<WidgetItem percent={-2.5} value={400} heading="Paid" color="rgba(0,198,202)" />
@@ -159,17 +158,16 @@ const Dashboard = () => {
 						</TableContainer>
 					)}
 				</section>
-				{tripdata?.length > 0 && (
-					<TableContainer className="dashboardTripTableContainer">
-						<TableHeading>
-							<p>Trip Details </p>
-						</TableHeading>
-						<Table>
-							<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${tripHeaders.length},1fr)` }} />
-							<TableBody onClick={onSelectTrip} TableRow={DashboardRow} data={tripdata.reverse()} />
-						</Table>
-					</TableContainer>
-				)}
+
+				<TableContainer className="dashboardTripTableContainer">
+					<TableHeading>
+						<p>Trip Details </p>
+					</TableHeading>
+					<Table>
+						<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${tripHeaders.length},1fr)` }} />
+						<TableBody onClick={onSelectTrip} TableRow={DashboardRow} data={tripdata.reverse()} />
+					</Table>
+				</TableContainer>
 				{selectedTrip && <Confirm setSelectedTrip={setSelectedTrip} open={isOpen} setIsOpen={setIsOpen} trip={selectedTrip} />}
 				{selectedTrip && <ConfirmDate open={isShown} setIsOpen={setIsShown} trip={selectedTrip} />}
 			</main>
