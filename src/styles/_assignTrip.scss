@@ -94,6 +94,14 @@
 				font-weight: 500;
 				font-size: 1rem;
 				cursor: pointer;
+				position: relative;
+				> svg {
+					position: absolute;
+					top: 0%;
+					left: -10%;
+					font-size: 0.5rem;
+					color: red;
+				}
 			}
 			> input {
 				@include inputStyles;

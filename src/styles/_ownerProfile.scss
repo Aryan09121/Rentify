@@ -6,6 +6,17 @@
 	> h2 {
 		font-size: 2.2rem;
 		margin: 1rem 2rem;
+		display: flex;
+		align-items: center;
+		> button {
+			margin-left: auto;
+			padding: 0.6rem 2rem;
+			display: block;
+			border-radius: 5px;
+			background-color: #029e9d;
+			color: #fcfcfc;
+			font-size: 1.2rem;
+		}
 	}
 	// filter div
 	> .filter {
@@ -62,6 +73,25 @@
 					font-family: "Gilroy";
 					font-weight: 500;
 					font-size: 0.9rem;
+				}
+			}
+			> button {
+				@include flex(row, start, start, 0.2rem);
+				background-color: transparent;
+				padding: 0;
+				align-items: center;
+				> svg {
+					font-size: 1.4rem;
+				}
+				padding-left: 1rem;
+				background-color: #fcfcfc;
+				border-radius: 5px;
+				> input {
+					border-radius: 5px;
+					font-size: 1rem;
+					@include inputStyles;
+					// background-color: red;
+					padding: 0.6rem 1rem;
 				}
 			}
 		}

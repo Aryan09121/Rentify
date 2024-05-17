@@ -239,6 +239,12 @@
 		> h5 {
 			font-size: 1.2rem;
 		}
+		> input {
+			@include inputStyles;
+			margin: 0.6rem 0;
+			padding: 0.7rem 1rem;
+			border: 1.5px solid #029e9d;
+		}
 		> div {
 			// width: 100%;
 			margin-top: 1rem;

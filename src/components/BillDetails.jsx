@@ -4,16 +4,17 @@ import AdminSidebar from "./AdminSidebar";
 import Bar from "./Bar";
 // import Table from "./Table";
 
-import { billDetailsData, billDetailsHeaders } from "../assets/data/bill";
+import { billDetailsHeaders } from "../assets/data/bill";
 import { BillDetailsRow, Table, TableBody, TableContainer, TableFooter, TableHeaders, TableHeading } from "./TableHOC";
 // import { useNavigate } from "react-router-dom";
-import { Filter } from "../pages/InvoiceDetails";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { payAllInvoice } from "../redux/actions/invoice.action";
+import { payOwnerBill } from "../redux/actions/invoice.action";
 import { toast } from "react-toastify";
 import TxtLoader from "./TxtLoader";
+import { getGst } from "../redux/actions/setting.action";
+import Loader from "./Loader";
 
 function formatDate(date) {
 	// Ensure date is in the correct format
@@ -35,39 +36,43 @@ function formatDate(date) {
 	return formattedDate;
 }
 
-const gst = 5;
+const fixed = (n) => {
+	return parseFloat(Number(n).toFixed(2));
+};
 
 function BillDetails() {
 	// const navigate = useNavigate();
 	const { message, error, loading } = useSelector((state) => state.invoice);
+	const { gst, loading: gstLoading } = useSelector((state) => state.settings);
 	const [owner, setOwner] = useState();
 	const [isOpen, setIsOpen] = useState(false);
 	const [total, setTotal] = useState([]);
-	const [invdata, setInvdata] = useState([]);
-	const [invoices, setInvoices] = useState([]);
 	const [datedata, setDatedata] = useState([]);
-	const [kmdata, setKmdata] = useState([]);
 	const [ids, setIds] = useState([]);
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const encodedInvoices = searchParams.get("invoices");
 	const encodedOwner = searchParams.get("owner");
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
-	const payBill = (data) => {
-		dispatch(payAllInvoice(data));
+	const payBill = (data, transaction) => {
+		dispatch(payOwnerBill(data, transaction));
 		// alert("payed");
 	};
 	const onConfirm = () => {
 		setIsOpen(true);
 	};
 
+	const viewPdf = () => {
+		const ownerJson = JSON.stringify(owner);
+		const encodedOwner = encodeURIComponent(ownerJson);
+
+		// Navigate to the route with the encoded invoices as a query parameter
+		navigate(`/ownerbill?owner=${encodedOwner}`);
+	};
+
 	useEffect(() => {
-		// Decode the encoded invoices and parse them back to an array
-		if (encodedInvoices.length > 0) {
-			const decodedInvoices = encodedInvoices ? JSON.parse(decodeURIComponent(encodedInvoices)) : [];
-			setInvdata(decodedInvoices);
-		}
 		if (encodedOwner) {
 			const decodedOwner = encodedOwner ? JSON.parse(decodeURIComponent(encodedOwner)) : null;
 			setOwner(decodedOwner);
@@ -75,211 +80,87 @@ function BillDetails() {
 	}, [encodedInvoices, encodedOwner]);
 
 	useEffect(() => {
-		if (invdata?.length > 0) {
-			const length = invdata?.length;
-			const datedata = invdata.map((inv, idx) => {
-				// Calculate dayQty - offroad and then sum of all dayQty
-				const totalDayQty = inv.invoice.reduce((total, current) => {
-					return total + (current.dayQty - current.offroad);
+		dispatch(getGst());
+	}, []);
+
+	useEffect(() => {
+		if (owner) {
+			// console.log(owner.bills);
+			const data = owner.bills.map((bill, idx) => {
+				const totalDays = bill.invoices.reduce((acc, inv) => acc + inv.days, 0);
+				const offroadDays = bill.invoices.reduce((acc, inv) => acc + inv.offroad, 0);
+				const model = bill.model;
+				const vehicleCount = bill.invoices.reduce((acc, inv) => {
+					// Check if the car exists in the accumulator
+					if (!acc.includes(inv.car)) {
+						// If it doesn't exist, add it to the accumulator
+						acc.push(inv.car);
+					}
+					return acc;
+				}, []).length;
+
+				const from = bill.invoices.reduce((acc, inv) => {
+					return acc < new Date(inv.start) ? acc : new Date(inv.start);
+				}, bill.invoices[0].start);
+				const to = bill.invoices.reduce((acc, inv) => {
+					return acc > new Date(inv.end) ? acc : new Date(inv.end);
+				}, bill.invoices[0].end);
+
+				const subTotal = bill.invoices.reduce((acc, inv) => {
+					return acc + (inv.days - inv.offroad) * inv.rent;
 				}, 0);
 
-				// Sum of all kmQty
-				const totalKmQty = inv.invoice.reduce((total, current) => {
-					return total + current.kmQty;
-				}, 0);
+				const gstAmount = fixed((subTotal * gst) / 100);
 
-				// Sum of all dayAmount
-				const totalDayAmount = inv.invoice.reduce((total, current) => {
-					return total + current.dayAmount;
-				}, 0);
+				const totalAmount = fixed(subTotal + gstAmount);
 
-				// Sum of all kmAmount
-				const totalKmAmount = inv.invoice.reduce((total, current) => {
-					return total + current.kmAmount;
-				}, 0);
-
-				// Find the earliest and latest dates
-				const fromDate = inv.invoice.reduce((earliest, current) => {
-					return earliest < new Date(current.from) ? earliest : new Date(current.from);
-				}, new Date(inv.invoice[0].from));
-
-				const toDate = inv.invoice.reduce((latest, current) => {
-					return latest > new Date(current.to) ? latest : new Date(current.to);
-				}, new Date(inv.invoice[0].to));
-
-				// Format the dates
-				const formattedFromDate = formatDate(fromDate);
-				const formattedToDate = formatDate(toDate);
 				return {
 					data: [
 						idx + 1,
-						`Rental (Hiring Charges) for - ${inv?.model} Vehicles on per day basis as per Annexure - 1 Vehicle Count - ${inv?.invoice?.length} Nos Period - ${formattedFromDate} To , ${formattedToDate}`,
-						totalDayQty,
+						`Rental (Hiring Charges) for - ${model} Vehicles on per day basis as per Annexure - 1 Vehicle Count - ${vehicleCount} Nos Period - ${formatDate(
+							from
+						)} To , ${formatDate(to)}`,
+						totalDays,
 						"Day",
-						inv?.invoice[0].dayRate,
-						totalDayAmount,
+						totalAmount,
 					],
 					_id: `Inv-${idx}${new Date()}`,
-					model: inv?.model,
-					count: inv?.invoice?.length,
-					periodFrom: formattedFromDate,
-					periodTo: formattedToDate,
-					totalDayQty: totalDayQty,
-					totalKmQty: totalKmQty,
-					totalDayAmount: totalDayAmount,
-					totalKmAmount: totalKmAmount,
-					dayRate: inv?.invoice[0].dayRate,
-					kmRate: inv?.invoice[0].kmRate,
+					model: model,
+					count: vehicleCount,
+					periodFrom: from,
+					periodTo: to,
+					totalDayQty: totalDays,
+					totalAmount: subTotal,
 					length: length,
 				};
 			});
-			const kmdata = invdata.map((inv, idx) => {
-				// console.log(inv);
-				// Calculate dayQty - offroad and then sum of all dayQty
-				const totalDayQty = inv.invoice.reduce((total, current) => {
-					return total + (current.dayQty - current.offroad);
-				}, 0);
-
-				// Sum of all kmQty
-				const totalKmQty = inv.invoice.reduce((total, current) => {
-					return total + current.kmQty;
-				}, 0);
-
-				// Sum of all dayAmount
-				const totalDayAmount = inv.invoice.reduce((total, current) => {
-					return total + current.dayAmount;
-				}, 0);
-
-				// Sum of all kmAmount
-				const totalKmAmount = inv.invoice.reduce((total, current) => {
-					return total + current.kmAmount;
-				}, 0);
-
-				// Find the earliest and latest dates
-				const fromDate = inv.invoice.reduce((earliest, current) => {
-					return earliest < new Date(current.from) ? earliest : new Date(current.from);
-				}, new Date(inv.invoice[0].from));
-
-				const toDate = inv.invoice.reduce((latest, current) => {
-					return latest > new Date(current.to) ? latest : new Date(current.to);
-				}, new Date(inv.invoice[0].to));
-
-				// Format the dates
-				const formattedFromDate = formatDate(fromDate);
-				const formattedToDate = formatDate(toDate);
-
-				return {
-					data: [
-						length + idx + 1,
-						`Minor maintainance charges on ${inv?.model} vehicle on actual per KM reading per basis as per the Annexure-1 vehicle count- ${inv?.invoice?.length} Nos, Period - ${formattedFromDate} To , ${formattedToDate}`,
-						totalKmQty,
-						"Km",
-						inv?.invoice[0].kmRate,
-						totalKmAmount.toFixed(2),
-					],
-					_id: `Inv-${idx}${new Date()}`,
-					model: inv?.model,
-					count: inv?.invoice?.length,
-					periodFrom: formattedFromDate,
-					periodTo: formattedToDate,
-					totalDayQty: totalDayQty,
-					totalKmQty: totalKmQty,
-					totalDayAmount: totalDayAmount,
-					totalKmAmount: totalKmAmount,
-					dayRate: inv?.invoice[0].dayRate,
-					kmRate: inv?.invoice[0].kmRate,
-					length: length,
-				};
-			});
-			const data = invdata.map((inv, idx) => {
-				// console.log(inv);
-				// Calculate dayQty - offroad and then sum of all dayQty
-				const totalDayQty = inv.invoice.reduce((total, current) => {
-					return total + (current.dayQty - current.offroad);
-				}, 0);
-
-				// Sum of all kmQty
-				const totalKmQty = inv.invoice.reduce((total, current) => {
-					return total + current.kmQty;
-				}, 0);
-
-				// Sum of all dayAmount
-				const totalDayAmount = inv.invoice.reduce((total, current) => {
-					return total + current.dayAmount;
-				}, 0);
-
-				// Sum of all kmAmount
-				const totalKmAmount = inv.invoice.reduce((total, current) => {
-					return total + current.kmAmount;
-				}, 0);
-
-				// Find the earliest and latest dates
-				const fromDate = inv.invoice.reduce((earliest, current) => {
-					return earliest < new Date(current.from) ? earliest : new Date(current.from);
-				}, new Date(inv.invoice[0].from));
-
-				const toDate = inv.invoice.reduce((latest, current) => {
-					return latest > new Date(current.to) ? latest : new Date(current.to);
-				}, new Date(inv.invoice[0].to));
-
-				// Format the dates
-				const formattedFromDate = formatDate(fromDate);
-				const formattedToDate = formatDate(toDate);
-
-				return {
-					_id: `Inv-${idx}${new Date()}`,
-					model: inv?.model,
-					count: inv?.invoice?.length,
-					periodFrom: formattedFromDate,
-					periodTo: formattedToDate,
-					totalDayQty: totalDayQty,
-					totalKmQty: totalKmQty,
-					totalDayAmount: totalDayAmount,
-					totalKmAmount: totalKmAmount,
-					dayRate: inv?.invoice[0].dayRate,
-					kmRate: inv?.invoice[0].kmRate,
-					length: length,
-				};
-			});
-			const invIds = invdata.flatMap((model) => {
-				return model.invoice.map((invoice) => invoice._id);
-			});
-			// console.log(data);
-			setDatedata(datedata);
-			setKmdata(kmdata);
-			setInvoices(data);
-			setIds(invIds);
+			setDatedata(data);
+			setIds(owner._id);
 		}
-	}, [invdata]);
+	}, [owner, gst]);
 
 	useEffect(() => {
-		if (invoices.length > 0) {
-			console.log(invoices);
+		if (owner) {
+			console.log(owner.bills);
 			// Calculate the sum of totalDayAmount and totalKmAmount for each invoice
-			const subtotals = invoices.map((invoice) => {
-				return invoice.totalDayAmount + invoice.totalKmAmount;
-			});
-
-			// Calculate the total of subtotals
-			const totalAmount = subtotals.reduce((total, amount) => {
-				return total + amount;
+			const subtotals = owner.bills.reduce((acc, bill) => {
+				return acc + bill.invoices.reduce((acc, inv) => acc + inv.amount, 0);
 			}, 0);
 
-			// Calculate GST (5%)
-			const gstAmount = totalAmount * (gst / 100);
+			const gstAmount = fixed(subtotals * (gst / 100));
 
-			// Calculate the bill total
-			const billTotal = totalAmount + gstAmount;
+			// Calculate the total of subtotals
+			const billTotal = fixed(subtotals + gstAmount);
 
 			// Set the total state
 			setTotal({
 				subtotals: subtotals,
-				totalAmount: totalAmount,
+				totalAmount: subtotals,
 				gstAmount: gstAmount,
 				billTotal: billTotal,
 			});
 		}
-	}, [invoices]);
+	}, [owner, gst]);
 
 	useEffect(() => {
 		if (error) {
@@ -290,14 +171,20 @@ function BillDetails() {
 			toast.success(message);
 			dispatch({ type: "CLEAR_MESSAGES" });
 		}
-	}, [message, error]);
+	}, [message, error, dispatch]);
+
+	if (gstLoading) {
+		return <Loader />;
+	}
 
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
 			<main className="ownerProfile">
 				<Bar />
-				<h2>Bills</h2>
+				<h2>
+					Bills <button onClick={viewPdf}>Send Bill</button>
+				</h2>
 				{/* <Filter /> */}
 				<TableContainer>
 					<TableHeading>
@@ -315,9 +202,8 @@ function BillDetails() {
 						</div>
 					</TableHeading>
 					<Table>
-						<TableHeaders style={{ gridTemplateColumns: `1fr 4fr 1fr 1fr 1fr 1fr` }} headers={billDetailsHeaders} />
+						<TableHeaders style={{ gridTemplateColumns: `1fr 4fr 1fr 1fr 1fr` }} headers={billDetailsHeaders} />
 						<TableBody TableRow={BillDetailsRow} data={datedata}></TableBody>
-						<TableBody TableRow={BillDetailsRow} data={kmdata}></TableBody>
 						<TableFooter>
 							<div>
 								<h4>Sub Total</h4>
@@ -344,19 +230,27 @@ function BillDetails() {
 }
 
 const Confirm = ({ open, setIsOpen, onPayBill, invoice }) => {
+	const [transaction, setTransaction] = useState("");
 	return (
 		<dialog className="confirmBox" open={open}>
 			<div>
 				<h5>Approve the Payment?? ‼️‼️</h5>
+				<input type="text" value={transaction} onChange={(e) => setTransaction(e.target.value)} placeholder="Enter Transaction Id..." />
 				<div>
 					<button
 						onClick={() => {
-							onPayBill(invoice);
-							setIsOpen(false);
+							if (transaction) {
+								onPayBill(invoice, transaction);
+								setTransaction("");
+								setIsOpen(false);
+							} else {
+								toast.error("Transaction id is required");
+							}
 						}}
 					>
 						Yes
 					</button>
+
 					<button onClick={() => setIsOpen(false)}>No, Cancel</button>
 				</div>
 			</div>

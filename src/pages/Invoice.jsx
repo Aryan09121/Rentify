@@ -1,18 +1,12 @@
 /* eslint-disable react/prop-types */
-import AdminSidebar from "../components/AdminSidebar";
-import { IoIosArrowDown } from "react-icons/io";
+import { AdminSidebar, Loader } from "../components";
 import Bar from "../components/Bar";
-import Select, { components } from "react-select";
 import { HiTrendingDown, HiTrendingUp } from "react-icons/hi";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { InvoiceRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "../components/TableHOC";
 import { FaPlus, FaSearch, FaUpload } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import NewInvoice from "../components/NewInvoice";
-// import { invoice } from "../assets/data/bill";
-// eslint-disable-next-line no-unused-vars
-import { generatePdf } from "../components/PdfGenerator";
 import { useNavigate } from "react-router-dom";
 import { getAllInvoices, getIndividualInvoices } from "../redux/actions";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,7 +36,7 @@ function formatDate(date, d = false) {
 	return formattedDate;
 }
 
-const invoiceHeaders = ["Invoice ID", "Vehicle Owner", "Email", "Issue Date", "Amount", "Status"];
+const invoiceHeaders = ["Invoice ID", "Company Name", "Email", "Issue Date", "Amount", "Status"];
 
 const Invoice = () => {
 	const [selectedInvoice, setSelectedInvoice] = useState("all");
@@ -50,7 +44,7 @@ const Invoice = () => {
 	const [invoiceData, setInvoiceData] = useState([]);
 	const [searchQuery, setSearchQuery] = useState(""); // State to hold search input value
 	const [isOpen, setIsOpen] = useState(false);
-	const { invoices, allinvoices, message, error } = useSelector((state) => state.invoice);
+	const { invoices, allinvoices, message, error, loading } = useSelector((state) => state.invoice);
 	const dispatch = useDispatch();
 
 	const navigate = useNavigate();
@@ -79,17 +73,19 @@ const Invoice = () => {
 		setFilteredInvoiceData(filteredData);
 	};
 
-	const generatePdf1 = (invoices, owner) => {
+	const generatePdf1 = (data) => {
 		// Convert the invoices array to a JSON string
-		const invoicesJson = JSON.stringify(invoices);
-		const ownerJson = JSON.stringify(owner);
+		const invoicesJson = JSON.stringify(data.invoices);
+		const ownerJson = JSON.stringify(data.company);
+		const id = JSON.stringify(data.data[0]);
+		const date = JSON.stringify(data.data[3]);
 
 		// Encode the JSON string to include it in the URL as a query parameter
 		const encodedInvoices = encodeURIComponent(invoicesJson);
 		const encodedOwner = encodeURIComponent(ownerJson);
 
 		// Navigate to the route with the encoded invoices as a query parameter
-		navigate(`/Bill?invoices=${encodedInvoices}&owner=${encodedOwner}`);
+		navigate(`/Bill?invoices=${encodedInvoices}&owner=${encodedOwner}&invId=${id}&date=${date}`);
 	};
 
 	useEffect(() => {
@@ -125,8 +121,8 @@ const Invoice = () => {
 		if (invoices) {
 			// console.log(invoices);
 			const data = invoices.map((invoice, idx) => {
-				const { owner } = invoice;
-				const { _id, name, email, createdAt } = owner;
+				const { company } = invoice;
+				const { _id, name, email } = company;
 
 				let totalAmount = 0; // Initialize totalAmount for each owner
 
@@ -134,6 +130,13 @@ const Invoice = () => {
 				invoice.invoices.forEach((invoice) => {
 					invoice.invoice.forEach((inv) => {
 						totalAmount += inv.totalAmount; // Sum up the totalAmount of each invoice
+					});
+				});
+
+				let createdDate;
+				invoice.invoices.forEach((invoice) => {
+					invoice.invoice.forEach((inv) => {
+						createdDate = inv.invoiceDate;
 					});
 				});
 
@@ -154,9 +157,9 @@ const Invoice = () => {
 					status = "paid";
 				}
 				return {
-					data: ["INV-10" + idx, name, email, formatDate(createdAt), totalAmount.toFixed(2)],
+					data: [String(idx + 1).padStart(3, "0"), name, email, formatDate(createdDate), totalAmount.toFixed(2)],
 					_id,
-					owner: owner,
+					company: company,
 					invoices: invoice.invoices,
 					status,
 				};
@@ -164,7 +167,7 @@ const Invoice = () => {
 			setInvoiceData(data);
 			setFilteredInvoiceData(data);
 		}
-	}, [invoices]);
+	}, [invoices, isOpen]);
 
 	useEffect(() => {
 		if (error) {
@@ -175,7 +178,11 @@ const Invoice = () => {
 			toast.success(message);
 			dispatch({ type: "CLEAR_MESSAGES" });
 		}
-	}, [message, error]);
+	}, [message, error, dispatch]);
+
+	if (loading) {
+		return <Loader />;
+	}
 
 	return (
 		<div className="admin-container">
@@ -190,9 +197,9 @@ const Invoice = () => {
 							<h2>Invoices</h2>
 						</section>
 						<section className="invoice_widget_container">
-							<WidgetItem designation="All Invoices" value={allinvoices?.length ? allinvoices?.length : 0} />
-							<WidgetItem designation="Unpaid Invoices" value={allinvoices?.filter((i) => i.status !== "paid")?.length || 2} />
-							<WidgetItem designation="Paid Invoices" value={allinvoices?.filter((i) => i.status === "paid")?.length || 0} />
+							<WidgetItem designation="All Invoices" value={invoiceData.length || 0} />
+							<WidgetItem designation="Paid Invoices" value={invoiceData.filter((i) => i.status === "paid").length || 0} />
+							<WidgetItem designation="Unpaid Invoices" value={invoiceData.filter((i) => i.status === "unpaid").length || 0} />
 						</section>
 						<TableContainer className="invoice_table_container">
 							<TableHeading>

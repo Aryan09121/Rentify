@@ -8,7 +8,7 @@ import { CUSTOME_STYLES } from "../assets/data/constants";
 
 import { customerHeaders, customerData, ownerSortOptions } from "../assets/data/owner";
 import { TableBody, Table, TableContainer, TableHeaders, TableHeading, OwnerRow } from "../components/TableHOC";
-import { FaSort } from "react-icons/fa";
+import { FaSearch, FaSort } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { getOwners } from "../redux/actions";
@@ -33,17 +33,7 @@ function OwnerProfile() {
 			// console.log(owners);
 
 			const ownerList = owners.map((owner, idx) => {
-				let status = "unpaid";
-				let allPaid = true;
-
-				const someUnpaid = owner.invoices.some((invoice) => invoice.status === "unpaid");
-				if (someUnpaid) {
-					allPaid = false;
-				}
-
-				if (allPaid) {
-					status = "paid";
-				}
+				let status = owner.bills.length > 0 ? "pending" : "paid";
 
 				return {
 					data: [idx, owner?.name, `${owner?.cars?.length} cars`, owner?.address?.city],
@@ -104,17 +94,13 @@ function OwnerProfile() {
 			<main className="ownerProfile">
 				<Bar />
 				<h2>Owner Profile</h2>
-				<Filter isOwnerProfile={true} onClickSearchHandler={searchOwner} />
+				{/* <Filter isOwnerProfile={true} onClickSearchHandler={searchOwner} /> */}
 				<TableContainer>
 					<TableHeading>
 						<p>Owner Profile</p>
-						<Select
-							defaultValue={ownerSortOptions[0]}
-							options={ownerSortOptions}
-							components={{ DropdownIndicator }}
-							onChange={handleSortChange}
-							styles={CUSTOME_STYLES}
-						/>
+						{/* <button>
+							<FaSearch /> <input type="text" placeholder="Search..." />
+						</button> */}
 					</TableHeading>
 					<Table>
 						<TableHeaders style={{ gridTemplateColumns: `repeat(${customerHeaders.length},1fr)` }} headers={customerHeaders} />

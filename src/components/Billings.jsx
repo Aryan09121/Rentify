@@ -3,13 +3,14 @@ import AdminSidebar from "./AdminSidebar";
 import Bar from "./Bar";
 // import Table from "./Table";
 
-import { billData, billHeaders } from "../assets/data/bill";
+import { billHeaders } from "../assets/data/bill";
 import { BillListRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllInvoices } from "../redux/actions";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { getGst } from "../redux/actions/setting.action";
+import { getAllOwnerInvoices } from "../redux/actions/invoice.action";
 
 function formatDate(date, d = false) {
 	// Ensure date is in the correct format
@@ -37,8 +38,9 @@ function formatDate(date, d = false) {
 
 function Billings() {
 	const dispatch = useDispatch();
-	const { invoices, message, error } = useSelector((state) => state.invoice);
+	const { ownerInvoices, message, error } = useSelector((state) => state.invoice);
 	const [invoiceData, setInvoiceData] = useState([]);
+	const [paidInvoicedata, setPaidInvoicedata] = useState([]);
 	const navigate = useNavigate();
 
 	const navigateToBill = (data) => {
@@ -57,50 +59,49 @@ function Billings() {
 	};
 
 	useEffect(() => {
-		if (invoices) {
-			// console.log(invoices);
-			const data = invoices.map((invoice, idx) => {
+		if (ownerInvoices) {
+			// console.log(ownerInvoices);
+			const isUniqueOwner = (owner, index, self) => {
+				return self.findIndex((o) => o.owner._id === owner.owner._id) === index;
+			};
+			// console.log(invoices.filter(isUniqueOwner));
+			const data = ownerInvoices.filter(isUniqueOwner).map((invoice, idx) => {
 				// console.log(invoice);
 				const { owner } = invoice;
-				const { _id, name, email, createdAt } = owner;
+				// console.log(owner);
+				if (owner.bills.length > 0) {
+					const { _id, name, email } = owner;
 
-				let totalAmount = 0; // Initialize totalAmount for each owner
+					let totalAmount = 0; // Initialize totalAmount for each owner
 
-				// Iterate through each invoice for the current owner
-				invoice.invoices.forEach((invoice) => {
-					invoice.invoice.forEach((inv) => {
-						totalAmount += inv.totalAmount; // Sum up the totalAmount of each invoice
+					// Iterate through each bills for the current owner
+					totalAmount = owner.bills.reduce((acc, bill) => {
+						return acc + bill.invoices.reduce((acc, inv) => acc + inv.amount, 0);
+					}, 0);
+
+					// console.log(totalAmount);
+
+					let createdDate;
+					invoice.invoices.forEach((invoice) => {
+						invoice.invoice.forEach((inv) => {
+							createdDate = inv.invoiceDate;
+						});
 					});
-				});
 
-				const modelInvoices = invoice.invoices;
-
-				let status = "unpaid";
-				let allPaid = true;
-
-				for (const modelInvoice of modelInvoices) {
-					const someUnpaid = modelInvoice.invoice.some((invoice) => invoice.status === "unpaid");
-					if (someUnpaid) {
-						allPaid = false;
-						break;
-					}
+					return {
+						data: [String(idx + 1).padStart(3, "0"), name, email, formatDate(createdDate), totalAmount.toFixed(2)],
+						_id,
+						owner: owner,
+						invoices: invoice.invoices,
+					};
+				} else {
+					return null;
 				}
-
-				if (allPaid) {
-					status = "paid";
-				}
-				return {
-					data: ["INV-10" + idx, name, email, formatDate(createdAt), totalAmount.toFixed(2)],
-					_id,
-					owner: owner,
-					invoices: invoice.invoices,
-					status,
-				};
 			});
-			// console.log(data);
-			setInvoiceData(data);
+
+			setInvoiceData(data.filter((i) => i !== null));
 		}
-	}, [invoices]);
+	}, [ownerInvoices]);
 
 	useEffect(() => {
 		if (error) {
@@ -114,7 +115,8 @@ function Billings() {
 	}, [message, error]);
 
 	useEffect(() => {
-		dispatch(getAllInvoices());
+		dispatch(getAllOwnerInvoices());
+		dispatch(getGst());
 	}, []);
 	return (
 		<div className="admin-container">
@@ -122,16 +124,20 @@ function Billings() {
 			<main className="ownerProfile">
 				<Bar />
 				<h2>Bills</h2>
-				<Filter />
-				<TableContainer>
-					<TableHeading>
-						<p>All Bills</p>
-					</TableHeading>
-					<Table>
-						<TableHeaders style={{ gridTemplateColumns: `repeat(${billHeaders.length},1fr)` }} headers={billHeaders} />
-						<TableBody TableRow={BillListRow} data={invoiceData} onClick={navigateToBill} />
-					</Table>
-				</TableContainer>
+				{/* {invoiceData.length > 0 && <Filter />} */}
+				{invoiceData.length > 0 && (
+					<>
+						<TableContainer>
+							<TableHeading>
+								<p>All Bills</p>
+							</TableHeading>
+							<Table>
+								<TableHeaders style={{ gridTemplateColumns: `repeat(${billHeaders.length},1fr)` }} headers={billHeaders} />
+								<TableBody TableRow={BillListRow} data={invoiceData} onClick={navigateToBill} />
+							</Table>
+						</TableContainer>
+					</>
+				)}
 			</main>
 		</div>
 	);

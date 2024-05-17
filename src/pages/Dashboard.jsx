@@ -89,10 +89,6 @@ const Dashboard = () => {
 		setSelectedTrip(trip.trip);
 	};
 
-	const offroadHandler = () => {
-		alert("offroad");
-	};
-
 	useEffect(() => {
 		if (trips?.length !== 0) {
 			const data = trips?.map((trip) => ({
@@ -125,11 +121,11 @@ const Dashboard = () => {
 					</Link>
 				</section>
 
-				<section className="widget-container">
+				{/* <section className="widget-container">
 					<WidgetItem percent={2.8} value={340000} heading="Income" color="rgba(0,115,255)" />
 					<WidgetItem percent={-2.5} value={400} heading="Paid" color="rgba(0,198,202)" />
 					<WidgetItem percent={4} value={23000} heading="Invoices" color="rgba(0,115,255)" />
-				</section>
+				</section> */}
 				<section className="driver-container">
 					{selectedTrip && (
 						<TableContainer className="dashboarddriverDetailsTableContainer">
@@ -170,7 +166,7 @@ const Dashboard = () => {
 						</TableHeading>
 						<Table>
 							<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${tripHeaders.length},1fr)` }} />
-							<TableBody onClick={onSelectTrip} TableRow={DashboardRow} data={tripdata} />
+							<TableBody onClick={onSelectTrip} TableRow={DashboardRow} data={tripdata.reverse()} />
 						</Table>
 					</TableContainer>
 				)}

@@ -118,11 +118,7 @@ export const OwnerRow = ({ rowdata, className = "tableContents" }) => {
 
 export const InvoiceRow = ({ rowdata, className = "tableContents", onClick }) => {
 	return (
-		<div
-			onClick={() => onClick(rowdata?.invoices, rowdata?.owner)}
-			className={className}
-			style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}
-		>
+		<div onClick={() => onClick(rowdata)} className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}>
 			{rowdata.data.map((data) => {
 				return <h3 key={rowdata._id}>{data}</h3>;
 			})}
@@ -151,10 +147,10 @@ export const BillListRow = ({ rowdata, className = "tableContents", onClick }) =
 
 export const BillDetailsRow = ({ rowdata, className = "tableContents", onClick }) => {
 	return (
-		<div onClick={() => onClick(rowdata._id)} style={{ gridTemplateColumns: `1fr 4fr 1fr 1fr 1fr 1fr` }} className={className}>
+		<div onClick={() => onClick(rowdata._id)} style={{ gridTemplateColumns: `1fr 4fr 1fr 1fr 1fr` }} className={className}>
 			{rowdata.data.map((data) => {
 				return (
-					<h3 style={{ textWrap: "balance", textAlign: "left" }} key={rowdata._id}>
+					<h3 style={{ textWrap: "balance", textAlign: "center" }} key={rowdata._id}>
 						{data}
 					</h3>
 				);

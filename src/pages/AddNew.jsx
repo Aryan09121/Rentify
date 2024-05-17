@@ -1,14 +1,15 @@
 /* eslint-disable react/prop-types */
-import AdminSidebar from "../components/AdminSidebar";
-import { FaArrowRight, FaUser } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCompanies } from "../redux/actions/company.action";
+import { getOwners } from "../redux/actions";
+import { AdminSidebar, Bar } from "../components/";
 import { TableContainer, Table, TableHeading } from "../components/TableHOC";
-import { IoMdAdd } from "react-icons/io";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { Box } from "@mui/system";
-
-import Bar from "../components/Bar";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { FaArrowRight, FaUser } from "react-icons/fa";
+import { IoMdAdd } from "react-icons/io";
 
 const xLabels = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -19,8 +20,11 @@ const dummyData = {
 };
 
 const AddNew = () => {
-	const [selectedYear, setSelectedYear] = useState(""); // State to hold the selected year
-	const [chartData, setChartData] = useState([]); // State to hold the chart data for the selected year
+	const [selectedYear, setSelectedYear] = useState("");
+	const [chartData, setChartData] = useState([]);
+	const { owners } = useSelector((state) => state.owner);
+	const { companies } = useSelector((state) => state.company);
+	const dispatch = useDispatch();
 
 	// Function to handle year selection
 	const handleYearChange = (event) => {
@@ -43,6 +47,8 @@ const AddNew = () => {
 		const latestYear = years.length > 0 ? years[years.length - 1] : "";
 		setSelectedYear(latestYear);
 		setChartData(dummyData[latestYear] || []);
+		dispatch(getAllCompanies());
+		dispatch(getOwners());
 	}, []);
 
 	return (
@@ -52,11 +58,10 @@ const AddNew = () => {
 				<Bar />
 				<h2>Add Owner</h2>
 				<section className="widget-container">
-					<WidgetItem designation="Owner" value={4} />
-					<WidgetItem designation="company" percent={5} value={13} />
-					{/* <WidgetItem designation="Staff" percent={4} value={243} /> */}
+					<WidgetItem designation="Owner" value={owners ? owners?.length : 0} />
+					<WidgetItem designation="company" percent={5} value={companies?.length > 0 ? companies?.length : 0} />
 				</section>
-				<section className="barChartContainer">
+				{/* <section className="barChartContainer">
 					<TableContainer className="addnewOwnerTable">
 						<TableHeading>
 							<button>
@@ -95,7 +100,7 @@ const AddNew = () => {
 							</Box>
 						</Table>
 					</TableContainer>
-				</section>
+				</section> */}
 			</main>
 		</div>
 	);

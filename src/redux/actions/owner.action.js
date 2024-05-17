@@ -69,6 +69,39 @@ export const getOwnerById = (id) => async (dispatch) => {
 		});
 	}
 };
+
+export const updateRate = (id, day) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "UPDATE_OWNER_RATE_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		const { data } = await axios.post(`${URI}/api/v1/admin/owner/edit/rate?id=${id}`, { day }, config);
+		const payload = {
+			message: data.message,
+		};
+
+		dispatch({
+			type: "UPDATE_OWNER_RATE_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "UPDATE_OWNER_RATE_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
+
 export const addOwners = (owners) => async (dispatch) => {
 	try {
 		dispatch({
@@ -84,8 +117,8 @@ export const addOwners = (owners) => async (dispatch) => {
 		};
 
 		for (const owner of owners) {
-			const { data } = await axios.post(`${URI}/api/v1/admin/add/owner`, owner, config);
-			console.log(data); // Call addSingleOwner function for each owner
+			await axios.post(`${URI}/api/v1/admin/add/owner`, owner, config);
+			// console.log(data); // Call addSingleOwner function for each owner
 		}
 
 		dispatch({

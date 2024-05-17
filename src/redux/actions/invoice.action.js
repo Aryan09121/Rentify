@@ -73,6 +73,76 @@ export const getAllInvoices = (invoice) => async (dispatch) => {
 	}
 };
 
+export const getAllOwnerInvoices = (invoice) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "GET_ALL_OWNER_INVOICES_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		// eslint-disable-next-line no-unused-vars
+		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/get/owner/invoices`, invoice, config);
+
+		const payload = {
+			message: data.message,
+			invoices: data.data,
+		};
+
+		dispatch({
+			type: "GET_ALL_OWNER_INVOICES_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "GET_ALL_OWNER_INVOICES_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
+
+export const getVendorsInvoices = (invoice) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "GET_VENDORS_INVOICE_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		// eslint-disable-next-line no-unused-vars
+		const { data } = await axios.get(`http://localhost:8000/api/v1/admin/get/vendors/invoices`, invoice, config);
+
+		const payload = {
+			message: data.message,
+			invoices: data.data,
+		};
+
+		dispatch({
+			type: "GET_VENDORS_INVOICE_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "GET_VENDORS_INVOICE_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
+
 export const getIndividualInvoices = () => async (dispatch) => {
 	try {
 		dispatch({
@@ -208,6 +278,41 @@ export const payAllInvoice = (ids) => async (dispatch) => {
 		console.log(error);
 		dispatch({
 			type: "PAY__ALL_INVOICE_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
+
+export const payOwnerBill = (id, transaction) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "PAY_OWNER_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		// eslint-disable-next-line no-unused-vars
+		const { data } = await axios.post(`http://localhost:8000/api/v1/admin/pay/owner?id=${id}`, { transaction }, config);
+
+		const payload = {
+			message: data.message,
+			invoice: data.data,
+		};
+
+		dispatch({
+			type: "PAY_OWNER_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "PAY_OWNER_FAILURE",
 			payload: error.response.data.message,
 		});
 	}

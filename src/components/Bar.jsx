@@ -1,15 +1,23 @@
 /* eslint-disable react/prop-types */
 import { BsSearch } from "react-icons/bs";
 import userImg from "../assets/userImage.png";
-import { IoIosSettings, IoMdMail } from "react-icons/io";
+import { IoIosSettings } from "react-icons/io";
 import { IoLogOut } from "react-icons/io5";
-import { FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../redux/actions";
 
 function Bar({ query, handleSearch }) {
+	const { user } = useSelector((state) => state.user);
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const handleSearchClick = () => {
 		navigate("/search");
+	};
+
+	const logoutHandler = () => {
+		dispatch(logoutUser());
+		navigate("/");
 	};
 
 	return (
@@ -23,15 +31,15 @@ function Bar({ query, handleSearch }) {
 					<IoMdMail />
 				</i> */}
 				<i onClick={() => navigate("/settings")}>
-					<IoIosSettings />
+					<IoIosSettings style={{ color: "#221E1F" }} />
 				</i>
-				<i>
-					<IoLogOut />
+				<i onClick={logoutHandler}>
+					<IoLogOut style={{ color: "red" }} />
 				</i>
 				<img src={userImg} alt="user iamge" />
 				<div>
-					<h5>Marvin</h5>
-					<p>sales</p>
+					<h5>{user?.name}</h5>
+					<p>Admin</p>
 				</div>
 			</article>
 		</div>

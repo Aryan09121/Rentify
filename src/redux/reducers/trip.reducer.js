@@ -7,13 +7,13 @@ export const tripReducer = createReducer(initialState, (builder) => {
 		.addCase("ASSIGN_TRIPS_REQUEST", (state) => {
 			state.loading = true;
 		})
-		.addCase("ASSIGN_TRIPS_SUCCESS", (state, action) => {
+		.addCase("ASSIGN_TRIPS_SUCCESS", (state) => {
 			state.loading = false;
-			state.message = action.payload.message;
+			state.message = "Trips Assign Successfully";
 		})
-		.addCase("ASSIGN_TRIPS_FAILURE", (state, action) => {
+		.addCase("ASSIGN_TRIPS_FAILURE", (state) => {
 			state.loading = false;
-			state.error = action.payload;
+			state.error = "Something went wrong! see logs for details";
 		})
 		.addCase("UPDATE_OFFROAD_REQUEST", (state) => {
 			state.loading = true;

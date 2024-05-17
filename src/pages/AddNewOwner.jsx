@@ -67,12 +67,23 @@ const DropdownIndicator = (props) => {
 
 // const ownersCarHeaders = ["Serial No", "Brand Name", "Kilometers", "Rate", "Total Days", "Amount"];
 
-const expectedOwnerHeaders = ["Name", "Phone Number", "Gender", "Email Id", "GSTIN Number", "PAN Number", "street", "city", "state", "pincode"];
-const expectedCarHeaders = ["gmail", "Brand", "Model", "Vehicle Registration Number", "km", "date", "rate (date)", "rate (km)"];
+const expectedOwnerHeaders = [
+	"Name",
+	"Phone Number",
+	"Gender",
+	"Email Id",
+	"GSTIN Number",
+	"PAN Number",
+	"street",
+	"city",
+	"state",
+	"pincode",
+	"HSNNO",
+];
+const expectedCarHeaders = ["gmail", "Brand", "Model", "Vehicle Registration Number", "km", "date", "Rent Charges"];
 
 const AddNewOwner = () => {
 	// ? states
-	const [photo, setPhoto] = useState();
 	const [tableData, setTableData] = useState([]);
 
 	// eslint-disable-next-line no-unused-vars
@@ -93,6 +104,7 @@ const AddNewOwner = () => {
 		email: "",
 		gst: "",
 		pan: "",
+		hsn: "",
 		address: {
 			street: "",
 			city: "",
@@ -110,10 +122,7 @@ const AddNewOwner = () => {
 			km: 0,
 			date: "",
 		},
-		rate: {
-			date: "",
-			km: "",
-		},
+		rent: "",
 	});
 
 	//  ? handlers
@@ -153,6 +162,7 @@ const AddNewOwner = () => {
 							email: data[3],
 							gst: data[4],
 							pan: data[5],
+							hsn: data[10],
 							address: {
 								street: data[6],
 								city: data[7],
@@ -196,19 +206,11 @@ const AddNewOwner = () => {
 								model: car[2],
 								registrationNo: car[3],
 								start: {
-									date: car[5],
 									km: car[4],
+									date: car[5],
 								},
-								rate: {
-									date: car[6],
-									km: car[7],
-								},
+								rent: car[6],
 							}));
-
-							console.log({
-								...owner,
-								cars: owner.cars.concat(cars),
-							});
 
 							return {
 								...owner,
@@ -282,20 +284,6 @@ const AddNewOwner = () => {
 		});
 	};
 
-	const handlePhotoChange = (files) => {
-		setPhoto(files[0].preview.url);
-		setOwner((prev) => {
-			return {
-				...prev,
-				avatar: files[0].preview.url,
-			};
-		});
-	};
-
-	const handleError = (error) => {
-		console.log("error code " + error.code + ": " + error.message);
-	};
-
 	const removeOwner = () => {
 		setOwnerFinal([]);
 	};
@@ -366,7 +354,7 @@ const AddNewOwner = () => {
 			toast.error(error);
 			dispatch({ type: "CLEAR_ERRORS" });
 		}
-	}, [error, message]);
+	}, [dispatch, error, message]);
 
 	return (
 		<div className="admin-container">

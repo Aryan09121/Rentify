@@ -50,6 +50,17 @@ export const ownerReducer = createReducer(initialState, (builder) => {
 			state.loading = false;
 			state.error = action.payload;
 		})
+		.addCase("UPDATE_OWNER_RATE_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("UPDATE_OWNER_RATE_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.message = action.payload.message;
+		})
+		.addCase("UPDATE_OWNER_RATE_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
 		.addCase("CLEAR_ERRORS", (state) => {
 			state.error = null;
 		})

@@ -1,12 +1,21 @@
 /* eslint-disable react/prop-types */
 import { BsSearch } from "react-icons/bs";
 import userImg from "../assets/userImage.png";
-import { IoIosSettings, IoMdMail } from "react-icons/io";
-import { FaBell } from "react-icons/fa";
+import { IoIosSettings } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { IoLogOut } from "react-icons/io5";
+import { logoutUser } from "../redux/actions";
 
 function Bar({ query, handleSearch }) {
+	const { user } = useSelector((state) => state.user);
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
+	const logoutHandler = () => {
+		dispatch(logoutUser());
+		navigate("/");
+	};
 
 	return (
 		<div className="bar">
@@ -15,19 +24,16 @@ function Bar({ query, handleSearch }) {
 				<input value={query} onChange={handleSearch} type="text" placeholder="Search Owners..." />
 			</div>
 			<article>
-				<i>
-					<IoMdMail />
-				</i>
 				<i onClick={() => navigate("/settings")}>
 					<IoIosSettings />
 				</i>
-				<i>
-					<FaBell />
+				<i onClick={logoutHandler}>
+					<IoLogOut style={{ color: "red" }} />
 				</i>
 				<img src={userImg} alt="user iamge" />
 				<div>
-					<h5>Marvin</h5>
-					<p>sales</p>
+					<h5>{user?.name}</h5>
+					<p>Admin</p>
 				</div>
 			</article>
 		</div>

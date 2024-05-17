@@ -20,17 +20,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { IoIosWarning } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { getOwnerById } from "../redux/actions";
+import { getGst } from "../redux/actions/setting.action";
 // import UpdateOwner from "./UpdateOwner";
-
-//  ?-- dropdown select
-
-const DropdownIndicator = (props) => {
-	return (
-		<components.DropdownIndicator {...props}>
-			<FaSort />
-		</components.DropdownIndicator>
-	);
-};
 
 function formatDate(date, d = false) {
 	// Ensure date is in the correct format
@@ -56,34 +47,41 @@ function formatDate(date, d = false) {
 	return formattedDate;
 }
 
-function findTotalDays(date) {
-	const givenDate = new Date(date);
-	const today = new Date();
-	const differenceMs = today - givenDate;
-	const differenceDays = differenceMs / (1000 * 60 * 60 * 24);
-	return Math.abs(Math.round(differenceDays));
+function findTotalDays(inv, car) {
+	const totalDay = inv?.reduce((acc, i) => {
+		if (i.car === car._id) {
+			return acc + i.dayQty;
+		} else {
+			return acc;
+		}
+	}, 0);
+	const offroad = inv?.reduce((acc, i) => {
+		if (i.car === car._id) {
+			return acc + i.offroad;
+		} else {
+			return acc;
+		}
+	}, 0);
+	return [totalDay, offroad] || 0;
 }
-
 const fixed = (n) => {
 	return parseFloat(Number(n).toFixed(2));
 };
-
-const unitOptions = [
-	{ value: "date", label: "DATE" },
-	{ value: "km", label: "KM" },
-];
 
 function OwnerDetails() {
 	const [cardata, setCarData] = useState([]);
 	// const [ownerdata] = useState(owner);
 	const [ownerdata, setOwnerdata] = useState({});
+	const [amountPending, setamountPending] = useState();
+	const [amountPaid, setAmountPaid] = useState();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const params = useParams();
 	const { owner } = useSelector((state) => state.owner);
+	const { gst } = useSelector((state) => state.settings);
 	const [sortedData, setSortedData] = useState([]);
-	const [totalkm, setTotalKm] = useState();
-	const [unit, setUnit] = useState("km");
+	const [totalDays, setTotalDays] = useState();
+	const [unit, setUnit] = useState("date");
 	const [carHeaders, setCarHeaders] = useState([]);
 
 	const handleSortChange = (selectedOption) => {
@@ -108,57 +106,72 @@ function OwnerDetails() {
 		setCarData(sortedDataCopy);
 	};
 
-	const remindOwner = () => {
-		window.open("https://wa.me/+917440649223?text=Your Payment is Due worth 99000");
-	};
-
 	useEffect(() => {
 		if (ownerdata) {
+			console.log(ownerdata.invoices);
 			const carsdata = ownerdata?.cars?.map((car, index) => {
+				console.log(ownerdata.invoices);
+				const totalDays = findTotalDays(ownerdata.invoices, car)[0];
+				const offroadDays = findTotalDays(ownerdata.invoices, car)[1];
+				const subTotal = (totalDays - offroadDays) * car.rent;
+				const totalAmount = (subTotal * gst) / 100 + subTotal;
 				return {
-					data: [
-						index + 1,
-						car?.brand,
-						unit === "km" ? (car.totalkm === 0 ? 0 : car?.totalkm - car?.start?.km) : findTotalDays(car?.createdAt),
-						unit === "km" ? `${car?.rate?.km} km` : car?.rate?.date,
-						unit === "km" ? fixed(car?.kmAmount) : fixed(car?.dayAmount),
-						fixed(car?.amount),
-					],
+					data: [index + 1, car?.brand, totalDays, offroadDays, car?.rent, fixed(subTotal), fixed(totalAmount)],
 					_id: car?._id,
 				};
 			});
-			const headers = ["Serial.No", "Brand Name", unit === "km" ? "Kilometers" : "Total Days", "Rate", "Sub Total", "Total Amount"];
+
+			// console.log(ownerdata.bills);
+			const pendingAmount = ownerdata?.bills?.reduce((acc, bill) => {
+				return (
+					acc +
+					bill?.invoices?.reduce((acc, inv) => {
+						const amount = inv.amount;
+						const gstAmount = fixed((amount * gst) / 100);
+						const totalAmount = fixed(amount + gstAmount);
+						return acc + totalAmount;
+					}, 0)
+				);
+			}, 0);
+
+			const paidAmount = ownerdata?.paid?.reduce((acc, bill) => {
+				// console.log(bill);
+				return (
+					acc +
+					bill?.bills.reduce(
+						(acc, i) =>
+							acc +
+							i.invoices?.reduce((acc, inv) => {
+								// console.log(inv);
+								const amount = inv?.amount;
+								const gstAmount = fixed((amount * gst) / 100);
+								const totalAmount = fixed(amount + gstAmount);
+								return fixed(acc + totalAmount);
+							}, 0),
+						0
+					)
+				);
+			}, 0);
+
+			setAmountPaid(paidAmount);
+			setamountPending(pendingAmount);
+
+			const headers = ["Serial.No", "Brand Name", "Total Days", "Offroad", "Rate", "Sub Total", "Total Amount"];
+
 			setCarHeaders(headers);
 			setSortedData(carsdata);
 		}
-	}, [ownerdata, unit]);
+	}, [ownerdata, unit, gst]);
 
 	useEffect(() => {
 		dispatch(getOwnerById(params.id));
+		dispatch(getGst());
 	}, [dispatch]);
 
 	useEffect(() => {
 		if (owner) {
-			console.log(owner);
-			const totalkm = owner.cars.reduce((acc, car) => {
-				if (car.totalkm === 0) {
-					return acc;
-				} else {
-					return acc + (car?.totalkm - car?.start?.km);
-				}
-			}, 0);
-
-			// const totalAmount = owner.cars.reduce((acc, car) => {
-			// 	if (car.totalkm === 0) {
-			// 		return acc;
-			// 	} else {
-			// 		return acc + (car?.totalkm - car?.start?.km);
-			// 	}
-			// }, 0);
-			setTotalKm(totalkm);
 			setOwnerdata(owner);
 			setCarData(owner.cars);
-			// setSortedData(owner.cars);
 		}
 	}, [owner]);
 
@@ -169,9 +182,6 @@ function OwnerDetails() {
 				<Bar />
 				<div>
 					<h2>Owner Details</h2>
-					<button onClick={remindOwner}>
-						Remind For Payment <IoIosWarning />
-					</button>
 				</div>
 				<section className="ownerProfileContainer">
 					<section className="profileDetails">
@@ -245,7 +255,7 @@ function OwnerDetails() {
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Total Km:</h4>
-								<h4 className="value">{totalkm ? totalkm : 0}</h4>
+								<h4 className="value">{totalDays ? totalDays : 0}</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Joined Date:</h4>
@@ -253,11 +263,11 @@ function OwnerDetails() {
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Amount Paid:</h4>
-								<h4 className="value">0</h4>
+								<h4 className="value">{amountPaid}</h4>
 							</div>
 							<div className="detialRow">
 								<h4 className="heading">Pending Amount:</h4>
-								<h4 className="value">0</h4>
+								<h4 className="value">{amountPending}</h4>
 							</div>
 						</div>
 					</section>
@@ -265,14 +275,6 @@ function OwnerDetails() {
 				<TableContainer className="vehicleTableContainer">
 					<TableHeading>
 						<p style={{ color: "#fcfcfc" }}>Car Details</p>
-						<Select
-							defaultValue={unitOptions[1]}
-							options={unitOptions}
-							components={{ DropdownIndicator }}
-							onChange={(e) => setUnit(e.value)}
-							// onChange={handleSortChange}
-							styles={CUSTOME_STYLES}
-						/>
 					</TableHeading>
 					{sortedData?.length === 0 ? (
 						<h2 style={{ textAlign: "center", margin: "1rem 0", color: "red" }}>No Cars are Found!</h2>

@@ -8,7 +8,7 @@ import { IoPersonAdd } from "react-icons/io5";
 import { BsFileText } from "react-icons/bs";
 import { AiTwotoneShop } from "react-icons/ai";
 // eslint-disable-next-line no-unused-vars
-import userImg from "../assets/userImage.png";
+import logo from "../assets/logo.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../redux/actions";
@@ -21,6 +21,7 @@ const AdminSidebar = () => {
 	const [phoneActive, setPhoneActive] = useState(window.innerWidth < 1000);
 	const { message, error } = useSelector((state) => state.user);
 	const navigate = useNavigate();
+	const { user } = useSelector((state) => state.user);
 
 	const resizeHandler = () => {
 		setPhoneActive(window.innerWidth < 1000);
@@ -73,9 +74,9 @@ const AdminSidebar = () => {
 				}
 			>
 				{/* <h2>Logo.</h2> */}
-				<img src={userImg} alt="user image" />
-				<h2>Marvin McKinny</h2>
-				<h5>President of Sales</h5>
+				<img src={logo} alt="user image" />
+				<h2>{user?.name}</h2>
+				<h5>Admin</h5>
 				<DivOne location={location} />
 
 				<button id="logout-sidebar" onClick={logoutHandler}>
@@ -97,8 +98,8 @@ const DivOne = ({ location }) => (
 		<ul>
 			<Li url="/dashboard" text="Dashboard" Icon={RiDashboardFill} location={location} />
 			<Li url="/invoices" text="Invoices" Icon={BsFileText} location={location} />
-			<Li url="/charges" text="Charges" Icon={AiTwotoneCar} location={location} />
-			{/* <Li url="/vendor" text="Vendors" Icon={AiTwotoneShop} location={location} /> */}
+			{/* <Li url="/charges" text="Charges" Icon={AiTwotoneCar} location={location} /> */}
+			<Li url="/vendors" text="Vendors" Icon={AiTwotoneShop} location={location} />
 			<Li url="/profile/owner" text="Profile" Icon={AiFillFileText} location={location} />
 			<Li url="/billings" text="Billings" Icon={AiFillFileText} location={location} />
 			<Li url="/add/new" text="Add New" Icon={IoPersonAdd} location={location} />

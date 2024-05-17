@@ -51,18 +51,13 @@ export const assignTrip = (trips) => async (dispatch) => {
 				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
 			},
 		};
-
 		trips.forEach(async (trip) => {
-			await axios.post(`http://localhost:8000/api/v1/admin/add/trip`, trip, config);
+			// eslint-disable-next-line no-unused-vars
+			const { data } = await axios.post(`http://localhost:8000/api/v1/admin/add/trip`, trip, config);
 		});
-
-		const payload = {
-			message: "Trips Assigned Successfully",
-		};
-
 		dispatch({
 			type: "ASSIGN_TRIPS_SUCCESS",
-			payload,
+			payload: "Trips assigned successfully",
 		});
 	} catch (error) {
 		console.log(error);

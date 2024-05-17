@@ -28,6 +28,8 @@ const AddNewOwner = lazy(() => import("./pages/AddNewOwner"));
 const AddNewComapny = lazy(() => import("./pages/AddNewCompany"));
 const Search = lazy(() => import("./pages/Search"));
 const AssignTrip = lazy(() => import("./components/AssignTrip"));
+const Vendors = lazy(() => import("./pages/Vendors"));
+const OwnerPdf = lazy(() => import("./components/ownerPdf"));
 const Error = lazy(() => import("./pages/Error"));
 
 const App = () => {
@@ -73,7 +75,9 @@ const App = () => {
 					<Route path="/invoices" element={<Invoice />} />
 					<Route path="/charges/details" element={<InvoiceDetails />} />
 					<Route path="/bill" element={<BillPdf />} />
+					<Route path="/ownerbill" element={<OwnerPdf />} />
 					<Route path="/charges" element={<Charges />} />
+					<Route path="/vendors" element={<Vendors />} />
 					<Route path="/profile/owner" element={<OwnerProfile />} />
 					<Route path="/profile/owner/edit/:id" element={<UpdateOwner />} />
 					<Route path="/profile/owner/:id" element={<OwnerDetails />} />

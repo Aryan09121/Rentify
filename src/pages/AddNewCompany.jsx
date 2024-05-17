@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import readXlsxFile from "read-excel-file";
 import { useDispatch, useSelector } from "react-redux";
-import { addOwners, addSingleOwner } from "../redux/actions";
+import { addCompanies, addSingleComapny } from "../redux/actions/company.action";
 
 // const ownersCarHeaders = ["Serial No", "Brand Name", "Kilometers", "Rate", "Total Days", "Amount"];
 
@@ -25,7 +25,7 @@ const expectedOwnerHeaders = [
 ];
 
 const AddNewOwner = () => {
-	const { message, error, loading } = useSelector((state) => state.owner);
+	const { message, error, loading } = useSelector((state) => state.company);
 	const dispatch = useDispatch();
 
 	// ? excel file
@@ -115,18 +115,14 @@ const AddNewOwner = () => {
 	const companyDetailsSubmitHandler = (e) => {
 		e.preventDefault();
 		if (companyFinal.length === 0) {
-			console.table(company);
-			// dispatch(addSingleOwner(company));
-		} else {
-			console.log("car reading...");
+			dispatch(addSingleComapny(company));
 		}
 	};
 
 	// ?? adding owners through excel files
 	const excelSubmitHandler = (e) => {
 		e.preventDefault();
-		console.log(companyFinal);
-		// dispatch(addOwners(companyFinal));
+		dispatch(addCompanies(companyFinal));
 	};
 
 	useEffect(() => {

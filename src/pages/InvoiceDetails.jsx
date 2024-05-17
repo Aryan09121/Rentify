@@ -175,7 +175,7 @@ export const Filter = ({ isOwnerProfile = false, onClickSearchHandler }) => {
 	const [query, setQuery] = useState("");
 	return (
 		<form className="filter" onSubmit={(e) => onClickSearchHandler(e, query)}>
-			{!isOwnerProfile && <Select defaultValue={options[0]} options={options} components={{ DropdownIndicator }} styles={CUSTOME_STYLES} />}
+			{/* {!isOwnerProfile && <Select defaultValue={options[0]} options={options} components={{ DropdownIndicator }} styles={CUSTOME_STYLES} />} */}
 			<div className="filterInp" style={isOwnerProfile ? { width: "100%" } : {}}>
 				<FaSearch />
 				<input

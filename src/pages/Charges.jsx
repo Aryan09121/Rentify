@@ -3,7 +3,7 @@ import { AdminSidebar, TxtLoader } from "../components";
 import TableSearchTOC from "../components/TableSearchHOC";
 import Bar from "../components/CarBar";
 import { useCallback, useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { getIndividualInvoices } from "../redux/actions";
 import { useDispatch, useSelector } from "react-redux";
 import Select, { components } from "react-select";
@@ -161,8 +161,11 @@ const SearchCars = () => {
 	const [query, setQuery] = useState("");
 	const [unit, setUnit] = useState("date");
 	const { allinvoices, loading } = useSelector((state) => state.invoice);
+	const location = useLocation();
+	const searchParams = new URLSearchParams(location.search);
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const compId = searchParams.get("id");
 
 	const [data, setData] = useState([]);
 
@@ -206,38 +209,43 @@ const SearchCars = () => {
 
 	useEffect(() => {
 		if (allinvoices?.length > 0) {
+			// const filterInvocie = allinvoices.filter();
 			const data = allinvoices?.map((inv, idx) => {
-				console.log(inv);
-				const { year, month } = extractYearMonthInWords(inv.invoiceDate);
-				return {
-					_id: inv?.car?._id,
-					invoice: inv,
-					sno: idx + 1,
-					district: inv.trip.district,
-					registrationno: inv?.car?.registrationNo,
-					make: inv?.car?.brand,
-					model: inv?.car?.model,
-					year: year,
-					frv: inv?.trip?.frvCode,
-					month: `${month.substring(0, 3)}-${year}`,
-					start: unit === "km" ? `${inv?.fromkm} km` : formatDate(inv?.from),
-					end: unit === "km" ? `${inv?.tokm} km` : formatDate(inv?.to),
-					qty: unit === "km" ? inv?.kmQty : inv?.dayQty,
-					unit: unit,
-					rate: unit === "km" ? inv?.kmRate : inv?.dayRate,
-					amount: unit === "km" ? inv?.kmAmount : inv?.dayAmount,
-					status: <p style={inv?.status === "paid" ? { color: "green" } : { color: "red" }}>{inv?.status}</p>,
-				};
+				// console.log(inv?.company?._id !== compId?.id);
+				if (inv.company._id.toString() !== compId) {
+					return null;
+				} else {
+					const { year, month } = extractYearMonthInWords(inv.invoiceDate);
+					return {
+						_id: inv?.car?._id,
+						invoice: inv,
+						sno: idx + 1,
+						district: inv.trip.district,
+						registrationno: inv?.car?.registrationNo,
+						make: inv?.car?.brand,
+						model: inv?.car?.model,
+						year: year,
+						frv: inv?.trip?.frvCode,
+						month: `${month.substring(0, 3)}-${year}`,
+						start: unit === "km" ? `${inv?.fromkm} km` : formatDate(inv?.from),
+						end: unit === "km" ? `${inv?.tokm} km` : formatDate(inv?.to),
+						qty: unit === "km" ? inv?.kmQty : inv?.dayQty,
+						unit: unit,
+						rate: unit === "km" ? inv?.kmRate : inv?.dayRate,
+						amount: unit === "km" ? inv?.kmAmount : inv?.dayAmount,
+						status: <p style={inv?.status === "paid" ? { color: "green" } : { color: "red" }}>{inv?.status}</p>,
+					};
+				}
 			});
 
 			// Create a copy of data with original sno order
-			const sortedData = data.map((item) => ({ ...item }));
+			const sortedData = data.filter((item) => item !== null).map((item) => ({ ...item }));
 
 			// Sort the copied array based on model
-			sortedData.sort((a, b) => a.model.localeCompare(b.model));
+			sortedData?.sort((a, b) => a?.model?.localeCompare(b?.model));
 
 			// Update sno property to maintain original order
-			sortedData.forEach((item, idx) => {
+			sortedData?.forEach((item, idx) => {
 				item.sno = idx + 1;
 			});
 

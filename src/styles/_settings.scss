@@ -3,6 +3,14 @@
 	&::-webkit-scrollbar {
 		display: none;
 	}
+
+	.css-1nmdiq5-menu {
+		margin-left: auto;
+		margin-right: auto;
+		right: 50%;
+		transform: translateX(50%);
+		width: 250px;
+	}
 	> h2 {
 		font-size: 2.2rem;
 		margin: 1rem 2rem;
@@ -53,7 +61,7 @@
 	> input {
 		@include inputStyles;
 		border: 1.5px solid #029e9d;
-		width: 30%;
+		width: 33%;
 		border-radius: 5px;
 	}
 	> button {

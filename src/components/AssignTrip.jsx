@@ -1,13 +1,16 @@
 /* eslint-disable react/prop-types */
-import { FaSearch } from "react-icons/fa";
+import { FaAsterisk, FaSearch } from "react-icons/fa";
 import AdminSidebar from "./AdminSidebar";
 import readXlsxFile from "read-excel-file";
 import Bar from "./Bar";
 import { AssignRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Select, { components } from "react-select";
 import { toast } from "react-toastify";
 import { assignSingleTrip, assignTrip, getAllCars } from "../redux/actions";
+import { getAllCompanies } from "../redux/actions/company.action";
+import { IoIosArrowDown } from "react-icons/io";
 
 const carsHeaders = ["S No", "Vehicle Reg No", "Car Brand", "Car Model", "Action"];
 
@@ -129,17 +132,77 @@ const AssignTrip = () => {
 
 export default AssignTrip;
 
-const expectedTripHeaders = ["Vehicle Registration Number", "District", "Year", "FRV Code", "Start Date", "Start Km"];
+const expectedTripHeaders = ["Vehicle Registration Number", "District", "FRV Code", "Start Date", "Start Km", "Company Name", "Year"];
+
+const DropdownIndicator = (props) => {
+	return (
+		<components.DropdownIndicator {...props}>
+			<IoIosArrowDown />
+		</components.DropdownIndicator>
+	);
+};
+
+const customStyles = {
+	control: (provided) => ({
+		...provided,
+		// padding: "0.3rem 0.6rem",
+		cursor: "pointer",
+		width: "100%",
+		marginLeft: "auto",
+		marginRight: "2rem",
+		backgroundColor: "#fff",
+		transition: "all 0.3s ease-in-out",
+		border: "2.5px solid rgb(2, 158, 157)",
+		Outline: "none",
+		"&:hover, &:focus": {
+			backgroundColor: "#fff",
+			// padding: "0.2rem",
+			color: "rgb(2, 158, 157)",
+		},
+	}),
+	singleValue: (provided) => ({
+		...provided,
+		padding: "0.1rem",
+		Outline: "none",
+		borderRadius: "10px",
+		fontSize: "1rem",
+		marginRight: "2rem",
+		width: "100%",
+		opacity: "0.8",
+		transition: "all 0.3s ease-in-out",
+		"&:hover, &:focus": {
+			// padding: "0.3rem 0.6rem",
+			color: "rgb(2, 158, 157)",
+		},
+	}),
+	dropdownIndicator: (provided) => ({
+		...provided,
+		color: "#000",
+		width: "fit-content",
+		fontSize: "1rem",
+		"&:hover, &:focus": {
+			color: "rgb(2, 158, 157)",
+		},
+	}),
+};
 
 const AssignForm = ({ carId }) => {
-	const [trip, setTrip] = useState({ registrationNo: "", district: "", year: "", frvCode: "", start: { date: "", km: "" } });
+	const [trip, setTrip] = useState({
+		registrationNo: "",
+		year: new Date().getFullYear(),
+		companyId: "",
+		district: "",
+		frvCode: "",
+		start: { date: "", km: "" },
+	});
+	const [companyOptions, setCompanyOptions] = useState([]);
+	const { companies } = useSelector((state) => state.company);
 	const dispatch = useDispatch();
 
 	const assignTripHandler = async (e) => {
 		e.preventDefault();
-		if (trip.district && trip.frvCode && trip.year && trip.registrationNo && trip.start.date && trip.start.km) {
+		if (trip.district && trip.frvCode && trip.registrationNo && trip.companyId) {
 			dispatch(assignSingleTrip(trip));
-			toast.success("hii");
 		} else {
 			toast.error("All Fields Are Required");
 		}
@@ -167,6 +230,7 @@ const AssignForm = ({ carId }) => {
 	};
 
 	useEffect(() => {
+		dispatch(getAllCompanies());
 		setTrip((curr) => {
 			return {
 				...curr,
@@ -175,19 +239,54 @@ const AssignForm = ({ carId }) => {
 		});
 	}, []);
 
+	useEffect(() => {
+		if (companies?.length > 0) {
+			const options = companies.map((company) => ({
+				value: company._id,
+				label: company.name,
+			}));
+			setCompanyOptions(options);
+		}
+	}, [companies]);
+
 	return (
 		<form className="assignform" onSubmit={assignTripHandler}>
 			<div>
-				<label htmlFor="district">District</label>
+				<label htmlFor="district">
+					District <FaAsterisk />
+				</label>
 				<input type="text" id="district" placeholder="District" name="district" value={trip.district} onChange={onHandleChange} />
 			</div>
 			<div>
-				<label htmlFor="year">Year</label>
-				<input type="number" id="year" placeholder="ex: 2024" name="year" value={trip.year} onChange={onHandleChange} />
+				<label htmlFor="company">
+					Select Company <FaAsterisk />
+				</label>
+				<Select
+					className="filter"
+					defaultValue={companyOptions[0]}
+					options={companyOptions}
+					components={{ DropdownIndicator }}
+					styles={customStyles}
+					id="company"
+					onChange={(e) => {
+						setTrip((curr) => {
+							return {
+								...curr,
+								companyId: e.value,
+							};
+						});
+					}}
+				/>
 			</div>
 			<div>
-				<label htmlFor="frvcode">FRV Code</label>
+				<label htmlFor="frvcode">
+					FRV Code <FaAsterisk />
+				</label>
 				<input type="text" id="frvcode" placeholder="ex. ASK101" name="frvCode" value={trip.frvCode} onChange={onHandleChange} />
+			</div>
+			<div>
+				<label htmlFor="year">Year</label>
+				<input type="text" id="year" placeholder="ex. 2024" name="year" value={trip.year} onChange={onHandleChange} />
 			</div>
 			<div>
 				<label htmlFor="startdate">Start Date</label>
@@ -231,12 +330,12 @@ const AssignExcel = () => {
 						return {
 							registrationNo: data[0],
 							district: data[1],
-							year: data[2],
-							frvCode: data[3],
+							frvCode: data[2],
 							start: {
-								date: data[4],
-								km: data[5],
+								date: data[3],
+								km: data[4],
 							},
+							companyName: data[5],
 						};
 					});
 					setTrips(newarr);
@@ -275,26 +374,6 @@ const AssignExcel = () => {
 				<input type="file" onChange={handleAssignTripFileChange} />
 				<h4>Upload Excel File</h4>
 			</div>
-			{/*<div>
-				<label htmlFor="district">District</label>
-				<input type="text" id="district" placeholder="District" />
-			</div>
-			<div>
-				<label htmlFor="year">Year</label>
-				<input type="number" id="year" placeholder="ex: 2024" />
-			</div>
-			<div>
-				<label htmlFor="frvcode">FRV Code</label>
-				<input type="text" id="frvcode" placeholder="ex. ASK101" />
-			</div>
-			<div>
-				<label htmlFor="startdate">Start Date</label>
-				<input type="date" id="startdate" placeholder="Start Date" />
-			</div>
-			<div>
-				<label htmlFor="startkm">Start Kilometers</label>
-				<input type="text" id="startkm" placeholder="start Kilometers" />
-			</div> */}
 			<button onClick={assignTripHandler}>Assign Trip</button>
 		</div>
 	);
