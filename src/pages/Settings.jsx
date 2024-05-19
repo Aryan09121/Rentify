@@ -177,6 +177,7 @@ const KmRateUpdate = () => {
 	const { message, error } = useSelector((state) => state.settings);
 	const { allcars } = useSelector((state) => state.car);
 	const [cars, setCars] = useState([]);
+	const [selectedCar, setSelectedCar] = useState("");
 	const [model, setModel] = useState();
 	const dispatch = useDispatch();
 
@@ -208,8 +209,6 @@ const KmRateUpdate = () => {
 				return acc;
 			}, []);
 
-			// console.log(data);
-
 			setCars(data);
 			setModel(data[0].value);
 		}
@@ -236,7 +235,9 @@ const KmRateUpdate = () => {
 				components={{ DropdownIndicator }}
 				styles={customStyles}
 				id="company"
-				onChange={(e) => setModel(e.value)}
+				onChange={(e) => {
+					setModel(e.value);
+				}}
 			/>
 			<input type="text" placeholder="Enter Km Rate..." value={kmRate} onChange={(e) => setKmRate(e.target.value)} />
 			<button onClick={() => updateDayRate()}>Update KM Rate</button>

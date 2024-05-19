@@ -41,11 +41,12 @@
 	margin: 1rem 2rem;
 	margin-top: 0.4rem;
 	gap: 2rem;
+	flex-wrap: wrap;
 	> section {
 		border-radius: 5px;
 	}
 	> .profileDetails {
-		width: 54%;
+		width: clamp(300px, 48%, 465px);
 		display: flex;
 		align-items: flex-start;
 		justify-content: flex-start;
@@ -132,7 +133,7 @@
 		}
 	}
 	> .registrationDetails {
-		width: 46%;
+		width: clamp(300px, 48%, 430px);
 		display: flex;
 		align-items: flex-start;
 		justify-content: flex-start;

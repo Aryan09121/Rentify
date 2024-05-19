@@ -168,7 +168,7 @@ const Row = ({ tdata, driverId, isAllBill, length, isBill, id, status, isOwnerPr
 			>
 				{tdata.map((data) => {
 					return (
-						<h3 style={{ textWrap: "balance", textAlign: "left" }} key={data}>
+						<h3 style={{ textWrap: "balance", textAlign: "center" }} key={data}>
 							{data}
 						</h3>
 					);

@@ -165,7 +165,7 @@ export const CarRow = ({ rowdata, className = "tableContents" }) => {
 		<Link style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }} className={className}>
 			{rowdata.data.map((data) => {
 				return (
-					<h3 style={{ textWrap: "balance", textAlign: "left" }} key={rowdata._id}>
+					<h3 style={{ textWrap: "balance", textAlign: "center" }} key={rowdata._id}>
 						{data}
 					</h3>
 				);
@@ -178,7 +178,7 @@ export const RowDefault = ({ rowdata, className = "tableContents" }) => {
 		<div style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }} className={className}>
 			{rowdata.data.map((data) => {
 				return (
-					<h3 style={{ textWrap: "balance", textAlign: "left" }} key={rowdata._id}>
+					<h3 style={{ textWrap: "balance", textAlign: "center" }} key={rowdata._id}>
 						{data}
 					</h3>
 				);

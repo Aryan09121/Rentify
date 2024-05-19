@@ -4,7 +4,7 @@ import Bar from "./Bar";
 import { useState, useEffect } from "react";
 import { AssignRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
 import { FaSearch } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCars, getSingleCar } from "../redux/actions";
 import { toast } from "react-toastify";
@@ -16,15 +16,18 @@ const UpdateOwner = () => {
 	const { allcars } = useSelector((state) => state.car);
 	const [query, setQuery] = useState("");
 	const [carsdata, setCarsdata] = useState([]);
-	const [tableCardata, setTableCardata] = useState([]);
 	const [searchData, setSearchData] = useState([]);
-	const [isCarSelected, setIsCarSelected] = useState(false);
 	const [selectedCar, setSelectedCar] = useState("");
 	const { id } = useParams();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const editRate = (id) => {
 		setSelectedCar(id);
+	};
+
+	const navigateToAddCars = () => {
+		navigate(`/profile/owner/add/car/${id}`);
 	};
 
 	const searchCar = (e) => {
@@ -65,6 +68,7 @@ const UpdateOwner = () => {
 			<AdminSidebar />
 			<main className="updateOwner">
 				<Bar />
+				<button onClick={navigateToAddCars}>Add Cars</button>
 				{!selectedCar ? (
 					<TableContainer className="carAssignTable">
 						<TableHeading>

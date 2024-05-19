@@ -1,11 +1,9 @@
 /* eslint-disable react/prop-types */
 import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
-import userImg from "../assets/userImage.png";
 import { TiTick } from "react-icons/ti";
 import Select, { components } from "react-select";
 import { IoIosArrowDown, IoIosClose } from "react-icons/io";
-import Files from "react-files";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import readXlsxFile from "read-excel-file";

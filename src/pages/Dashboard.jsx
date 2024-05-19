@@ -165,7 +165,7 @@ const Dashboard = () => {
 					</TableHeading>
 					<Table>
 						<TableHeaders headers={tripHeaders} style={{ gridTemplateColumns: `repeat(${tripHeaders?.length},1fr)` }} />
-						<TableBody onClick={onSelectTrip} TableRow={DashboardRow} data={tripdata?.reverse()} />
+						{tripdata?.length > 0 && <TableBody onClick={onSelectTrip} TableRow={DashboardRow} data={tripdata?.reverse()} />}
 					</Table>
 				</TableContainer>
 				{selectedTrip && <Confirm setSelectedTrip={setSelectedTrip} open={isOpen} setIsOpen={setIsOpen} trip={selectedTrip} />}

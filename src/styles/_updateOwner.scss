@@ -3,6 +3,17 @@
 	&::-webkit-scrollbar {
 		display: none;
 	}
+	> button {
+		margin-left: auto;
+		display: block;
+		margin-top: 2rem;
+		margin-right: 2rem;
+		padding: 0.8rem 2.2rem;
+		border-radius: 5px;
+		color: #fcfcfc;
+		background-color: #d70372;
+		font-size: 1.2rem;
+	}
 	> .tableContainers {
 		margin: 2rem;
 		button {

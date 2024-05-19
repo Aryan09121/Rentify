@@ -11,14 +11,19 @@
 			box-shadow: 0 0 3px 1px #e4e4e4;
 			@include flex(row, unset, unset, 0);
 			border-radius: 10px;
-			width: 40%;
+			width: clamp(300px, 50%, 500px);
 			background-color: #fefefc;
 			> form {
-				padding: 3rem 1rem;
+				padding: 2rem;
 				width: 80%;
 				margin: auto auto;
 				> * {
 					width: 100%;
+				}
+				> img {
+					width: 60%;
+					display: block;
+					margin: 0rem auto;
 				}
 				> h2 {
 					font-size: 2rem;

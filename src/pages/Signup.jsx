@@ -1,7 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import travelsImg from "../assets/travels.png";
-import signupImg from "../assets/signup.png";
-import { FaGoogle, FaFacebookF } from "react-icons/fa";
+import logo from "../assets/logo.png";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -51,7 +49,8 @@ function SignUp() {
 			<main className="login-main">
 				<section>
 					<form onSubmit={loginSubmitHandler}>
-						<h2>{"Log In"}</h2>
+						<img src={logo} alt="logo" />
+						<h2>Log In</h2>
 						<p>Please Enter your details</p>
 						<input
 							value={loginDetails.username}

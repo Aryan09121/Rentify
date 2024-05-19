@@ -38,59 +38,23 @@
 	html {
 		font-size: 90%;
 	}
-	.signup {
-		> .login-main {
-			padding: 1rem 2rem;
-			> section {
-				> img {
-					width: 54%;
-				}
-				> form {
-					padding: 1rem 4rem;
-					> h2 {
-						font-size: 2.2rem;
-						letter-spacing: 1;
-					}
-				}
-			}
-		}
-	}
 }
 
 @media screen and (width<= 850px) {
 	html {
-		font-size: 80%;
+		font-size: 90%;
 	}
-	.signup {
-		> .login-main {
-			padding: 1rem 2rem;
-			> section {
-				> img {
-					width: 47%;
-				}
-				> form {
-					padding: 1rem 3rem;
-					> h2 {
-						font-size: 2.5rem;
-						letter-spacing: 1;
-					}
-					> input {
-						font-size: 0.9rem;
-					}
-					> a {
-						> button {
-							font-size: 1rem;
-						}
-					}
-					> aside {
-						margin: 0;
-					}
-					> div {
-						> button {
-							font-size: 0.8rem;
-						}
-					}
-				}
+}
+
+@media screen and (width<= 803px) {
+	.ownerProfileContainer {
+		> .profileDetails {
+			width: clamp(200px, 55%, 400px);
+		}
+		> .registrationDetails {
+			width: clamp(200px, 40%, 300px);
+			> .body {
+				padding: 1rem 1rem;
 			}
 		}
 	}
@@ -101,26 +65,28 @@
 		font-size: 60%;
 	}
 }
-@media screen and (width<= 600px) {
-	.signup {
-		> .login-main {
-			> section {
-				> img {
-					width: 57%;
-				}
-				> form {
-					> a {
-						> button {
-							font-size: 1rem;
-						}
-					}
-					> div {
-						> button {
-							font-size: 1rem;
-							padding: 1rem 1.2rem;
-						}
-					}
-				}
+
+@media screen and (width<= 572px) {
+	.invoice_functionality {
+		&_search {
+			width: 100%;
+			> button:nth-child(2) {
+				font-size: 1.1rem;
+				padding: 1.1rem 1.3rem;
+			}
+		}
+	}
+}
+
+@media screen and (width<= 545px) {
+	.ownerProfileContainer {
+		> .profileDetails {
+			width: clamp(200px, 100%, 600px);
+		}
+		> .registrationDetails {
+			width: clamp(200px, 100%, 600px);
+			> .body {
+				padding: 1rem 1rem;
 			}
 		}
 	}
@@ -131,59 +97,39 @@
 		font-size: 80%;
 	}
 	.signup {
-		> .login-nav {
-			width: 100%;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 1rem 4rem;
-			> img {
-				width: 23%;
-			}
-			> button {
-				padding: 0.7rem 2rem;
-				border-radius: 5px;
-				background-color: #009f9c;
-				color: #fcfcfc;
-				font-weight: 600;
-				border: none;
-				outline: none;
-				&:hover {
-					filter: brightness(0.9);
-					color: #fff;
+		> .login-main {
+			padding: 1rem;
+			> section {
+				width: clamp(300px, 67%, 800px);
+				> form {
+					padding: 2rem;
 				}
 			}
 		}
-		> .login-main {
-			> section {
-				flex-direction: column;
-				box-shadow: none;
-				> img {
-					width: 80%;
-					margin: 0 auto;
-					border-top-right-radius: 10px;
-					border-bottom-left-radius: 0;
-					background-color: transparent;
-					filter: drop-shadow(0 0 1px red);
+	}
+	.dashboard {
+		> .heading {
+			> h2 {
+				font-size: 1.5rem;
+			}
+			> a {
+				> button {
+					padding: 0.8rem 1.3rem;
+					border-radius: 5px;
+					font-size: 1rem;
+					background-color: #029e9d;
+					color: #fcfcfc;
 				}
-				> form {
-					padding: 2rem;
-					> a {
-						> button {
-							font-size: 1rem;
-						}
-					}
-					> h2 {
-						letter-spacing: initial;
-						font-weight: 600;
-					}
-					> div {
-						> button {
-							font-size: 1rem;
-							padding: 1rem 1.2rem;
-						}
-					}
-				}
+			}
+		}
+	}
+	.searchCars {
+		h2 {
+			margin-top: 1rem;
+			text-wrap: balance;
+			font-size: 1rem;
+			> .css-b62m3t-container {
+				width: fit-content !important;
 			}
 		}
 	}
@@ -298,6 +244,65 @@
 			margin: 1rem auto;
 			width: 83%;
 			border-radius: 3px;
+		}
+	}
+	.formContainer {
+		padding: 1rem !important;
+		> .documentUploader {
+			width: 100%;
+			margin: 1rem auto;
+			padding: 0 2rem;
+			border: none;
+			> input {
+				&::-webkit-file-upload-button {
+					font-size: 1.4rem;
+				}
+			}
+		}
+
+		> .ownerDetails {
+			margin: 2rem auto;
+			> div {
+				padding: 0;
+			}
+			> .ownerDetailsFormDiv {
+				margin-top: 1rem;
+				@include flex(row, space-between, flex-start, 1rem);
+				> .ownerDataUpload {
+					padding: 0;
+					> div {
+						flex-direction: column;
+					}
+				}
+			}
+		}
+
+		.carDetails {
+			> .carInputDiv {
+				> div {
+					@include flex(column, flex-start, center, 1rem);
+				}
+			}
+			> button {
+				margin-top: 1rem;
+				margin-right: 0;
+				width: fit-content;
+				padding: 1rem 2rem;
+				background-color: #029e9d;
+			}
+		}
+	}
+}
+
+@media screen and (width <= 400px) {
+	.searchCars {
+		h2 {
+			@include flex(column, center, end, 1rem);
+			text-align: center;
+			> .css-b62m3t-container {
+				width: 100% !important;
+				align-self: flex-end;
+			}
 		}
 	}
 }

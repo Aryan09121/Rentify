@@ -11,7 +11,7 @@
 		}
 	}
 	&_widget_container {
-		@include flex(row, space-between, center, 1rem);
+		@include flex(row, center, center, 1rem);
 		flex-wrap: wrap;
 		margin: 0 2rem;
 		margin-bottom: 2rem;
@@ -98,6 +98,7 @@
 		border-left: 1.5px solid #029e9d;
 		border-right: 1.5px solid #029e9d;
 		padding: 0;
+		flex-wrap: wrap-reverse;
 		&_sort {
 			@include flex(row, flex-start, baseline, 1rem);
 			margin-right: auto;
@@ -120,8 +121,10 @@
 			}
 		}
 		&_search {
-			@include flex(row, flex-end, center, 2rem);
+			@include flex(row, flex-end, center, 1rem);
 			padding: 0.5rem 1rem;
+
+			align-self: end;
 			> button:first-child {
 				padding-left: 1rem;
 				background-color: #ffff;
@@ -129,6 +132,7 @@
 				@include flex(row, unset, center, 0.3rem);
 				border: 1.5px solid #bdbcbc;
 				background-color: transparent;
+				width: 100%;
 				> input {
 					border-radius: 3px;
 					@include inputStyles;

@@ -4,6 +4,17 @@ const initialState = {};
 
 export const carReducer = createReducer(initialState, (builder) => {
 	builder
+		.addCase("ADD_CAR_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("ADD_CAR_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.message = action.payload;
+		})
+		.addCase("ADD_CAR_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
 		.addCase("GET_CARS_BY_OWNER_ID_REQUEST", (state) => {
 			state.loading = true;
 		})

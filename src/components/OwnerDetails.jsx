@@ -108,9 +108,9 @@ function OwnerDetails() {
 
 	useEffect(() => {
 		if (ownerdata) {
-			console.log(ownerdata.invoices);
+			// console.log(ownerdata.invoices);
 			const carsdata = ownerdata?.cars?.map((car, index) => {
-				console.log(ownerdata.invoices);
+				// console.log(ownerdata.invoices);
 				const totalDays = findTotalDays(ownerdata.invoices, car)[0];
 				const offroadDays = findTotalDays(ownerdata.invoices, car)[1];
 				const subTotal = (totalDays - offroadDays) * car.rent;
