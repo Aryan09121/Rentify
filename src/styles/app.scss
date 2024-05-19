@@ -324,6 +324,10 @@ a {
 .Table {
 	width: 100%;
 	border: 1.5px solid #979595;
+	overflow-x: scroll;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 	> .headers {
 		background-color: #d4e5d2;
 		padding: 2rem 0;
@@ -331,20 +335,22 @@ a {
 		width: 100%;
 		display: grid;
 		gap: 1rem;
-		overflow-x: scroll;
+		min-width: 600px;
+		// overflow-x: scroll;
 		&::-webkit-scrollbar {
 			display: none;
 		}
 		> h3 {
 			font-size: 1rem;
 			text-align: center;
-			min-width: 100px;
+			// min-width: 100px;
 		}
 	}
 	> .tableContentBody {
 		max-height: 50vh;
-		overflow-x: hidden;
-		overflow-y: scroll;
+		// overflow-x: scroll;
+		// overflow-y: hidden;
+		min-width: 600px;
 		&::-webkit-scrollbar {
 			display: block;
 			width: 0;
@@ -369,7 +375,7 @@ a {
 				"Helvetica Neue", sans-serif;
 			font-size: 1rem;
 			text-align: center;
-			min-width: 100px;
+			// min-width: 100px;
 		}
 		> button {
 			padding: 0.75rem 1.5rem;
@@ -509,7 +515,10 @@ a {
 .txtLoaderContainer {
 	display: flex;
 	align-items: center;
+	margin: 2rem auto;
 	justify-content: center;
+	font-size: 1.2rem;
+	gap: 1rem;
 }
 
 .textloading {
@@ -529,8 +538,8 @@ a {
 }
 
 .textloading span {
-	width: 4px;
-	height: 23px;
+	width: 10px;
+	height: 50px;
 	background: var(--first-color);
 	animation: scale var(--speed-of-animation) ease-in-out infinite;
 }

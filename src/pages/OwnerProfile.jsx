@@ -1,31 +1,19 @@
 /* eslint-disable react/prop-types */
 import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
-import { Filter } from "./InvoiceDetails";
 import { useEffect, useState } from "react";
-import Select, { components } from "react-select";
-import { CUSTOME_STYLES } from "../assets/data/constants";
+import TxtLoader from "../components/TxtLoader";
 
-import { customerHeaders, customerData, ownerSortOptions } from "../assets/data/owner";
+import { customerHeaders, customerData } from "../assets/data/owner";
 import { TableBody, Table, TableContainer, TableHeaders, TableHeading, OwnerRow } from "../components/TableHOC";
-import { FaSearch, FaSort } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { getOwners } from "../redux/actions";
 
-//  ?--- dropdown indicator
-
-const DropdownIndicator = (props) => {
-	return (
-		<components.DropdownIndicator {...props}>
-			<FaSort />
-		</components.DropdownIndicator>
-	);
-};
-
 function OwnerProfile() {
 	const [sortedData, setSortedData] = useState([]);
-	const { owners } = useSelector((state) => state.owner);
+	const { owners, loading } = useSelector((state) => state.owner);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -98,13 +86,13 @@ function OwnerProfile() {
 				<TableContainer>
 					<TableHeading>
 						<p>Owner Profile</p>
-						{/* <button>
+						<button>
 							<FaSearch /> <input type="text" placeholder="Search..." />
-						</button> */}
+						</button>
 					</TableHeading>
 					<Table>
 						<TableHeaders style={{ gridTemplateColumns: `repeat(${customerHeaders.length},1fr)` }} headers={customerHeaders} />
-						<TableBody TableRow={OwnerRow} data={sortedData} />
+						{loading ? <TxtLoader /> : <TableBody TableRow={OwnerRow} data={sortedData} />}
 					</Table>
 				</TableContainer>
 			</main>

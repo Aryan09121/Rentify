@@ -21,6 +21,7 @@ import { IoIosWarning } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { getOwnerById } from "../redux/actions";
 import { getGst } from "../redux/actions/setting.action";
+import TxtLoader from "./TxtLoader";
 // import UpdateOwner from "./UpdateOwner";
 
 function formatDate(date, d = false) {
@@ -77,7 +78,7 @@ function OwnerDetails() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const params = useParams();
-	const { owner } = useSelector((state) => state.owner);
+	const { owner, loading } = useSelector((state) => state.owner);
 	const { gst } = useSelector((state) => state.settings);
 	const [sortedData, setSortedData] = useState([]);
 	const [totalDays, setTotalDays] = useState();
@@ -186,90 +187,98 @@ function OwnerDetails() {
 				<section className="ownerProfileContainer">
 					<section className="profileDetails">
 						<header></header>
-						<div>
-							<article className="basicProfile">
-								<img src={ownerdata?.avatar?.url ? ownerdata.avatar.url : userImg} alt="user iamge" />
-								<section className="details">
+						{loading ? (
+							<TxtLoader />
+						) : (
+							<div>
+								<article className="basicProfile">
+									<img src={ownerdata?.avatar?.url ? ownerdata.avatar.url : userImg} alt="user iamge" />
+									<section className="details">
+										<div>
+											<FaUser />
+											<h3>{ownerdata.name}</h3>
+										</div>
+										<div>
+											<BsTelephoneFill />
+											<h3>+91 {ownerdata.contact}</h3>
+										</div>
+										<div>
+											<BiLogoGmail />
+											<h3>{ownerdata.email}</h3>
+										</div>
+									</section>
+								</article>
+								<section className="carDetails">
 									<div>
-										<FaUser />
-										<h3>{ownerdata.name}</h3>
+										<FaCar />
+										<h3>{ownerdata?.cars?.length} Cars</h3>
 									</div>
 									<div>
-										<BsTelephoneFill />
-										<h3>+91 {ownerdata.contact}</h3>
-									</div>
-									<div>
-										<BiLogoGmail />
-										<h3>{ownerdata.email}</h3>
+										<MdLocationPin />
+										<h3>
+											{ownerdata?.address?.street +
+												", " +
+												ownerdata?.address?.city +
+												", " +
+												ownerdata?.address?.state +
+												", " +
+												ownerdata?.address?.pincode}
+										</h3>
 									</div>
 								</section>
-							</article>
-							<section className="carDetails">
-								<div>
-									<FaCar />
-									<h3>{ownerdata?.cars?.length} Cars</h3>
-								</div>
-								<div>
-									<MdLocationPin />
-									<h3>
-										{ownerdata?.address?.street +
-											", " +
-											ownerdata?.address?.city +
-											", " +
-											ownerdata?.address?.state +
-											", " +
-											ownerdata?.address?.pincode}
-									</h3>
-								</div>
-							</section>
-							<section className="socials">
-								<div className="sociallinks">
-									<Link to={ownerdata.facebook}>
-										<FaFacebook />
-									</Link>
-									<Link to={ownerdata.twitter}>
-										<FaSquareXTwitter />
-									</Link>
-									<Link to={ownerdata.instagram}>
-										<AiFillInstagram />
-									</Link>
-								</div>
-								<button onClick={() => navigate(`/profile/owner/edit/${ownerdata._id}`)}>Edit Info</button>
-							</section>
-						</div>
+								<section className="socials">
+									<div className="sociallinks">
+										<Link to={ownerdata.facebook}>
+											<FaFacebook />
+										</Link>
+										<Link to={ownerdata.twitter}>
+											<FaSquareXTwitter />
+										</Link>
+										<Link to={ownerdata.instagram}>
+											<AiFillInstagram />
+										</Link>
+									</div>
+									<button onClick={() => navigate(`/profile/owner/edit/${ownerdata._id}`)}>Edit Info</button>
+								</section>
+							</div>
+						)}
 					</section>
 					<section className="registrationDetails">
 						<header></header>
-						<div className="body">
-							<div className="detialRow">
-								<h4 className="heading">GST Number:</h4>
-								<h4 className="value">{ownerdata.gst}</h4>
+						{loading ? (
+							<TxtLoader />
+						) : (
+							<div className="body">
+								<div className="detialRow">
+									<h4 className="heading">GST Number:</h4>
+									<h4 className="value">{ownerdata.gst}</h4>
+								</div>
+								<div className="detialRow">
+									<h4 className="heading">HSN No:</h4>
+									<h4 className="value">{ownerdata.hsn}</h4>
+								</div>
+								<div className="detialRow">
+									<h4 className="heading">Pan Card No:</h4>
+									<h4 className="value">{ownerdata.pan}</h4>
+								</div>
+								<div className="detialRow">
+									<h4 className="heading">Total Km:</h4>
+									<h4 className="value">{totalDays ? totalDays : 0}</h4>
+								</div>
+								<div className="detialRow">
+									<h4 className="heading">Joined Date:</h4>
+									<h4 className="value">{formatDate(ownerdata.createdAt)}</h4>
+								</div>
+								<div className="detialRow">
+									<h4 className="heading">Amount Paid:</h4>
+									<h4 className="value">{amountPaid}</h4>
+								</div>
+								<div className="detialRow">
+									<h4 className="heading">Pending Amount:</h4>
+									<h4 className="value">{amountPending}</h4>
+								</div>
 							</div>
-							<div className="detialRow">
-								<h4 className="heading">HSN No:</h4>
-								<h4 className="value">{ownerdata.hsn}</h4>
-							</div>
-							<div className="detialRow">
-								<h4 className="heading">Pan Card No:</h4>
-								<h4 className="value">{ownerdata.pan}</h4>
-							</div>
-							<div className="detialRow">
-								<h4 className="heading">Total Km:</h4>
-								<h4 className="value">{totalDays ? totalDays : 0}</h4>
-							</div>
-							<div className="detialRow">
-								<h4 className="heading">Joined Date:</h4>
-								<h4 className="value">{formatDate(ownerdata.createdAt)}</h4>
-							</div>
-							<div className="detialRow">
-								<h4 className="heading">Amount Paid:</h4>
-								<h4 className="value">{amountPaid}</h4>
-							</div>
-							<div className="detialRow">
-								<h4 className="heading">Pending Amount:</h4>
-								<h4 className="value">{amountPending}</h4>
-							</div>
-						</div>
+						)}
 					</section>
 				</section>
 				<TableContainer className="vehicleTableContainer">
@@ -281,7 +290,7 @@ function OwnerDetails() {
 					) : (
 						<Table>
 							<TableHeaders style={{ gridTemplateColumns: `repeat(${carHeaders?.length},1fr)` }} headers={carHeaders} />
-							<TableBody TableRow={CarRow} data={sortedData} />
+							{loading ? <TxtLoader /> : <TableBody TableRow={CarRow} data={sortedData} />}
 						</Table>
 					)}
 				</TableContainer>

@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import readXlsxFile from "read-excel-file";
 import { useDispatch, useSelector } from "react-redux";
 import { addCompanies, addSingleComapny } from "../redux/actions/company.action";
+import { Loader } from "../components";
 
 // const ownersCarHeaders = ["Serial No", "Brand Name", "Kilometers", "Rate", "Total Days", "Amount"];
 
@@ -139,7 +140,7 @@ const AddNewOwner = () => {
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
-			{loading && <h1>Loadin...</h1>}
+			{loading && <Loader />}
 			{!loading && (
 				<main className="addNewForm">
 					<Bar />

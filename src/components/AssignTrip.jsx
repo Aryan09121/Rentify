@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { assignSingleTrip, assignTrip, getAllCars } from "../redux/actions";
 import { getAllCompanies } from "../redux/actions/company.action";
 import { IoIosArrowDown } from "react-icons/io";
+import Loader from "./Loader";
 
 const carsHeaders = ["S No", "Vehicle Reg No", "Car Brand", "Car Model", "Action"];
 
@@ -87,7 +88,7 @@ const AssignTrip = () => {
 	return (
 		<>
 			{loading ? (
-				<h2>Loading...</h2>
+				<Loader />
 			) : (
 				<div className="admin-container">
 					<AdminSidebar />

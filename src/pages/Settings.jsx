@@ -10,6 +10,7 @@ import { getGst, modifyGst, updateRate } from "../redux/actions/setting.action";
 import { getAllCars } from "../redux/actions";
 import Select, { components } from "react-select";
 import { IoIosArrowDown } from "react-icons/io";
+import { TxtLoader } from "../components";
 
 const DropdownIndicator = (props) => {
 	return (
@@ -102,7 +103,7 @@ export default Settings;
 // eslint-disable-next-line no-unused-vars
 const DayRateUpdate = () => {
 	const [dayRate, setDayRate] = useState();
-	const { message, error } = useSelector((state) => state.settings);
+	const { message, error, loading } = useSelector((state) => state.settings);
 	const { allcars } = useSelector((state) => state.car);
 	const [cars, setCars] = useState([]);
 	const [model, setModel] = useState();
@@ -167,17 +168,18 @@ const DayRateUpdate = () => {
 				onChange={(e) => setModel(e.value)}
 			/>
 			<input type="text" placeholder="Enter Day Rate..." value={dayRate} onChange={(e) => setDayRate(e.target.value)} />
-			<button onClick={() => updateDayRate()}>Update Day Rate</button>
+			<button disabled={loading} onClick={() => updateDayRate()}>
+				{loading ? "Loading..." : "Update Day Rate"}
+			</button>
 		</div>
 	);
 };
 // eslint-disable-next-line no-unused-vars
 const KmRateUpdate = () => {
 	const [kmRate, setKmRate] = useState();
-	const { message, error } = useSelector((state) => state.settings);
+	const { message, error, loading } = useSelector((state) => state.settings);
 	const { allcars } = useSelector((state) => state.car);
 	const [cars, setCars] = useState([]);
-	const [selectedCar, setSelectedCar] = useState("");
 	const [model, setModel] = useState();
 	const dispatch = useDispatch();
 
@@ -240,7 +242,10 @@ const KmRateUpdate = () => {
 				}}
 			/>
 			<input type="text" placeholder="Enter Km Rate..." value={kmRate} onChange={(e) => setKmRate(e.target.value)} />
-			<button onClick={() => updateDayRate()}>Update KM Rate</button>
+
+			<button disabled={loading} onClick={() => updateDayRate()}>
+				{loading ? "Loading..." : "Update KM Rate"}
+			</button>
 		</div>
 	);
 };

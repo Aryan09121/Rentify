@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { getGst } from "../redux/actions/setting.action";
 import { getAllOwnerInvoices } from "../redux/actions/invoice.action";
+import TxtLoader from "./TxtLoader";
 
 function formatDate(date, d = false) {
 	// Ensure date is in the correct format
@@ -38,7 +39,7 @@ function formatDate(date, d = false) {
 
 function Billings() {
 	const dispatch = useDispatch();
-	const { ownerInvoices, message, error } = useSelector((state) => state.invoice);
+	const { ownerInvoices, message, error, loading } = useSelector((state) => state.invoice);
 	const [invoiceData, setInvoiceData] = useState([]);
 	const [paidInvoicedata, setPaidInvoicedata] = useState([]);
 	const navigate = useNavigate();
@@ -125,19 +126,16 @@ function Billings() {
 				<Bar />
 				<h2>Bills</h2>
 				{/* {invoiceData.length > 0 && <Filter />} */}
-				{invoiceData.length > 0 && (
-					<>
-						<TableContainer>
-							<TableHeading>
-								<p>All Bills</p>
-							</TableHeading>
-							<Table>
-								<TableHeaders style={{ gridTemplateColumns: `repeat(${billHeaders.length},1fr)` }} headers={billHeaders} />
-								<TableBody TableRow={BillListRow} data={invoiceData} onClick={navigateToBill} />
-							</Table>
-						</TableContainer>
-					</>
-				)}
+
+				<TableContainer>
+					<TableHeading>
+						<p>All Bills</p>
+					</TableHeading>
+					<Table>
+						<TableHeaders style={{ gridTemplateColumns: `repeat(${billHeaders.length},1fr)` }} headers={billHeaders} />
+						{loading ? <TxtLoader /> : <TableBody TableRow={BillListRow} data={invoiceData} onClick={navigateToBill} />}
+					</Table>
+				</TableContainer>
 			</main>
 		</div>
 	);

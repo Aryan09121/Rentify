@@ -44,7 +44,7 @@ const Invoice = () => {
 	const [invoiceData, setInvoiceData] = useState([]);
 	const [searchQuery, setSearchQuery] = useState(""); // State to hold search input value
 	const [isOpen, setIsOpen] = useState(false);
-	const { invoices, allinvoices, message, error, loading } = useSelector((state) => state.invoice);
+	const { invoices, message, error, loading } = useSelector((state) => state.invoice);
 	const dispatch = useDispatch();
 
 	const navigate = useNavigate();
