@@ -347,7 +347,7 @@ a {
 		}
 	}
 	> .tableContentBody {
-		max-height: 50vh;
+		// max-height: 50vh;
 		// overflow-x: scroll;
 		// overflow-y: hidden;
 		min-width: 600px;
@@ -367,6 +367,7 @@ a {
 		gap: 1rem;
 		place-items: center;
 		overflow-x: scroll;
+		// overflow-y: scroll;
 		&::-webkit-scrollbar {
 			display: none;
 		}

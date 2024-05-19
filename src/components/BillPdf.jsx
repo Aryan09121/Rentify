@@ -76,6 +76,7 @@ function BillPdf() {
 	useEffect(() => {
 		if (invdata.length > 0) {
 			const length = invdata?.length;
+
 			const data = invdata.map((inv) => {
 				// console.log(inv);
 				// Calculate dayQty - offroad and then sum of all dayQty
@@ -110,9 +111,19 @@ function BillPdf() {
 				// Format the dates
 				const formattedFromDate = formatDate(fromDate);
 				const formattedToDate = formatDate(toDate);
+
+				const vehicleCount = inv?.invoice?.reduce((acc, inv) => {
+					console.log(inv);
+					if (!acc.includes(inv.car)) {
+						// If it doesn't exist, add it to the accumulator
+						acc.push(inv.car);
+					}
+					return acc;
+				}, []).length;
+
 				return {
 					model: inv?.model,
-					count: inv?.invoice?.length,
+					count: vehicleCount,
 					periodFrom: formattedFromDate,
 					periodTo: formattedToDate,
 					totalDayQty: totalDayQty,

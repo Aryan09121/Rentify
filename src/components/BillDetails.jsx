@@ -89,7 +89,7 @@ function BillDetails() {
 			// console.log(owner.bills);
 			const data = owner.bills.map((bill, idx) => {
 				const totalDays = bill.invoices.reduce((acc, inv) => acc + inv.days, 0);
-				const offroadDays = bill.invoices.reduce((acc, inv) => acc + inv.offroad, 0);
+				// const offroadDays = bill.invoices.reduce((acc, inv) => acc + inv.offroad, 0);
 				const model = bill.model;
 				const vehicleCount = bill.invoices.reduce((acc, inv) => {
 					// Check if the car exists in the accumulator
@@ -99,6 +99,8 @@ function BillDetails() {
 					}
 					return acc;
 				}, []).length;
+
+				console.log(vehicleCount);
 
 				const from = bill.invoices.reduce((acc, inv) => {
 					return acc < new Date(inv.start) ? acc : new Date(inv.start);

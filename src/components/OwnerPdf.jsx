@@ -76,19 +76,13 @@ function OwnerPdf() {
 		generatePDF(targetRef, option);
 	};
 
-	const generateAndSendPDF = () => {
-		generatePDF(targetRef, {
-			filename: "Invoice.pdf",
-			resolution: Resolution.MEDIUM,
-			page: {
-				margin: Margin.SMALL,
-			},
-		});
-		dispatch(sendPdf("911aaryan@gmail.com"));
+	const generateAndSendPDF = (invoices, email) => {
+		dispatch(sendPdf(invoices, "911aaryan@gmail.com"));
 	};
 
 	const sendToEmail = () => {
-		generateAndSendPDF(invoices, email);
+		console.log(invoices);
+		generateAndSendPDF(invoices, owner.email);
 	};
 
 	const sendToWhatsapp = () => {

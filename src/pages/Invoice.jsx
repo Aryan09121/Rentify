@@ -119,7 +119,7 @@ const Invoice = () => {
 
 	useEffect(() => {
 		if (invoices) {
-			// console.log(invoices);
+			console.log(invoices);
 			const data = invoices.map((invoice, idx) => {
 				const { company } = invoice;
 				const { _id, name, email } = company;

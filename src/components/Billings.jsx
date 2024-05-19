@@ -41,7 +41,6 @@ function Billings() {
 	const dispatch = useDispatch();
 	const { ownerInvoices, message, error, loading } = useSelector((state) => state.invoice);
 	const [invoiceData, setInvoiceData] = useState([]);
-	const [paidInvoicedata, setPaidInvoicedata] = useState([]);
 	const navigate = useNavigate();
 
 	const navigateToBill = (data) => {
