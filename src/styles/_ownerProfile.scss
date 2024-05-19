@@ -144,23 +144,25 @@
 			}
 		}
 	}
-	> button {
-		padding: 0.6rem 1.2rem;
-		font-size: 1.6rem;
-		font-weight: 700;
-		background-color: #d70372;
-		border-radius: 5px;
-		color: #fcfcfc;
-		margin-left: auto;
-		display: block;
-		margin-right: 2.2rem;
-		margin-bottom: 2rem;
-		outline: none;
-		border: none;
-		font-size: 1rem;
-		transition: all 0.4s;
-		&:hover {
-			background-color: #d70371a0;
+	> .actionBtn {
+		@include flex(row, flex-end, center, 1.2rem);
+		padding-right: 2rem;
+		padding-bottom: 2rem;
+		> button {
+			padding: 0.6rem 1.2rem;
+			font-size: 1.6rem;
+			font-weight: 700;
+			background-color: #d70372;
+			border-radius: 5px;
+			color: #fcfcfc;
+			display: block;
+			outline: none;
+			border: none;
+			font-size: 1rem;
+			transition: all 0.4s;
+			&:hover {
+				background-color: #d70371a0;
+			}
 		}
 	}
 	> .billpay {

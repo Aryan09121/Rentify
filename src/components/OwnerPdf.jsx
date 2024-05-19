@@ -6,7 +6,8 @@ import AdminSidebar from "./AdminSidebar";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getGst } from "../redux/actions/setting.action";
+import { getGst, sendPdf } from "../redux/actions/setting.action";
+import { IoLogoWhatsapp } from "react-icons/io5";
 
 function formatDate(date) {
 	// Ensure date is in the correct format
@@ -75,6 +76,25 @@ function OwnerPdf() {
 		generatePDF(targetRef, option);
 	};
 
+	const generateAndSendPDF = () => {
+		generatePDF(targetRef, {
+			filename: "Invoice.pdf",
+			resolution: Resolution.MEDIUM,
+			page: {
+				margin: Margin.SMALL,
+			},
+		});
+		dispatch(sendPdf("911aaryan@gmail.com"));
+	};
+
+	const sendToEmail = () => {
+		generateAndSendPDF(invoices, email);
+	};
+
+	const sendToWhatsapp = () => {
+		window.open("https://wa.me/917415721902?text=Your%20custom%20message%20here");
+	};
+
 	useEffect(() => {
 		if (encodedOwner) {
 			const decodedOwner = encodedOwner ? JSON.parse(decodeURIComponent(encodedOwner)) : null;
@@ -121,6 +141,7 @@ function OwnerPdf() {
 					_id: bill?._id,
 				};
 			});
+			console.log(data);
 			setInvoices(data);
 		}
 	}, [owner]);
@@ -158,6 +179,12 @@ function OwnerPdf() {
 			<AdminSidebar />
 			<main className="pdfContainer">
 				<div style={{ display: "flex", padding: "0 6rem" }}>
+					<button className="downloadbtn" onClick={sendToEmail}>
+						Email
+					</button>
+					<button className="downloadbtn" onClick={sendToWhatsapp}>
+						<IoLogoWhatsapp />
+					</button>
 					<button className="downloadbtn" onClick={generate}>
 						Download PDF
 					</button>

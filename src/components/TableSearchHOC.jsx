@@ -60,7 +60,7 @@ function TableHOC(columns, data, containerClassName, heading, showPagination = f
 						})}
 					</tbody>
 				</table>
-				{showPagination && (
+				{showPagination && pageCount > 50 && (
 					<div className="table-pagination">
 						<button disabled={!canPreviousPage} onClick={() => gotoPage(0)}>
 							Go to First Page

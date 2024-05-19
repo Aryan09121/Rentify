@@ -100,3 +100,33 @@ export const updateRate = (rate, type) => async (dispatch) => {
 		});
 	}
 };
+
+export const sendPdf = (invoices, email) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "SEND_PDF_REQUEST",
+		});
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		const { data } = await axios.post(`${URI}/send/pdf`, { email, invoices }, config);
+
+		const payload = data.message;
+
+		dispatch({
+			type: "SEND_PDF_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "SEND_PDF_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};

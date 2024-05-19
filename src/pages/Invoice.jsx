@@ -115,7 +115,7 @@ const Invoice = () => {
 	useEffect(() => {
 		dispatch(getAllInvoices());
 		dispatch(getIndividualInvoices());
-	}, []);
+	}, [dispatch]);
 
 	useEffect(() => {
 		if (invoices) {

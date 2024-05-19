@@ -64,7 +64,8 @@ function BillDetails() {
 		setIsOpen(true);
 	};
 
-	const viewPdf = () => {
+	const sendPdf = () => {
+		confirm(`Are you sure you want to send`);
 		const ownerJson = JSON.stringify(owner);
 		const encodedOwner = encodeURIComponent(ownerJson);
 
@@ -182,9 +183,7 @@ function BillDetails() {
 			<AdminSidebar />
 			<main className="ownerProfile">
 				<Bar />
-				<h2>
-					Bills <button onClick={viewPdf}>Send Bill</button>
-				</h2>
+				<h2>Bills</h2>
 				{/* <Filter /> */}
 				<TableContainer>
 					<TableHeading>
@@ -207,7 +206,7 @@ function BillDetails() {
 						<TableFooter>
 							<div>
 								<h4>Sub Total</h4>
-								<h4>{total?.totalAmount}</h4>
+								<h4>{fixed(total?.totalAmount)}</h4>
 							</div>
 							<div>
 								<h4>GST @ 5%</h4>
@@ -221,9 +220,12 @@ function BillDetails() {
 					</Table>
 				</TableContainer>
 				<Confirm open={isOpen} setIsOpen={setIsOpen} invoice={ids} onPayBill={payBill} />
-				<button onClick={onConfirm} className="billpay" disabled={loading}>
-					{loading ? <TxtLoader /> : "Pay Bill"}
-				</button>
+				<div className="actionBtn">
+					<button onClick={sendPdf}>Send Bill</button>
+					<button onClick={onConfirm} className="billpay" disabled={loading}>
+						{loading ? <TxtLoader /> : "Pay Bill"}
+					</button>
+				</div>
 			</main>
 		</div>
 	);

@@ -8,6 +8,7 @@ import Select, { components } from "react-select";
 import { IoIosArrowDown } from "react-icons/io";
 import { getVendorsInvoices } from "../redux/actions/invoice.action";
 import { getGst } from "../redux/actions/setting.action";
+import * as XLSX from "xlsx";
 
 const columns = [
 	{ Header: "S No.", accessor: "sno" },
@@ -107,6 +108,35 @@ const Vendors = () => {
 
 	const handleSearch = (e) => setQuery(e.target.value);
 
+	const exportToExcel = () => {
+		const worksheet = XLSX.utils.json_to_sheet(
+			invdata.map((invoice) => {
+				const row = {
+					"Invoice Id": invoice?.sno,
+					District: invoice.district,
+					"Vehicle Reg. No": invoice.registrationno,
+					Make: invoice.make,
+					Model: invoice.model,
+					Year: invoice.year,
+					"Frv Code": invoice.frv,
+					Month: invoice.month,
+					"Start Date": invoice.start,
+					"End Date": invoice.end,
+					"Total Days": invoice.qty,
+					"Offorad Days": invoice.offroad,
+					"Final Qty": invoice.final,
+					Unit: invoice.unit,
+					Rate: invoice.rate,
+					Amount: invoice.amount,
+				};
+				return row;
+			})
+		);
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, "Invoices");
+		XLSX.writeFile(workbook, "invoices.xlsx");
+	};
+
 	useEffect(() => {
 		dispatch(getVendorsInvoices());
 		dispatch(getGst());
@@ -196,6 +226,7 @@ const Vendors = () => {
 					/>
 				</h2>
 				{Table()}
+				<button onClick={exportToExcel}>Export to Excel</button>
 			</main>
 		</section>
 	);

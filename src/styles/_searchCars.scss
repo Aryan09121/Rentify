@@ -12,6 +12,22 @@
 			width: fit-content !important;
 		}
 	}
+	> div:nth-child(4) {
+		@include flex(row, flex-end, center, 1rem);
+		padding-right: 4rem;
+		> button {
+			// margin-left: auto;
+			display: block;
+			// margin-right: 4rem;
+			margin-top: 1rem;
+			margin-bottom: 1rem;
+			padding: 0.6rem 2rem;
+			background-color: #029e9d;
+			color: #fcfcfc;
+			border-radius: 5px;
+			font-size: 1.1rem;
+		}
+	}
 	background-color: rgb(249, 248, 246);
 	// table styling
 	.dashboard-product-box {

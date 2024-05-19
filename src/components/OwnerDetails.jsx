@@ -271,11 +271,11 @@ function OwnerDetails() {
 								</div>
 								<div className="detialRow">
 									<h4 className="heading">Amount Paid:</h4>
-									<h4 className="value">{amountPaid}</h4>
+									<h4 className="value">{fixed(amountPaid)}</h4>
 								</div>
 								<div className="detialRow">
 									<h4 className="heading">Pending Amount:</h4>
-									<h4 className="value">{amountPending}</h4>
+									<h4 className="value">{fixed(amountPending)}</h4>
 								</div>
 							</div>
 						)}

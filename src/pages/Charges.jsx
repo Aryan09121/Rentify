@@ -1,13 +1,16 @@
 /* eslint-disable no-unused-vars */
-import { AdminSidebar, TxtLoader } from "../components";
+import { AdminSidebar, Loader, TxtLoader } from "../components";
 import TableSearchTOC from "../components/TableSearchHOC";
 import Bar from "../components/CarBar";
 import { useCallback, useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import * as XLSX from "xlsx";
 import { getIndividualInvoices } from "../redux/actions";
 import { useDispatch, useSelector } from "react-redux";
 import Select, { components } from "react-select";
 import { IoIosArrowDown } from "react-icons/io";
+import { payAllCompanyInvoices } from "../redux/actions/invoice.action";
+import { toast } from "react-toastify";
 
 const columns = [
 	{
@@ -160,7 +163,7 @@ function extractYearMonthInWords(dateString) {
 const SearchCars = () => {
 	const [query, setQuery] = useState("");
 	const [unit, setUnit] = useState("date");
-	const { allinvoices, loading } = useSelector((state) => state.invoice);
+	const { allinvoices, loading, message, error } = useSelector((state) => state.invoice);
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const navigate = useNavigate();
@@ -179,6 +182,68 @@ const SearchCars = () => {
 		const { invoice } = row.original;
 
 		navigate(`/charges/details?id=${invoice._id}`);
+	};
+
+	const payBill = () => {
+		const ids = data?.map((inv) => inv?.invoice?._id);
+		dispatch(payAllCompanyInvoices(ids));
+		dispatch(getIndividualInvoices());
+	};
+
+	const exportToExcel = (type) => {
+		let worksheet;
+		if (type === "date") {
+			worksheet = XLSX.utils.json_to_sheet(
+				data.map((invoice) => {
+					console.log(invoice);
+					const row = {
+						"Invoice Id": invoice?.sno,
+						District: invoice.district,
+						"Vehicle Reg. No": invoice.registrationno,
+						Make: invoice.make,
+						Model: invoice.model,
+						Year: invoice.year,
+						"Frv Code": invoice.frv,
+						Month: invoice.month,
+						"Start Date": invoice.start,
+						"End Date": invoice.end,
+						"Total Days": invoice.qty,
+						"Offorad Days": invoice.offroad,
+						"Final Qty": invoice.final,
+						Unit: invoice.unit,
+						Rate: invoice.rate,
+						Amount: invoice.amount,
+					};
+					return row;
+				})
+			);
+		} else {
+			worksheet = XLSX.utils.json_to_sheet(
+				data.map((invoice) => {
+					console.log(invoice);
+					const row = {
+						"Invoice Id": invoice?.sno,
+						District: invoice.district,
+						"Vehicle Reg. No": invoice.registrationno,
+						Make: invoice.make,
+						Model: invoice.model,
+						Year: invoice.year,
+						"Frv Code": invoice.frv,
+						Month: invoice.month,
+						"Start Km": invoice.start,
+						"End Km": invoice.end,
+						"Total Km": invoice.qty,
+						Unit: invoice.unit,
+						Rate: invoice.rate,
+						Amount: invoice.amount,
+					};
+					return row;
+				})
+			);
+		}
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, "Invoices");
+		XLSX.writeFile(workbook, "invoices.xlsx");
 	};
 
 	useEffect(() => {
@@ -201,11 +266,22 @@ const SearchCars = () => {
 		setData(filteredData);
 	}, [query]);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const Table = useCallback(TableSearchTOC(columns, data, "dashboard-product-box", "", true, 50, handleRowClick), [data]);
+	const Table = useCallback(TableSearchTOC(columns, loading ? [] : data, "dashboard-product-box", "", true, 50, handleRowClick), [data]);
 
 	useEffect(() => {
 		dispatch(getIndividualInvoices());
 	}, []);
+
+	useEffect(() => {
+		if (error) {
+			toast.error(error);
+			dispatch({ type: "CLEAR_ERRORS" });
+		}
+		if (message) {
+			toast.success(message);
+			dispatch({ type: "CLEAR_MESSAGES" });
+		}
+	}, [message, error, dispatch]);
 
 	useEffect(() => {
 		if (allinvoices?.length > 0) {
@@ -230,6 +306,8 @@ const SearchCars = () => {
 						start: unit === "km" ? `${inv?.fromkm} km` : formatDate(inv?.from),
 						end: unit === "km" ? `${inv?.tokm} km` : formatDate(inv?.to),
 						qty: unit === "km" ? inv?.kmQty : inv?.dayQty,
+						offroad: inv?.offroad,
+						final: inv?.dayQty - inv?.offroad,
 						unit: unit,
 						rate: unit === "km" ? inv?.kmRate : inv?.dayRate,
 						amount: unit === "km" ? inv?.kmAmount : inv?.dayAmount,
@@ -248,7 +326,6 @@ const SearchCars = () => {
 			sortedData?.forEach((item, idx) => {
 				item.sno = idx + 1;
 			});
-
 			setData(sortedData);
 		}
 	}, [allinvoices, unit]);
@@ -274,6 +351,12 @@ const SearchCars = () => {
 				</h2>
 
 				{Table()}
+				<div>
+					<button onClick={() => exportToExcel(unit)}>Export to excel</button>
+					<button disabled={loading} onClick={() => payBill(data)}>
+						{loading ? "Loading..." : "Pay Bill"}
+					</button>
+				</div>
 			</main>
 		</section>
 	);

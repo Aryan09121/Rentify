@@ -37,6 +37,17 @@ export const settingReducer = createReducer(initialState, (builder) => {
 			state.loading = false;
 			state.error = action.payload;
 		})
+		.addCase("SEND_PDF_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("SEND_PDF_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.message = action.payload;
+		})
+		.addCase("SEND_PDF_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
 		.addCase("CLEAR_ERRORS", (state) => {
 			state.error = null;
 		})

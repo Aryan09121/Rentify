@@ -282,6 +282,38 @@ export const payAllInvoice = (ids) => async (dispatch) => {
 	}
 };
 
+export const payAllCompanyInvoices = (ids) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "PAY_ALL_INVOICE_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		// eslint-disable-next-line no-unused-vars
+		const { data } = await axios.post(`${URI}/pay/all/invoice`, { ids }, config);
+
+		const payload = data.message;
+
+		dispatch({
+			type: "PAY_ALL_INVOICE_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "PAY_ALL_INVOICE_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
+
 export const payOwnerBill = (id, transaction) => async (dispatch) => {
 	try {
 		dispatch({

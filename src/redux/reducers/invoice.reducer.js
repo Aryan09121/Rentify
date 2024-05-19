@@ -74,6 +74,17 @@ export const invoiceReducer = createReducer(initialState, (builder) => {
 			state.loading = false;
 			state.error = action.payload;
 		})
+		.addCase("PAY_ALL_INVOICE_REQUEST", (state) => {
+			state.loading = true;
+		})
+		.addCase("PAY_ALL_INVOICE_SUCCESS", (state, action) => {
+			state.loading = false;
+			state.message = action.payload;
+		})
+		.addCase("PAY_ALL_INVOICE_FAILURE", (state, action) => {
+			state.loading = false;
+			state.error = action.payload;
+		})
 		.addCase("PAY__ALL_INVOICE_REQUEST", (state) => {
 			state.loading = true;
 		})

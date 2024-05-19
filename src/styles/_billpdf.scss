@@ -4,17 +4,25 @@
 		display: none;
 	}
 	.downloadbtn {
-		padding: 1rem 2.2rem;
-		// width: 20%;
+		padding: 0.8rem 2rem;
 		display: block;
 		margin: 1rem;
-		margin-left: auto;
-		background-color: #029e9d;
+		// margin-left: auto;
+		&:first-child {
+			margin-left: auto;
+		}
+		background-color: #d70372;
 		border-radius: 5px;
 		color: #f0f0f0;
 		font-size: 1.2rem;
 		&:hover {
 			background-color: #029e9eb8;
+		}
+		margin-bottom: 0;
+		> svg {
+			font-size: 2rem;
+			color: #fcfcfc;
+			font-weight: 900;
 		}
 	}
 
