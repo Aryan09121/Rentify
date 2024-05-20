@@ -226,7 +226,9 @@ const Vendors = () => {
 					/>
 				</h2>
 				{Table()}
-				<button onClick={exportToExcel}>Export to Excel</button>
+				<div>
+					<button onClick={exportToExcel}>Export to Excel</button>
+				</div>
 			</main>
 		</section>
 	);
