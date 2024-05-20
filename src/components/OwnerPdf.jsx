@@ -38,25 +38,6 @@ const option = {
 	},
 };
 
-const columns = [
-	{
-		Header: "Item",
-		accessor: "item",
-	},
-	{
-		Header: "Days",
-		accessor: "days",
-	},
-	{
-		Header: "Rate",
-		accessor: "rate",
-	},
-	{
-		Header: "Amount",
-		accessor: "amount",
-	},
-];
-
 const fixed = (n) => {
 	return parseFloat(Number(n).toFixed(2));
 };
@@ -68,7 +49,7 @@ function OwnerPdf() {
 	const [owner, setOwner] = useState();
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
-	const { gst, loading: gstLoading } = useSelector((state) => state.settings);
+	const { gst } = useSelector((state) => state.settings);
 	const encodedOwner = searchParams.get("owner");
 	const dispatch = useDispatch();
 
@@ -77,6 +58,7 @@ function OwnerPdf() {
 	};
 
 	const generateAndSendPDF = (invoices, email) => {
+		console.log(invoices);
 		dispatch(sendPdf(invoices, "911aaryan@gmail.com"));
 	};
 
@@ -98,7 +80,7 @@ function OwnerPdf() {
 
 	useEffect(() => {
 		if (owner) {
-			console.log(owner);
+			// console.log(owner);
 			const data = owner.bills.map((bill) => {
 				// console.log(bill);
 				// Calculate dayQty - offroad and then sum of all dayQty
@@ -135,7 +117,6 @@ function OwnerPdf() {
 					_id: bill?._id,
 				};
 			});
-			console.log(data);
 			setInvoices(data);
 		}
 	}, [owner]);

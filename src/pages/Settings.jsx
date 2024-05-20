@@ -10,7 +10,6 @@ import { getGst, modifyGst, updateRate } from "../redux/actions/setting.action";
 import { getAllCars } from "../redux/actions";
 import Select, { components } from "react-select";
 import { IoIosArrowDown } from "react-icons/io";
-import { TxtLoader } from "../components";
 
 const DropdownIndicator = (props) => {
 	return (
