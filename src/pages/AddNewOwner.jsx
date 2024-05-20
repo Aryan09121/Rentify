@@ -78,7 +78,7 @@ const expectedOwnerHeaders = [
 	"pincode",
 	"HSNNO",
 ];
-const expectedCarHeaders = ["gmail", "Brand", "Model", "Vehicle Registration Number", "km", "date", "Rent Charges"];
+const expectedCarHeaders = ["Phone", "Brand", "Model", "Vehicle Registration Number", "km", "date", "Rent Charges"];
 
 const AddNewOwner = () => {
 	// ? states
@@ -196,7 +196,7 @@ const AddNewOwner = () => {
 					const carData = rows.slice(1);
 
 					const updatedOwners = ownerFinal.map((owner) => {
-						const matchingCars = carData.filter((car) => car[0] === owner.email);
+						const matchingCars = carData.filter((car) => car[0] === owner.phone);
 
 						if (matchingCars.length > 0) {
 							const cars = matchingCars.map((car) => ({
