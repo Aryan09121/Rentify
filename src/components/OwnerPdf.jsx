@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getGst, sendPdf } from "../redux/actions/setting.action";
 import { IoLogoWhatsapp } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 function formatDate(date) {
 	// Ensure date is in the correct format
@@ -49,7 +50,7 @@ function OwnerPdf() {
 	const [owner, setOwner] = useState();
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
-	const { gst } = useSelector((state) => state.settings);
+	const { gst, error, message } = useSelector((state) => state.settings);
 	const encodedOwner = searchParams.get("owner");
 	const dispatch = useDispatch();
 
@@ -58,7 +59,7 @@ function OwnerPdf() {
 	};
 
 	const generateAndSendPDF = (invoices, email) => {
-		console.log(invoices);
+		// console.log(invoices);
 		dispatch(sendPdf(invoices, email));
 	};
 
@@ -148,6 +149,17 @@ function OwnerPdf() {
 	useEffect(() => {
 		dispatch(getGst());
 	}, []);
+
+	useEffect(() => {
+		if (error) {
+			toast.error(error);
+			dispatch({ type: "CLEAR_ERRORS" });
+		}
+		if (message) {
+			toast.success(message);
+			dispatch({ type: "CLEAR_MESSAGES" });
+		}
+	}, [message, error, dispatch]);
 
 	return (
 		<div className="admin-container">

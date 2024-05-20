@@ -65,7 +65,7 @@ function BillDetails() {
 	};
 
 	const sendPdf = () => {
-		confirm(`Are you sure you want to send`);
+		// confirm(`Are you sure you want to send`);
 		const ownerJson = JSON.stringify(owner);
 		const encodedOwner = encodeURIComponent(ownerJson);
 
