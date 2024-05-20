@@ -59,7 +59,7 @@ function OwnerPdf() {
 
 	const generateAndSendPDF = (invoices, email) => {
 		console.log(invoices);
-		dispatch(sendPdf(invoices, "911aaryan@gmail.com"));
+		dispatch(sendPdf(invoices, email));
 	};
 
 	const sendToEmail = () => {
