@@ -31,6 +31,8 @@ const Search = lazy(() => import("./pages/Search"));
 const AssignTrip = lazy(() => import("./components/AssignTrip"));
 const Vendors = lazy(() => import("./pages/Vendors"));
 const OwnerPdf = lazy(() => import("./components/OwnerPdf"));
+const DataUpload = lazy(() => import("./pages/DataUpload"));
+const InvoicesUploads = lazy(() => import("./pages/InvoicesUploads"));
 const AddCars = lazy(() => import("./components/AddCars"));
 const Error = lazy(() => import("./pages/Error"));
 
@@ -92,6 +94,8 @@ const App = () => {
 					<Route path="/add/new/owner" element={<AddNewOwner />} />
 					<Route path="/add/new/company" element={<AddNewComapny />} />
 					<Route path="/add/trip" element={<AssignTrip />} />
+					<Route path="/data/upload" element={<DataUpload />} />
+					<Route path="/hiring/uploads" element={<InvoicesUploads />} />
 				</Route>
 				<Route path="*" element={<Error />} />
 			</Routes>

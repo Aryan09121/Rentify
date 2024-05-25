@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import AdminSidebar from "../components/AdminSidebar";
 import Bar from "../components/Bar";
@@ -41,18 +42,6 @@ const genderSortOptions = [
 	{ value: "female", label: "Female" },
 	{ value: "others", label: "Others" },
 ];
-const airconditionSortOptions = [
-	{ value: "", label: "Air Conditioned" },
-	{ value: true, label: "AC" },
-	{ value: false, label: "NON AC" },
-];
-const sittingSortOptions = [
-	{ value: "", label: "sitting" },
-	{ value: "4", label: "4 Seater" },
-	{ value: "5", label: "5 Seater" },
-	{ value: "6", label: "6 Seater" },
-	{ value: "8", label: "8 Seater" },
-];
 
 // eslint-disable-next-line no-unused-vars
 const DropdownIndicator = (props) => {
@@ -67,22 +56,19 @@ const DropdownIndicator = (props) => {
 
 const expectedOwnerHeaders = [
 	"Name",
+	"Bank Name",
+	"Account No",
+	"IFSC Code",
+	"District and Location",
+	"Vehicle No",
+	"Vehicle Type",
+	"Monthly Payment",
 	"Phone Number",
-	"Gender",
-	"Email Id",
-	"GSTIN Number",
-	"PAN Number",
-	"street",
-	"city",
-	"state",
-	"pincode",
-	"HSNNO",
 ];
-const expectedCarHeaders = ["Phone", "Brand", "Model", "Vehicle Registration Number", "km", "date", "Rent Charges"];
+// const expectedAccountHeaders = ["Phone", "Brand", "Model", "Vehicle Registration Number", "km", "date", "Rent Charges"];
 
 const AddNewOwner = () => {
 	// ? states
-	const [tableData, setTableData] = useState([]);
 
 	// eslint-disable-next-line no-unused-vars
 	const { message, error, loading } = useSelector((state) => state.owner);
@@ -90,8 +76,6 @@ const AddNewOwner = () => {
 
 	// ? excel file
 	const [ownerFinal, setOwnerFinal] = useState([]);
-	// const dispatch = useDispatch();
-	// const { loading, message, error } = useSelector((state) => state.owner);
 
 	// owner personal details
 	const [owner, setOwner] = useState({
@@ -100,27 +84,16 @@ const AddNewOwner = () => {
 		phone: "",
 		gender: genderSortOptions[0].value,
 		email: "",
-		gst: "",
+		aadhar: "",
 		pan: "",
-		hsn: "",
 		address: {
 			street: "",
 			city: "",
 			state: "",
 			pincode: "",
 		},
-		cars: [],
-	});
-
-	const [cars, setCars] = useState({
-		registrationNo: "",
-		brand: "",
-		model: "",
-		start: {
-			km: 0,
-			date: "",
-		},
-		rent: "",
+		account: "",
+		ifsc: "",
 	});
 
 	//  ? handlers
@@ -128,12 +101,6 @@ const AddNewOwner = () => {
 	const handleOwnerFileUpload = (event) => {
 		const file = event.target.files[0];
 		readOwnerExcelFile(file);
-		event.target.value = null;
-	};
-
-	const handleCarFileUpload = (event) => {
-		const file = event.target.files[0];
-		readCarExcelFile(file);
 		event.target.value = null;
 	};
 
@@ -149,28 +116,32 @@ const AddNewOwner = () => {
 					expectedOwnerHeaders.every((value, index) => value.toLowerCase() === ownerHeadersLower[index]);
 
 				if (arraysAreEqual) {
-					// setOwnerExcelData(() => {
-					// 	return ownerData;
-					// });
-					const newarr = ownerData.map((data) => {
-						return {
-							name: data[0],
-							phone: data[1],
-							gender: data[2],
-							email: data[3],
-							gst: data[4],
-							pan: data[5],
-							hsn: data[10],
-							address: {
-								street: data[6],
-								city: data[7],
-								state: data[8],
-								pincode: data[9],
-							},
-							cars: [],
-						};
+					console.log(ownerData);
+					const ownerDictionary = {}; // Dictionary to store owners and their data
+					ownerData.forEach((data) => {
+						const phoneNumber = data[8];
+						const ownerKey = `${data[0]}_${phoneNumber}`; // Using a combination of name and phone number as key
+						if (!ownerDictionary[ownerKey]) {
+							// If owner does not exist in dictionary, initialize with an array containing the owner data
+							ownerDictionary[ownerKey] = {
+								name: data[0],
+								phone: phoneNumber,
+								address: {
+									street: data[4],
+								},
+								account: data[2],
+								bankName: data[1],
+								ifsc: data[3],
+								registration: [{ registrationNo: data[5], model: data[6] }],
+							};
+						} else {
+							// If owner exists in dictionary, append the registration number to the existing registration array
+							ownerDictionary[ownerKey].registration.push({ registrationNo: data[5], model: data[6] });
+						}
 					});
-					setOwnerFinal(newarr);
+					const ownerArray = Object.values(ownerDictionary);
+					// console.log(ownerArray);
+					setOwnerFinal(ownerArray);
 					return toast.success("Owners Data Read Successfully");
 				} else {
 					return toast.error("Invalid File Format");
@@ -179,86 +150,6 @@ const AddNewOwner = () => {
 			.catch((error) => {
 				console.error("Error reading Owner Excel file:", error);
 			});
-	};
-
-	const readCarExcelFile = (file) => {
-		readXlsxFile(file)
-			.then((rows) => {
-				// Skip header row if necessary
-				const carHeaders = rows[0];
-				const carHeadersLower = carHeaders.map((header) => header.toLowerCase());
-
-				const arraysAreEqual =
-					expectedCarHeaders.length === carHeadersLower.length &&
-					expectedCarHeaders.every((value, index) => value.toLowerCase() === carHeadersLower[index]);
-
-				if (arraysAreEqual) {
-					const carData = rows.slice(1);
-
-					const updatedOwners = ownerFinal.map((owner) => {
-						const matchingCars = carData.filter((car) => car[0] === owner.phone);
-
-						if (matchingCars.length > 0) {
-							const cars = matchingCars.map((car) => ({
-								brand: car[1],
-								model: car[2],
-								registrationNo: car[3],
-								start: {
-									km: car[4],
-									date: car[5],
-								},
-								rent: car[6],
-							}));
-
-							return {
-								...owner,
-								cars: owner.cars.concat(cars),
-							};
-						} else {
-							return owner;
-						}
-					});
-					console.log(updatedOwners);
-					setOwnerFinal(updatedOwners);
-					toast.success("Cars Data Reads Successfully");
-				} else {
-					toast.error("Invalid File Format");
-				}
-			})
-			.catch((error) => {
-				toast.error("Only Excel files are accepted!");
-				console.error("Error reading Car Excel file:", error);
-			});
-	};
-
-	const onInputCarChange = (e) => {
-		const name = e.target.name;
-		const value = e.target.value;
-
-		setCars((prev) => {
-			return {
-				...prev,
-				[name]: value,
-			};
-		});
-	};
-
-	const onSelectAcChange = (selectedValue) => {
-		setCars((prev) => {
-			return {
-				...prev,
-				isAc: selectedValue.value,
-			};
-		});
-	};
-
-	const onSelectSeaterChange = (selectedValue) => {
-		setCars((prev) => {
-			return {
-				...prev,
-				seater: selectedValue.value,
-			};
-		});
 	};
 
 	const onSelectChange = (selectedValue) => {
@@ -286,46 +177,6 @@ const AddNewOwner = () => {
 		setOwnerFinal([]);
 	};
 
-	const carDetailsSubmitHandler = (e) => {
-		e.preventDefault();
-		alert("inner form submit");
-		const isCarAlreadyAdded = owner.cars.some((car) => car.registrationNo === cars.registrationNo);
-		if (isCarAlreadyAdded) {
-			toast.error("Car with the same vehicle number already exists for this owner.");
-		} else {
-			setOwner((prev) => {
-				return {
-					...prev,
-					cars: [...prev.cars, cars],
-				};
-			});
-			const updatedTableData = [
-				...tableData,
-				{
-					data: [tableData.length + 1, cars.model, cars.brand, cars.rent, cars.seater],
-					_id: `CAR-${tableData.length + 1}`,
-				},
-			];
-
-			// Set the updated tableData to the state
-			setTableData(updatedTableData);
-			toast.success("Car Added Successfully");
-			setCars({
-				brand: "",
-				model: "",
-				registrationNo: "",
-				rent: "",
-				year: "",
-				isAc: false,
-				seater: 4,
-				start: {
-					km: 0,
-					date: null,
-				},
-			});
-		}
-	};
-
 	// ?? adding owners through form
 	const ownerDetailsSubmitHandler = (e) => {
 		e.preventDefault();
@@ -340,7 +191,9 @@ const AddNewOwner = () => {
 	// ?? adding owners through excel files
 	const excelSubmitHandler = (e) => {
 		e.preventDefault();
+		// console.log(ownerFinal);
 		dispatch(addOwners(ownerFinal));
+		setOwnerFinal([]);
 	};
 
 	useEffect(() => {
@@ -422,11 +275,10 @@ const AddNewOwner = () => {
 												<div>
 													<input
 														type="text"
-														name="gst"
-														value={owner.gst}
+														name="aadhar"
+														value={owner.aadhar}
 														onChange={onInputChange}
-														placeholder="GST Number *"
-														pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z0-9]{1}[A-Z0-9]{1}$"
+														placeholder="Aadhar No *"
 														required
 													/>
 													<input
@@ -436,6 +288,24 @@ const AddNewOwner = () => {
 														onChange={onInputChange}
 														placeholder="PAN Card Number *"
 														pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}"
+														required
+													/>
+												</div>
+												<div>
+													<input
+														type="text"
+														name="ifsc"
+														value={owner.ifsc}
+														onChange={onInputChange}
+														placeholder="IFSC Code *"
+														required
+													/>
+													<input
+														type="text"
+														value={owner.account}
+														name="account"
+														onChange={onInputChange}
+														placeholder="Account Number *"
 														required
 													/>
 												</div>
@@ -523,116 +393,6 @@ const AddNewOwner = () => {
 									</section>
 								</>
 							) : null}
-							<section className="carDetails">
-								{ownerFinal.length === 0 ? (
-									<>
-										<h3>Car Information</h3>
-										<div className="carInputDiv">
-											<div>
-												<input
-													type="text"
-													onChange={onInputCarChange}
-													value={cars.brand}
-													name="brand"
-													placeholder="Brand Name *"
-													pattern="[A-Za-z0-9\s\-']+"
-												/>
-											</div>
-											<div>
-												<input
-													type="text"
-													onChange={onInputCarChange}
-													value={cars.model}
-													name="model"
-													placeholder="Model Number *"
-													pattern="[A-Za-z0-9_-]+"
-												/>
-												<input
-													type="text"
-													placeholder="Vehicle Number *"
-													onChange={onInputCarChange}
-													value={cars.registrationNo}
-													name="registrationNo"
-													title="Please enter a valid vehicle Vehicle number"
-												/>
-											</div>
-											<div>
-												<input type="text" name="year" placeholder="Year *" required />
-												<Select
-													defaultValue={sittingSortOptions[0]}
-													options={sittingSortOptions}
-													components={{ DropdownIndicator }}
-													styles={customStyles}
-													onChange={onSelectSeaterChange}
-												/>
-											</div>
-											<div>
-												<input
-													type="text"
-													onChange={onInputCarChange}
-													value={cars.rent}
-													placeholder="Rent Charges *"
-													name="rent"
-												/>
-
-												<Select
-													defaultValue={airconditionSortOptions[0]}
-													options={airconditionSortOptions}
-													components={{ DropdownIndicator }}
-													styles={customStyles}
-													name="isAc"
-													onChange={onSelectAcChange}
-												/>
-											</div>
-											<div>
-												<input
-													type="text"
-													value={cars.start.km}
-													onChange={(e) =>
-														setCars((curr) => {
-															return {
-																...curr,
-																start: {
-																	...curr.start,
-																	km: e.target.value,
-																},
-															};
-														})
-													}
-													placeholder="Start Km"
-													name="startkm"
-												/>
-												<input
-													type="date"
-													value={cars.start.date}
-													onChange={(e) =>
-														setCars((curr) => {
-															return {
-																...curr,
-																start: {
-																	...curr.start,
-																	date: e.target.value,
-																},
-															};
-														})
-													}
-													placeholder="Start Date dd/MM/YYYY"
-													name="startdate"
-												/>
-											</div>
-										</div>
-
-										<button onClick={carDetailsSubmitHandler}>Add Car</button>
-									</>
-								) : (
-									<>
-										{/* <button className="carExcelBtn"> */}
-										<h2 style={{ textAlign: "center", fontFamily: "poppins", fontSize: "1.3rem" }}>Add Cars</h2>
-										<input type="file" id="carfileupload" onChange={handleCarFileUpload} />
-										{/* </button> */}
-									</>
-								)}
-							</section>
 							{ownerFinal.length === 0 ? (
 								<button type="submit">Add Owner</button>
 							) : (

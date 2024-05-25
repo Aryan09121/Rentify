@@ -171,6 +171,7 @@ function OwnerDetails() {
 
 	useEffect(() => {
 		if (owner) {
+			console.log(owner);
 			setOwnerdata(owner);
 			setCarData(owner.cars);
 		}

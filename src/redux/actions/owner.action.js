@@ -115,14 +115,11 @@ export const addOwners = (owners) => async (dispatch) => {
 			},
 		};
 
-		for (const owner of owners) {
-			await axios.post(`${URI}/add/owner`, owner, config);
-			// console.log(data); // Call addSingleOwner function for each owner
-		}
+		const { data } = await axios.post(`${URI}/uploads/owners`, owners, config);
 
 		dispatch({
 			type: "ADD_MULTIPLE_OWNER_SUCCESS",
-			payload: "Owners Added Succesfully",
+			payload: data.message,
 		});
 	} catch (error) {
 		console.log(error);

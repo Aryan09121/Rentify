@@ -8,32 +8,22 @@ import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import NewInvoice from "../components/NewInvoice";
 import { useNavigate } from "react-router-dom";
-import { getAllInvoices, getIndividualInvoices } from "../redux/actions";
+import { getAllInvoices } from "../redux/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 function formatDate(date, d = false) {
-	// Ensure date is in the correct format
 	if (!(date instanceof Date)) {
 		date = new Date(date);
 	}
 
-	// Array of month names
 	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-	// Get components of the date
 	const year = date.getFullYear();
 	const month = date.getMonth();
 	const day = date.getDate();
-	let formattedDate;
-	// Format the date
-	if (d === false) {
-		formattedDate = `${day}, ${months[month]}, ${year}`;
-	} else {
-		formattedDate = day;
-	}
 
-	return formattedDate;
+	return d ? day : `${day}, ${months[month]}, ${year}`;
 }
 
 const invoiceHeaders = ["Invoice ID", "Company Name", "Email", "Issue Date", "Amount", "Status"];
@@ -42,132 +32,99 @@ const Invoice = () => {
 	const [selectedInvoice, setSelectedInvoice] = useState("all");
 	const [filteredInvoiceData, setFilteredInvoiceData] = useState([]);
 	const [invoiceData, setInvoiceData] = useState([]);
-	const [searchQuery, setSearchQuery] = useState(""); // State to hold search input value
+	const [searchQuery, setSearchQuery] = useState("");
 	const [isOpen, setIsOpen] = useState(false);
 	const { invoices, message, error, loading } = useSelector((state) => state.invoice);
 	const dispatch = useDispatch();
-
 	const navigate = useNavigate();
-
-	//  ? filtering  invoice data
-	const filterInvoiceData = (status, query) => {
-		let filteredData = invoiceData.slice();
-
-		// ? filtering the invoice data based on the status | paid | unpaid | all invoices
-
-		if (status !== "all") {
-			filteredData = filteredData.filter((invoice) => invoice.status === status);
-		}
-
-		// ? filtering the invoice data based on the name or email.
-
-		if (query) {
-			const lowercaseQuery = query.toLowerCase();
-			filteredData = filteredData.filter((invoice) => {
-				return invoice.data.some((cell) => {
-					return cell?.toString()?.toLowerCase()?.includes(lowercaseQuery);
-				});
-			});
-		}
-
-		setFilteredInvoiceData(filteredData);
-	};
-
-	const generatePdf1 = (data) => {
-		// Convert the invoices array to a JSON string
-		const invoicesJson = JSON.stringify(data.invoices);
-		const ownerJson = JSON.stringify(data.company);
-		const id = JSON.stringify(data.data[0]);
-		const date = JSON.stringify(data.data[3]);
-
-		// Encode the JSON string to include it in the URL as a query parameter
-		const encodedInvoices = encodeURIComponent(invoicesJson);
-		const encodedOwner = encodeURIComponent(ownerJson);
-
-		// Navigate to the route with the encoded invoices as a query parameter
-		navigate(`/Bill?invoices=${encodedInvoices}&owner=${encodedOwner}&invId=${id}&date=${date}`);
-	};
-
-	useEffect(() => {
-		filterInvoiceData(selectedInvoice, searchQuery);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedInvoice, searchQuery, invoiceData]);
-
-	const exportToExcel = () => {
-		const worksheet = XLSX.utils.json_to_sheet(
-			filteredInvoiceData.map((invoice) => {
-				const row = {
-					"Invoice Id": invoice.data[0],
-					"Owner Name": invoice.data[1],
-					"Owner Email Id": invoice.data[2],
-					"Invoice Date": invoice.data[3],
-					"Invoice Amount": invoice.data[4],
-					Status: invoice.status,
-				};
-				return row;
-			})
-		);
-		const workbook = XLSX.utils.book_new();
-		XLSX.utils.book_append_sheet(workbook, worksheet, "Invoices");
-		XLSX.writeFile(workbook, "invoices.xlsx");
-	};
 
 	useEffect(() => {
 		dispatch(getAllInvoices());
-		dispatch(getIndividualInvoices());
 	}, [dispatch]);
 
 	useEffect(() => {
 		if (invoices) {
-			console.log(invoices);
-			const data = invoices.map((invoice, idx) => {
-				const { company } = invoice;
-				const { _id, name, email } = company;
+			const companyInvoiceData = invoices.map((invoice) => {
+				console.log(invoice);
+				const { company, months } = invoice;
+				const {
+					_id: companyId,
+					name: companyName,
+					contact: companyContact,
+					address: companyAddress,
+					pan: companyPan,
+					gst: companyGst,
+					hsn: companyHsn,
+				} = company;
+				const monthlyCarData = {};
+				months.forEach((monthInvoice) => {
+					console.log(monthInvoice);
+					const { startDate, endDate, billAmount, invoiceDate } = monthInvoice;
+					const cars = monthInvoice.cars.map((car) => ({
+						model: car.model,
+						registrationNo: car.registrationNo,
+						// Add other car properties here if needed
+					}));
 
-				let totalAmount = 0; // Initialize totalAmount for each owner
-
-				// Iterate through each invoice for the current owner
-				invoice.invoices.forEach((invoice) => {
-					invoice.invoice.forEach((inv) => {
-						totalAmount += inv.totalAmount; // Sum up the totalAmount of each invoice
-					});
-				});
-
-				let createdDate;
-				invoice.invoices.forEach((invoice) => {
-					invoice.invoice.forEach((inv) => {
-						createdDate = inv.invoiceDate;
-					});
-				});
-
-				const modelInvoices = invoice.invoices;
-
-				let status = "unpaid";
-				let allPaid = true;
-
-				for (const modelInvoice of modelInvoices) {
-					const someUnpaid = modelInvoice.invoice.some((invoice) => invoice.status === "unpaid");
-					if (someUnpaid) {
-						allPaid = false;
-						break;
+					if (!monthlyCarData[invoiceDate]) {
+						monthlyCarData[invoiceDate] = {
+							startDate,
+							endDate,
+							billAmount,
+							cars,
+						};
+					} else {
+						monthlyCarData[invoiceDate].cars.push(...cars);
 					}
-				}
+				});
+				console.log(monthlyCarData);
 
-				if (allPaid) {
-					status = "paid";
-				}
+				const monthlyInvoices = Object.entries(monthlyCarData).map(([invoiceDate, data]) => ({
+					invoiceDate,
+					...data,
+				}));
+
 				return {
-					data: [String(idx + 1).padStart(3, "0"), name, email, formatDate(createdDate), totalAmount.toFixed(2)],
-					_id,
-					company: company,
-					invoices: invoice.invoices,
-					status,
+					companyId,
+					companyName,
+					companyContact,
+					companyAddress,
+					companyPan,
+					companyGst,
+					companyHsn,
+					monthlyInvoices,
 				};
 			});
-			setInvoiceData(data);
-			setFilteredInvoiceData(data);
+			console.log(companyInvoiceData);
+			setInvoiceData(companyInvoiceData);
+			setFilteredInvoiceData(companyInvoiceData);
 		}
-	}, [invoices, isOpen]);
+	}, [invoices]);
+
+	useEffect(() => {
+		const filterInvoiceData = () => {
+			let filteredData = invoiceData.slice();
+
+			if (selectedInvoice !== "all") {
+				filteredData = filteredData.filter((invoice) => invoice.monthlyInvoices.some((inv) => inv.companyStatus === selectedInvoice));
+			}
+
+			if (searchQuery) {
+				const lowercaseQuery = searchQuery.toLowerCase();
+				filteredData = filteredData.filter(
+					(invoice) =>
+						invoice.companyName.toLowerCase().includes(lowercaseQuery) || invoice.companyContact.toLowerCase().includes(lowercaseQuery)
+				);
+			}
+			setFilteredInvoiceData(filteredData);
+		};
+
+		filterInvoiceData();
+	}, [selectedInvoice, searchQuery, invoiceData]);
+
+	useEffect(() => {
+		console.log(filteredInvoiceData);
+	}, [filteredInvoiceData]);
 
 	useEffect(() => {
 		if (error) {
@@ -179,6 +136,33 @@ const Invoice = () => {
 			dispatch({ type: "CLEAR_MESSAGES" });
 		}
 	}, [message, error, dispatch]);
+
+	const exportToExcel = () => {
+		const worksheet = XLSX.utils.json_to_sheet(
+			filteredInvoiceData.map((invoice) => {
+				return {
+					"Invoice Id": invoice.companyId,
+					"Owner Name": invoice.companyName,
+					"Owner Email Id": invoice.companyContact,
+					"Invoice Date": invoice.monthlyInvoices[0].invoiceDate,
+					"Invoice Amount": invoice.totalAmount,
+					Status: selectedInvoice,
+				};
+			})
+		);
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, "Invoices");
+		XLSX.writeFile(workbook, "invoices.xlsx");
+	};
+
+	const generatePdf1 = (data) => {
+		const invoicesJson = encodeURIComponent(JSON.stringify(data.invoices));
+		const ownerJson = encodeURIComponent(JSON.stringify(data.company));
+		const id = encodeURIComponent(JSON.stringify(data.data[0]));
+		const date = encodeURIComponent(JSON.stringify(data.data[3]));
+
+		navigate(`/Bill?invoices=${invoicesJson}&owner=${ownerJson}&invId=${id}&date=${date}`);
+	};
 
 	if (loading) {
 		return <Loader />;
@@ -198,14 +182,20 @@ const Invoice = () => {
 						</section>
 						<section className="invoice_widget_container">
 							<WidgetItem designation="All Invoices" value={invoiceData.length || 0} />
-							<WidgetItem designation="Paid Invoices" value={invoiceData.filter((i) => i.status === "paid").length || 0} />
-							<WidgetItem designation="Unpaid Invoices" value={invoiceData.filter((i) => i.status === "unpaid").length || 0} />
+							<WidgetItem
+								designation="Paid Invoices"
+								value={invoiceData.filter((i) => i.monthlyInvoices.some((inv) => inv.companyStatus === "paid")).length || 0}
+							/>
+							<WidgetItem
+								designation="Unpaid Invoices"
+								value={invoiceData.filter((i) => i.monthlyInvoices.some((inv) => inv.companyStatus === "unpaid")).length || 0}
+							/>
 						</section>
 						<TableContainer className="invoice_table_container">
 							<TableHeading>
 								<h5>All Invoices</h5>
 								<div className="invoice_options">
-									<button onClick={() => setIsOpen((curr) => !curr)}>
+									<button onClick={() => setIsOpen(!isOpen)}>
 										Create Invoice <FaPlus />
 									</button>
 								</div>
@@ -215,12 +205,6 @@ const Invoice = () => {
 									<h4 className={selectedInvoice === "all" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("all")}>
 										All Invoices
 									</h4>
-									{/* <h4
-										className={selectedInvoice === "pending" ? "selected_invoice" : ""}
-										onClick={() => setSelectedInvoice("pending")}
-									>
-										Pending
-									</h4> */}
 									<h4 className={selectedInvoice === "paid" ? "selected_invoice" : ""} onClick={() => setSelectedInvoice("paid")}>
 										Paid
 									</h4>
@@ -236,7 +220,7 @@ const Invoice = () => {
 										<FaSearch />
 										<input
 											type="text"
-											placeholder="Search by Email, Name"
+											placeholder="Search by Company Name or Contact"
 											value={searchQuery}
 											onChange={(e) => setSearchQuery(e.target.value)}
 										/>

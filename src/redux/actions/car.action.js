@@ -33,6 +33,36 @@ export const addCar = (car, id) => async (dispatch) => {
 	}
 };
 
+export const addMultipleCar = (cars, id) => async (dispatch) => {
+	try {
+		dispatch({
+			type: "ADD_MULTIPLE_CAR_REQUEST",
+		});
+
+		const token = Cookies.get("token"); // Get the token from the cookie
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+			},
+		};
+
+		const { data } = await axios.post(`${URI}/add/cars?id=${id}`, { cars }, config);
+		const payload = data.message;
+
+		dispatch({
+			type: "ADD_MULTIPLE_CAR_SUCCESS",
+			payload,
+		});
+	} catch (error) {
+		console.log(error);
+		dispatch({
+			type: "ADD_MULTIPLE_CAR_FAILURE",
+			payload: error.response.data.message,
+		});
+	}
+};
+
 export const getAllCars = () => async (dispatch) => {
 	try {
 		dispatch({

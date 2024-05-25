@@ -68,7 +68,7 @@ const UpdateOwner = () => {
 			<AdminSidebar />
 			<main className="updateOwner">
 				<Bar />
-				<button onClick={navigateToAddCars}>Add Cars</button>
+				<button onClick={navigateToAddCars}>Add Car</button>
 				{!selectedCar ? (
 					<TableContainer className="carAssignTable">
 						<TableHeading>

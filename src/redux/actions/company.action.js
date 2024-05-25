@@ -17,13 +17,11 @@ export const addCompanies = (companies) => async (dispatch) => {
 			},
 		};
 
-		for (const company of companies) {
-			await axios.post(`${URI}/add/company`, company, config);
-		}
+		const { data } = await axios.post(`${URI}/add/companies`, companies, config);
 
 		dispatch({
 			type: "ADD_MULTIPLE_COMPANY_SUCCESS",
-			payload: "companies details added successfully",
+			payload: data.message,
 		});
 	} catch (error) {
 		console.log(error);

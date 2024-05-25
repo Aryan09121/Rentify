@@ -24,7 +24,7 @@ function OwnerProfile() {
 				let status = owner.bills.length > 0 ? "pending" : "paid";
 
 				return {
-					data: [idx, owner?.name, `${owner?.cars?.length} cars`, owner?.address?.city],
+					data: [idx, owner?.name, `${owner?.cars?.length} cars`, owner?.address?.street],
 					status,
 					_id: owner._id,
 				};

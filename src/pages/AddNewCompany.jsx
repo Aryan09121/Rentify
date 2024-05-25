@@ -12,18 +12,7 @@ import { Loader } from "../components";
 
 // const ownersCarHeaders = ["Serial No", "Brand Name", "Kilometers", "Rate", "Total Days", "Amount"];
 
-const expectedOwnerHeaders = [
-	"Company Name",
-	"Phone Number",
-	"Email Id",
-	"GSTIN Number",
-	"PAN Number",
-	"HSN Services No",
-	"street",
-	"city",
-	"state",
-	"pincode",
-];
+const expectedOwnerHeaders = ["Company Name", "GSTIN Number", "HSN Services No", "PAN Number", "Phone Number", "address"];
 
 const AddNewOwner = () => {
 	const { message, error, loading } = useSelector((state) => state.company);
@@ -42,15 +31,10 @@ const AddNewOwner = () => {
 		gst: "",
 		pan: "",
 		hsn: "",
-		address: {
-			street: "",
-			city: "",
-			state: "",
-			pincode: "",
-		},
+		address: "",
 	});
 
-	const handleOwnerFileUpload = (event) => {
+	const handleCompanyFileUpload = (event) => {
 		const file = event.target.files[0];
 		readCompanyExcelFile(file);
 		event.target.value = null;
@@ -71,17 +55,11 @@ const AddNewOwner = () => {
 					const newarr = companyData.map((data) => {
 						return {
 							name: data[0],
-							phone: data[1],
-							email: data[2],
-							gst: data[3],
-							pan: data[4],
-							hsn: data[5],
-							address: {
-								street: data[6],
-								city: data[7],
-								state: data[8],
-								pincode: data[9],
-							},
+							gst: data[1],
+							hsn: data[2],
+							pan: data[3],
+							phone: data[4],
+							address: data[5],
 						};
 					});
 					// console.log(newarr);
@@ -157,7 +135,7 @@ const AddNewOwner = () => {
 										</span>
 									</p>
 								)}
-								<input type="file" onChange={handleOwnerFileUpload} />
+								<input type="file" onChange={handleCompanyFileUpload} />
 							</section>
 							{companyFinal.length === 0 ? (
 								<>
@@ -173,8 +151,6 @@ const AddNewOwner = () => {
 														onChange={onInputChange}
 														placeholder="Comapny Name *"
 													/>
-												</div>
-												<div>
 													<input
 														type="text"
 														name="phone"
@@ -183,6 +159,16 @@ const AddNewOwner = () => {
 														onChange={onInputChange}
 														required
 														pattern="[0-9]{10}"
+													/>
+												</div>
+												<div>
+													<input
+														type="text"
+														value={company.hsn}
+														name="hsn"
+														onChange={onInputChange}
+														placeholder="HSN Services No *"
+														required
 													/>
 													<input
 														type="email"
@@ -214,79 +200,16 @@ const AddNewOwner = () => {
 												<div>
 													<input
 														type="text"
-														value={company.hsn}
-														name="hsn"
-														onChange={onInputChange}
-														placeholder="HSN Services No *"
-														required
-													/>
-												</div>
-												<div>
-													<input
-														type="text"
 														onChange={(e) => {
 															setCompany((curr) => {
 																return {
 																	...curr,
-																	address: {
-																		...curr.address,
-																		street: e.target.value,
-																	},
+																	address: e.target.value,
 																};
 															});
 														}}
 														value={company.address.street}
 														placeholder="Locality"
-													/>
-													<input
-														type="text"
-														onChange={(e) => {
-															setCompany((curr) => {
-																return {
-																	...curr,
-																	address: {
-																		...curr.address,
-																		city: e.target.value,
-																	},
-																};
-															});
-														}}
-														value={company.address.city}
-														placeholder="City"
-													/>
-												</div>
-												<div>
-													<input
-														type="text"
-														onChange={(e) => {
-															setCompany((curr) => {
-																return {
-																	...curr,
-																	address: {
-																		...curr.address,
-																		state: e.target.value,
-																	},
-																};
-															});
-														}}
-														value={company.address.state}
-														placeholder="State"
-													/>
-													<input
-														type="text"
-														onChange={(e) => {
-															setCompany((curr) => {
-																return {
-																	...curr,
-																	address: {
-																		...curr.address,
-																		pincode: e.target.value,
-																	},
-																};
-															});
-														}}
-														value={company.address.pincode}
-														placeholder="Pin Code"
 													/>
 												</div>
 											</div>

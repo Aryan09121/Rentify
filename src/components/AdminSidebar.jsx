@@ -102,14 +102,15 @@ const DivOne = ({ location }) => (
 			<Li url="/profile/owner" text="Profile" Icon={AiFillFileText} location={location} />
 			<Li url="/billings" text="Billings" Icon={AiFillFileText} location={location} />
 			<Li url="/add/new" text="Add New" Icon={IoPersonAdd} location={location} />
-			{/* <Li url="/settings" text="Settings" Icon={AiFillFileText} location={location} /> */}
+			<Li url="/data/upload" text="Data Upload" Icon={IoPersonAdd} location={location} />
+			<Li url="/hiring/uploads" text="Admin Sidebar" Icon={AiFillFileText} location={location} />
 		</ul>
 	</div>
 );
 const Li = ({ url, location, text, Icon }) => (
 	<li
 		style={{
-			backgroundColor: location.pathname.includes(url) ? "white" : "transparent",
+			backgroundColor: location.pathname.includes(url) ? "#e0efefd4" : "transparent",
 		}}
 	>
 		<Link
