@@ -83,10 +83,11 @@ const DataUpload = () => {
 						}
 						return acc;
 					}, []);
-					console.log(filteredCars);
+					// console.log(filteredCars);
 					const updatedCars = filteredCars.map((car) => ({
 						brand: car[3],
 						model: car[4],
+						year: car[5],
 						registrationNo: car[2],
 						start: {
 							date: car[8],
@@ -157,6 +158,7 @@ const DataUpload = () => {
 
 	const carSubmitHandler = (e) => {
 		e.preventDefault();
+		// console.log(cars);
 		dispatch(addCars(cars));
 	};
 

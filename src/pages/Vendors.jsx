@@ -1,17 +1,17 @@
 /* eslint-disable no-unused-vars */
-import { AdminSidebar } from "../components";
+import { AdminSidebar, Loader } from "../components";
 import TableSearchTOC from "../components/TableSearchHOC";
 import Bar from "../components/CarBar";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Select, { components } from "react-select";
 import { IoIosArrowDown } from "react-icons/io";
-import { getVendorsInvoices } from "../redux/actions/invoice.action";
+import { getAllInvoices, getVendorsInvoices } from "../redux/actions/invoice.action";
 import { getGst } from "../redux/actions/setting.action";
 import * as XLSX from "xlsx";
 
 const columns = [
-	{ Header: "S No.", accessor: "sno" },
+	// { Header: "S No.", accessor: "sno" },
 	{ Header: "District", accessor: "district" },
 	{ Header: "Vehicle Reg.no", accessor: "registrationno" },
 	{ Header: "Make", accessor: "make" },
@@ -99,31 +99,31 @@ const fixed = (n) => parseFloat(Number(n).toFixed(2));
 const Vendors = () => {
 	const [query, setQuery] = useState("");
 	const [selectedMonth, setSelectedMonth] = useState("");
-	const { vendorInvoices } = useSelector((state) => state.invoice);
+	const { invoices, loading } = useSelector((state) => state.invoice);
 	const { gst } = useSelector((state) => state.settings);
 	const [invdata, setInvdata] = useState([]);
 	const [filteredData, setFilteredData] = useState([]);
-	const [monthOptions, setMonthOptions] = useState([]);
+	const [dateOptions, setDateOptions] = useState([]);
 	const dispatch = useDispatch();
 
 	const handleSearch = (e) => setQuery(e.target.value);
 
 	const exportToExcel = () => {
 		const worksheet = XLSX.utils.json_to_sheet(
-			invdata.map((invoice) => {
+			filteredData.map((invoice, index) => {
 				const row = {
-					"Invoice Id": invoice?.sno,
+					"S No.": index + 1,
 					District: invoice.district,
 					"Vehicle Reg. No": invoice.registrationno,
 					Make: invoice.make,
 					Model: invoice.model,
 					Year: invoice.year,
-					"Frv Code": invoice.frv,
+					"FRV Code": invoice.frv,
 					Month: invoice.month,
 					"Start Date": invoice.start,
 					"End Date": invoice.end,
 					"Total Days": invoice.qty,
-					"Offorad Days": invoice.offroad,
+					"Offroad Days": invoice.offroad,
 					"Final Qty": invoice.final,
 					Unit: invoice.unit,
 					Rate: invoice.rate,
@@ -138,75 +138,102 @@ const Vendors = () => {
 	};
 
 	useEffect(() => {
-		dispatch(getVendorsInvoices());
+		dispatch(getAllInvoices());
 		dispatch(getGst());
 	}, [dispatch]);
 
 	useEffect(() => {
-		if (vendorInvoices?.length > 0) {
-			const data = vendorInvoices.map((inv, idx) => {
-				const totalDays = inv?.dayQty - inv?.offroad;
-				const subTotal = totalDays * inv?.car?.rent;
-				const gstAmount = (subTotal * gst) / 100;
-				const totalAmount = fixed(subTotal + gstAmount);
-				return {
-					sno: inv?.invoiceId,
-					district: inv?.trip?.district,
-					registrationno: inv?.car?.registrationNo,
-					make: inv?.owner?.name,
-					model: inv?.car?.model,
-					year: new Date(inv?.invoiceDate).getFullYear(),
-					frv: inv?.trip?.frvCode,
-					month: extractYearMonthInWords(inv?.invoiceDate).month + "-" + extractYearMonthInWords(inv?.invoiceDate).year,
-					start: formatDate(inv?.from),
-					end: formatDate(inv?.to),
-					qty: inv?.dayQty,
-					offroad: inv?.offroad,
-					final: totalDays,
-					unit: "Day",
-					rate: inv?.car?.rent,
-					amount: totalAmount,
-				};
-			});
-			const uniqueMonths = [...new Set(data.map((inv) => inv.month))];
-			const options = uniqueMonths.map((month) => ({ value: month, label: month })).reverse();
-			options.unshift({ value: "", label: "Select Month" }); // Add default label
-			setMonthOptions(options);
-			setSelectedMonth(options[0]?.value || "");
-			setInvdata(data);
-			setFilteredData(data.filter((item) => item.month.toLowerCase().includes(options[0]?.value.toLowerCase())));
+		if (invoices && invoices.length > 0) {
+			const dateSet = new Set();
+			const allData = [];
+
+			const data = invoices.reduce((acc, invoice, index) => {
+				for (const invoicedata of invoice.months) {
+					if (invoicedata.car.registrationNo === "MP04CT1234") {
+						console.log(invoicedata);
+					}
+					const date = new Date(invoicedata.invoiceDate).toISOString().split("T")[0]; // Format the date as 'YYYY-MM-DD'
+					if (!acc[date]) {
+						acc[date] = [];
+					}
+
+					const formattedData = {
+						sno: index + 1,
+						district: invoicedata.district,
+						registrationno: invoice.car.registrationNo,
+						make: invoice.owner.name,
+						model: invoice.car.model,
+						year: invoice.car.year,
+						frv: invoicedata.frvCode,
+						month: `${new Date(invoicedata.invoiceDate).toLocaleString("default", { month: "long" })} ${new Date(
+							invoicedata.invoiceDate
+						).getFullYear()}`,
+						start: formatDate(invoicedata.startDate),
+						end: formatDate(invoicedata.endDate),
+						qty: invoicedata.days,
+						offroad: invoicedata.offroad,
+						final: invoicedata?.totalDays,
+						unit: "Days",
+						rate: invoicedata?.rent,
+						amount: fixed(invoicedata.rent * invoicedata.totalDays),
+					};
+
+					acc[date].push(formattedData);
+					dateSet.add(date); // Collect unique dates
+					allData.push(formattedData);
+				}
+				return acc;
+			}, {});
+			console.log(allData);
+			setInvdata(allData);
+			setFilteredData(allData);
+			setDateOptions(
+				Array.from(dateSet).map((date) => ({
+					label: new Date(date).toLocaleString("default", { month: "long" }) + " " + new Date(date).getFullYear(),
+					value: new Date(date).toLocaleString("default", { month: "long" }) + " " + new Date(date).getFullYear(),
+				}))
+			);
 		}
-	}, [vendorInvoices, gst]);
+	}, [invoices]);
 
 	useEffect(() => {
 		if (selectedMonth) {
-			const filteredData = invdata.filter((item) => item.month.toLowerCase().includes(selectedMonth.toLowerCase()));
+			const filteredData = invdata.filter((item) => {
+				return item.month.toLowerCase().includes(selectedMonth.toLowerCase());
+			});
 			setFilteredData(filteredData);
+		} else {
+			setFilteredData(invdata);
 		}
 	}, [selectedMonth, invdata]);
 
 	useEffect(() => {
 		const filteredData = invdata.filter(
 			(item) =>
-				item.district.toLowerCase().includes(query.toLowerCase()) ||
-				item.registrationno.toLowerCase().includes(query.toLowerCase()) ||
-				item.make.toLowerCase().includes(query.toLowerCase()) ||
-				item.model.toLowerCase().includes(query.toLowerCase()) ||
-				item.year.toString().toLowerCase().includes(query.toLowerCase()) ||
-				item.frv.toLowerCase().includes(query.toLowerCase()) ||
-				item.month.toLowerCase().includes(query.toLowerCase()) ||
-				item.start.toString().toLowerCase().includes(query.toLowerCase()) ||
-				item.end.toString().toLowerCase().includes(query.toLowerCase()) ||
-				item.qty.toString().toLowerCase().includes(query.toLowerCase()) ||
-				item.unit.toLowerCase().includes(query.toLowerCase()) ||
-				item.rate.toString().toLowerCase().includes(query.toLowerCase())
+				item?.district?.toLowerCase().includes(query.toLowerCase()) ||
+				item?.registrationno.toLowerCase().includes(query.toLowerCase()) ||
+				item?.make?.toLowerCase()?.includes(query.toLowerCase()) ||
+				item?.model?.toLowerCase()?.includes(query.toLowerCase()) ||
+				item?.year?.toString()?.toLowerCase().includes(query.toLowerCase()) ||
+				item?.frv?.toLowerCase()?.includes(query.toLowerCase()) ||
+				item?.month?.toLowerCase()?.includes(query.toLowerCase()) ||
+				item?.start?.toLowerCase()?.includes(query.toLowerCase()) ||
+				item?.end?.toLowerCase()?.includes(query.toLowerCase()) ||
+				item?.qty?.toString()?.toLowerCase().includes(query.toLowerCase()) ||
+				item?.unit?.toLowerCase()?.includes(query.toLowerCase()) ||
+				item?.rate?.toString()?.toLowerCase().includes(query.toLowerCase())
 		);
+		console.log(filteredData);
 		setFilteredData(filteredData);
 	}, [query, invdata]);
 
+	// const Table = useCallback(() => {
+	// 	return TableSearchTOC(columns, query || selectedMonth ? filteredData : invdata, "dashboard-product-box", "", true, 50);
+	// }, [query, selectedMonth, filteredData, invdata]);
+
 	const Table = useCallback(
-		TableSearchTOC(columns, query || selectedMonth ? filteredData.reverse() : invdata.reverse(), "dashboard-product-box", "", true, 50),
-		[filteredData]
+		TableSearchTOC(columns, loading ? [{ sno: 1 }] : query || selectedMonth ? filteredData : invdata, "dashboard-product-box", "", true, 50),
+		[query, selectedMonth, filteredData, invdata]
 	);
 
 	return (
@@ -218,11 +245,13 @@ const Vendors = () => {
 					Perfect Vendor Payment Month of Oct 2024
 					<Select
 						className="filter"
-						options={monthOptions}
-						value={monthOptions.find((option) => option.value === selectedMonth)}
+						options={dateOptions}
+						value={dateOptions.find((option) => option.value === selectedMonth)}
 						components={{ DropdownIndicator }}
 						styles={customStyles}
-						onChange={(e) => setSelectedMonth(e.value)}
+						onChange={(e) =>
+							setSelectedMonth(`${new Date(e.value).toLocaleString("default", { month: "long" })} ${new Date(e.value).getFullYear()}`)
+						}
 					/>
 				</h2>
 				{Table()}

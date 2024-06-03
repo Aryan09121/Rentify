@@ -1,154 +1,44 @@
-/* eslint-disable no-unused-vars */
-// eslint-disable-next-line react/prop-types
-/* eslint-disable react-hooks/exhaustive-deps */
-import generatePDF, { usePDF, Resolution, Margin } from "react-to-pdf";
-import AdminSidebar from "./AdminSidebar";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+/* eslint-disable react/prop-types */
+import { useLocation } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getGst, sendPdf } from "../redux/actions/setting.action";
-import { IoLogoWhatsapp } from "react-icons/io5";
-import { toast } from "react-toastify";
+import { getGst } from "../redux/actions/setting.action";
+import { getAllInvoices } from "../redux/actions/invoice.action";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { toast } from "react-toastify"; // Assuming you're using react-toastify for notifications
 
 function formatDate(date) {
-	// Ensure date is in the correct format
 	if (!(date instanceof Date)) {
 		date = new Date(date);
 	}
 
-	// Array of month names
 	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-	// Get components of the date
 	const year = date.getFullYear();
 	const month = date.getMonth();
 	const day = date.getDate();
 
-	// Format the date
-	const formattedDate = `${day}, ${months[month]}, ${year}`;
-
-	return formattedDate;
+	return `${day}, ${months[month]}, ${year}`;
 }
 
-const option = {
-	filename: "Invoice.pdf",
-	method: "open",
-	resolution: Resolution.MEDIUM,
-	page: {
-		margin: Margin.SMALL,
-	},
-};
-
-const fixed = (n) => {
-	return parseFloat(Number(n).toFixed(2));
-};
+const fixed = (n) => parseFloat(Number(n).toFixed(2));
 
 function OwnerPdf() {
-	const { targetRef } = usePDF();
-	const [invoices, setInvoices] = useState([]);
-	const [total, setTotal] = useState([]);
-	const [owner, setOwner] = useState();
-	const location = useLocation();
-	const searchParams = new URLSearchParams(location.search);
-	const { gst, error, message } = useSelector((state) => state.settings);
-	const encodedOwner = searchParams.get("owner");
 	const dispatch = useDispatch();
-
-	const generate = () => {
-		generatePDF(targetRef, option);
-	};
-
-	const generateAndSendPDF = (invoices, email) => {
-		// console.log(invoices);
-		dispatch(sendPdf(invoices, email));
-	};
-
-	const sendToEmail = () => {
-		console.log(invoices);
-		generateAndSendPDF(invoices, owner.email);
-	};
-
-	const sendToWhatsapp = () => {
-		window.open("https://wa.me/917415721902?text=Your%20custom%20message%20here");
-	};
+	const location = useLocation();
+	const params = new URLSearchParams(location.search);
+	const ownerId = params.get("id");
+	const [total, setTotal] = useState([]);
+	const invoiceDate = params.get("date");
+	const { invoices: backendData, message, error } = useSelector((state) => state.invoice);
+	const [invdata, setInvData] = useState([]);
+	const [invoices, setInvoices] = useState([]);
+	const targetRef = useRef(null);
 
 	useEffect(() => {
-		if (encodedOwner) {
-			const decodedOwner = encodedOwner ? JSON.parse(decodeURIComponent(encodedOwner)) : null;
-			setOwner(decodedOwner);
-		}
-	}, [encodedOwner]);
-
-	useEffect(() => {
-		if (owner) {
-			// console.log(owner);
-			const data = owner.bills.map((bill) => {
-				// console.log(bill);
-				// Calculate dayQty - offroad and then sum of all dayQty
-				const totalDayQty = bill.invoices.reduce((total, current) => {
-					return total + (current.days - current.offroad);
-				}, 0);
-
-				// Sum of all dayAmount
-				const totalDayAmount = bill.invoices.reduce((total, current) => {
-					return total + current.amount;
-				}, 0);
-
-				// Find the earliest and latest dates
-				const fromDate = bill.invoices.reduce((earliest, current) => {
-					return earliest < new Date(current.start) ? earliest : new Date(current.start);
-				}, new Date(bill.invoices[0].start));
-
-				const toDate = bill.invoices.reduce((latest, current) => {
-					return latest > new Date(current.end) ? latest : new Date(current.end);
-				}, new Date(bill.invoices[0].end));
-				// Format the dates
-				const formattedFromDate = formatDate(fromDate);
-				const formattedToDate = formatDate(toDate);
-				const distinctCarCount = new Set(bill.invoices.map((invoice) => invoice.car)).size;
-				// console.log(distinctCarCount);
-				return {
-					model: bill?.model,
-					count: distinctCarCount,
-					periodFrom: formattedFromDate,
-					periodTo: formattedToDate,
-					totalDayQty: totalDayQty,
-					totalDayAmount: totalDayAmount,
-					length: length,
-					_id: bill?._id,
-				};
-			});
-			setInvoices(data);
-		}
-	}, [owner]);
-
-	useEffect(() => {
-		if (invoices.length > 0) {
-			// Calculate the sum of totalDayAmount and totalKmAmount for each invoice
-			const subtotals = invoices.reduce((acc, inv) => {
-				return acc + inv.totalDayAmount;
-			}, 0);
-
-			const gstAmount = fixed(subtotals * gst) / 100;
-
-			// Calculate GST (5%)
-			// const gstAmount = totalAmount * (gst / 100);
-
-			// Calculate the bill total
-			const billTotal = subtotals + gstAmount;
-
-			// Set the total state
-			setTotal({
-				subtotals: subtotals,
-				gstAmount: gstAmount,
-				billTotal: billTotal,
-			});
-		}
-	}, [invoices, gst]);
-
-	useEffect(() => {
+		dispatch(getAllInvoices());
 		dispatch(getGst());
-	}, []);
+	}, [dispatch]);
 
 	useEffect(() => {
 		if (error) {
@@ -161,18 +51,123 @@ function OwnerPdf() {
 		}
 	}, [message, error, dispatch]);
 
+	useEffect(() => {
+		// console.log(invoices);
+		if (backendData?.length > 0) {
+			const ownerInvoiceData = {};
+			backendData.forEach((invoice) => {
+				const { owner, months } = invoice;
+				const { _id, name, contact, address: ownerAddress } = owner;
+				if (!ownerInvoiceData[_id]) {
+					ownerInvoiceData[_id] = {
+						ownerId: _id,
+						ownerName: name,
+						contact,
+						ownerAddress,
+						monthlyInvoices: [],
+					};
+				}
+				months.forEach((monthInvoice, index) => {
+					const monthlyInvoice = { month: formatDate(monthInvoice.invoiceDate), ...monthInvoice };
+					if (!ownerInvoiceData[_id].monthlyInvoices[index]) {
+						ownerInvoiceData[_id].monthlyInvoices[index] = [];
+					}
+					ownerInvoiceData[_id].monthlyInvoices[index].push(monthlyInvoice);
+				});
+			});
+			const ownerInvoiceArray = Object.values(ownerInvoiceData);
+			const invData = ownerInvoiceArray.flatMap((invoice) =>
+				invoice.monthlyInvoices.map((invoiceMonth) => ({
+					data: [
+						invoice.ownerName,
+						invoice.contact,
+						invoiceMonth[0].month,
+						fixed(invoiceMonth.reduce((acc, data) => acc + data.totalDays * data.rent, 0)),
+					],
+					status: invoiceMonth[0].ownerStatus === "paid" ? "paid" : "unpaid",
+					ownerId: invoice.ownerId,
+					ownerName: invoice.ownerName,
+					contact: invoice.contact,
+					ownerAddress: invoice.ownerAddress,
+					ownerPan: invoice.ownerPan,
+					invoices: invoiceMonth,
+				}))
+			);
+			console.log(invData);
+			// console.log(ownerId);
+			console.log(invData.find((inv) => inv.ownerId === ownerId && inv.data[2] === invoiceDate));
+			setInvData(invData.find((inv) => inv.ownerId === ownerId && inv.data[2] === invoiceDate));
+		}
+	}, [backendData, ownerId]);
+
+	useEffect(() => {
+		if (invdata?.invoices?.length > 0) {
+			const groupedInvoices = invdata.invoices.reduce((acc, inv) => {
+				if (!acc[inv.car.model]) {
+					acc[inv.car.model] = [];
+				}
+				acc[inv.car.model].push(inv);
+				return acc;
+			}, {});
+
+			const data = Object.entries(groupedInvoices).map(([model, modelInvoices]) => {
+				const totalDayQty = modelInvoices.reduce((total, inv) => total + (inv.days - inv.offroad), 0);
+				const totalDayAmount = fixed(modelInvoices.reduce((total, inv) => total + inv.rent * inv.totalDays, 0));
+				const fromDate = new Date(Math.min(...modelInvoices.map((inv) => new Date(inv.startDate))));
+				const toDate = new Date(Math.max(...modelInvoices.map((inv) => new Date(inv.endDate))));
+				const formattedFromDate = formatDate(fromDate);
+				const formattedToDate = formatDate(toDate);
+				const vehicleCount = modelInvoices.length;
+
+				return {
+					model: model,
+					count: vehicleCount,
+					periodFrom: formattedFromDate,
+					periodTo: formattedToDate,
+					totalDayQty: totalDayQty,
+					totalDayAmount: totalDayAmount,
+					kmRate: modelInvoices[0].rate.km,
+				};
+			});
+			setInvoices(data);
+		}
+	}, [invdata]);
+
+	const generatePDF = () => {
+		const input = targetRef.current;
+		html2canvas(input).then((canvas) => {
+			const imgData = canvas.toDataURL("image/png");
+			const pdf = new jsPDF();
+			const imgProperties = pdf.getImageProperties(imgData);
+			const pdfWidth = pdf.internal.pageSize.getWidth();
+			const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
+			pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+			pdf.save(`invoice_${ownerId}.pdf`);
+		});
+	};
+
+	useEffect(() => {
+		console.log(invoices);
+		if (invoices.length > 0) {
+			const subtotals = invoices.map((invoice) => invoice.totalDayAmount);
+			const totalAmount = subtotals.reduce((total, amount) => total + amount, 0);
+			const gstAmount = totalAmount * (10 / 100);
+			const billTotal = totalAmount + gstAmount;
+
+			setTotal({
+				subtotals: subtotals,
+				totalAmount: totalAmount,
+				gstAmount: gstAmount,
+				billTotal: billTotal,
+			});
+		}
+	}, [invoices]);
+
 	return (
-		<div className="admin-container">
-			<AdminSidebar />
+		<div className="admin-contaner">
 			<main className="pdfContainer">
 				<div style={{ display: "flex", padding: "0 6rem" }}>
-					<button className="downloadbtn" onClick={sendToEmail}>
-						Email
-					</button>
-					<button className="downloadbtn" onClick={sendToWhatsapp}>
-						<IoLogoWhatsapp />
-					</button>
-					<button className="downloadbtn" onClick={generate}>
+					<button className="downloadbtn" onClick={generatePDF}>
 						Download PDF
 					</button>
 				</div>
@@ -182,37 +177,31 @@ function OwnerPdf() {
 						<h2>Tax Invoice</h2>
 						<div className="basicDetails">
 							<div>
-								<p>GST NO : {owner?.gst}</p>
-								<p>HSN Services : {owner?.hsn}</p>
-								<p>Pan Card No : {owner?.pan}</p>
+								<p>GST NO : {"{GST NUMBER}"}</p>
+								<p>HSN Services : {"{HSN NUMBER}"}</p>
+								<p>Pan Card No : {"{PAN NUMBER}"}</p>
 							</div>
-							{/* <div>
-								<p>Invoice NO : </p>
-								<p>Date : </p>
-							</div> */}
+							<div>
+								<p>Invoice NO : invoiceId</p>
+								<p>Date : {!invdata && invdata?.data[2]}</p>
+							</div>
 						</div>
 						<div className="inviceContainer">
 							<div className="invoiceHeaders">
 								<div>
 									<h3>Bill to Address:</h3>
-									<h5>{owner?.name}</h5>
+									<h5>{invdata?.ownerName}</h5>
 									<h4>
 										<span style={{ fontWeight: 600 }}>Address: </span>
-										{owner?.address?.street +
-											", " +
-											owner?.address?.city +
-											",\n" +
-											owner?.address?.state +
-											", India, " +
-											owner?.address?.pincode}
+										{invdata?.ownerAddress?.street}
 									</h4>
 								</div>
 								<div>
-									<p></p>
+									<p>{!invdata && invdata?.data[2]}</p>
 									<p>Vehicle Monthly Rental Basis PO No -</p>
 								</div>
 							</div>
-							<div className="invoiceBody">
+							<div className="invoiceBody ownerBody">
 								{invoices?.map((invoice, idx) => {
 									return (
 										<div key={invoice.from + idx}>
@@ -221,28 +210,26 @@ function OwnerPdf() {
 												<article>
 													Rental (Hiring Charges) - {invoice.model}
 													<br />
-													Description: Hiring Charges for {invoice.model} Vehicles on per day basis
+													Description: Hiring Charges for {invoice.model} Vehicles on per day basis as per Annexure - 1
 													<br />
 													Vehicle Count - {invoice.count} Nos
 													<br />
 													Period - {invoice.periodFrom} To {invoice.periodTo}
 												</article>
 											</div>
-											<div style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
+											<div>
 												<p>{invoice.totalDayQty}</p>
 												<p>Days</p>
-												{/* <p>{invoice.dayRate}</p> */}
 												<p>{invoice.totalDayAmount.toFixed(2)}</p>
 											</div>
 										</div>
 									);
 								})}
 							</div>
-							<div className="invoiceFooter">
+							<div className="invoiceFooter ownerFooter">
 								<div>
 									<p>Taxable Value (Rs): </p>
-									{/* <p>2882549.64</p> */}
-									<p>{Number(total?.subtotals).toFixed(2)}</p>
+									<p>{Number(total?.totalAmount).toFixed(2)}</p>
 								</div>
 								<div>
 									<p>GST 5%: </p>

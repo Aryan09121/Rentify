@@ -1,107 +1,41 @@
-import { Filter } from "../pages/InvoiceDetails";
-import AdminSidebar from "./AdminSidebar";
-import Bar from "./Bar";
-// import Table from "./Table";
-
-import { billHeaders } from "../assets/data/bill";
-import { BillListRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { getGst } from "../redux/actions/setting.action";
-import { getAllOwnerInvoices } from "../redux/actions/invoice.action";
+import { getAllInvoices } from "../redux/actions/invoice.action";
 import TxtLoader from "./TxtLoader";
+import { FaSearch } from "react-icons/fa";
+import AdminSidebar from "./AdminSidebar";
+import Bar from "./Bar";
+import { billHeaders } from "../assets/data/bill";
+import { BillListRow, Table, TableBody, TableContainer, TableHeaders, TableHeading } from "./TableHOC";
 
-function formatDate(date, d = false) {
-	// Ensure date is in the correct format
+const formatDate = (date, d = false) => {
 	if (!(date instanceof Date)) {
 		date = new Date(date);
 	}
-
-	// Array of month names
 	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-	// Get components of the date
 	const year = date.getFullYear();
 	const month = date.getMonth();
 	const day = date.getDate();
-	let formattedDate;
-	// Format the date
-	if (d === false) {
-		formattedDate = `${day}, ${months[month]}, ${year}`;
-	} else {
-		formattedDate = day;
-	}
+	return d === false ? `${day}, ${months[month]}, ${year}` : day;
+};
 
-	return formattedDate;
-}
+const fixed = (n) => parseFloat(Number(n).toFixed(2));
 
-function Billings() {
+const Billings = () => {
 	const dispatch = useDispatch();
-	const { ownerInvoices, message, error, loading } = useSelector((state) => state.invoice);
+	const { invoices, message, error, loading } = useSelector((state) => state.invoice);
 	const [invoiceData, setInvoiceData] = useState([]);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [selectedInvoice, setSelectedInvoice] = useState("all");
 	const navigate = useNavigate();
 
-	const navigateToBill = (data) => {
-		// console.log(data);
-		const { owner, invoices } = data;
-		// Convert the invoices array to a JSON string
-		const invoicesJson = JSON.stringify(invoices);
-		const ownerJson = JSON.stringify(owner);
-
-		// Encode the JSON string to include it in the URL as a query parameter
-		const encodedInvoices = encodeURIComponent(invoicesJson);
-		const encodedOwner = encodeURIComponent(ownerJson);
-
-		// Navigate to the route with the encoded invoices as a query parameter
-		navigate(`/billings/${data._id}?invoices=${encodedInvoices}&owner=${encodedOwner}`);
-	};
-
 	useEffect(() => {
-		if (ownerInvoices) {
-			// console.log(ownerInvoices);
-			const isUniqueOwner = (owner, index, self) => {
-				return self.findIndex((o) => o.owner._id === owner.owner._id) === index;
-			};
-			// console.log(invoices.filter(isUniqueOwner));
-			const data = ownerInvoices.filter(isUniqueOwner).map((invoice, idx) => {
-				// console.log(invoice);
-				const { owner } = invoice;
-				// console.log(owner);
-				if (owner.bills.length > 0) {
-					const { _id, name, email } = owner;
-
-					let totalAmount = 0; // Initialize totalAmount for each owner
-
-					// Iterate through each bills for the current owner
-					totalAmount = owner.bills.reduce((acc, bill) => {
-						return acc + bill.invoices.reduce((acc, inv) => acc + inv.amount, 0);
-					}, 0);
-
-					// console.log(totalAmount);
-
-					let createdDate;
-					invoice.invoices.forEach((invoice) => {
-						invoice.invoice.forEach((inv) => {
-							createdDate = inv.invoiceDate;
-						});
-					});
-
-					return {
-						data: [String(idx + 1).padStart(3, "0"), name, email, formatDate(createdDate), totalAmount.toFixed(2)],
-						_id,
-						owner: owner,
-						invoices: invoice.invoices,
-					};
-				} else {
-					return null;
-				}
-			});
-
-			setInvoiceData(data.filter((i) => i !== null));
-		}
-	}, [ownerInvoices]);
+		dispatch(getAllInvoices());
+		dispatch(getGst());
+	}, []);
 
 	useEffect(() => {
 		if (error) {
@@ -115,29 +49,112 @@ function Billings() {
 	}, [message, error]);
 
 	useEffect(() => {
-		dispatch(getAllOwnerInvoices());
-		dispatch(getGst());
-	}, []);
+		if (invoices?.length > 0) {
+			const ownerInvoiceData = {};
+			invoices.forEach((invoice) => {
+				const { owner, months } = invoice;
+				const { _id, name, contact, address: ownerAddress } = owner;
+				if (!ownerInvoiceData[_id]) {
+					ownerInvoiceData[_id] = {
+						ownerId: _id,
+						ownerName: name,
+						contact,
+						ownerAddress,
+						monthlyInvoices: [],
+					};
+				}
+				months.forEach((monthInvoice, index) => {
+					const monthlyInvoice = { month: formatDate(monthInvoice.invoiceDate), ...monthInvoice };
+					if (!ownerInvoiceData[_id].monthlyInvoices[index]) {
+						ownerInvoiceData[_id].monthlyInvoices[index] = [];
+					}
+					ownerInvoiceData[_id].monthlyInvoices[index].push(monthlyInvoice);
+				});
+			});
+			const ownerInvoiceArray = Object.values(ownerInvoiceData);
+			const invData = ownerInvoiceArray.flatMap((invoice) =>
+				invoice.monthlyInvoices.map((invoiceMonth) => ({
+					data: [
+						invoice.ownerName,
+						invoice.contact,
+						invoiceMonth[0].month,
+						fixed(invoiceMonth.reduce((acc, data) => acc + data.totalDays * data.rent, 0)),
+					],
+					status: invoiceMonth[0].ownerStatus === "paid" ? "paid" : "unpaid",
+					ownerId: invoice.ownerId,
+					ownerName: invoice.ownerName,
+					contact: invoice.contact,
+					ownerAddress: invoice.ownerAddress,
+					ownerPan: invoice.ownerPan,
+					invoices: invoiceMonth,
+				}))
+			);
+			setInvoiceData(invData);
+		}
+	}, [invoices]);
+
+	const sortedAndFilteredData = useMemo(() => {
+		let data = [...invoiceData];
+		if (searchQuery) {
+			data = data.filter((bill) => bill.data.slice(0, 2).join("").toLowerCase().includes(searchQuery.toLowerCase()));
+		}
+		if (selectedInvoice !== "all") {
+			data = data.filter((bill) => bill.status === selectedInvoice);
+		}
+		return data;
+	}, [invoiceData, searchQuery, selectedInvoice]);
+
+	const navigateToBill = (data) => {
+		const invoicesJson = encodeURIComponent(JSON.stringify(data));
+		navigate(`/billings/data?invoices=${invoicesJson}`);
+	};
+
+	const handleInvoiceTypeChange = (type) => {
+		setSelectedInvoice(type);
+	};
+
 	return (
 		<div className="admin-container">
 			<AdminSidebar />
 			<main className="ownerProfile">
 				<Bar />
 				<h2>Bills</h2>
-				{/* {invoiceData.length > 0 && <Filter />} */}
-
 				<TableContainer>
 					<TableHeading>
 						<p>All Bills</p>
 					</TableHeading>
+					<TableHeading className="invoice_functionality">
+						<div className="invoice_functionality_sort">
+							{["all", "paid", "unpaid"].map((status) => (
+								<h4
+									key={status}
+									className={selectedInvoice === status ? "selected_invoice" : ""}
+									onClick={() => handleInvoiceTypeChange(status)}
+								>
+									{status === "all" ? "All Invoices" : status === "paid" ? "Paid" : "Unpaid Invoices"}
+								</h4>
+							))}
+						</div>
+						<div className="invoice_functionality_search">
+							<button>
+								<FaSearch />
+								<input
+									type="text"
+									placeholder="Search by Owner details"
+									value={searchQuery}
+									onChange={(e) => setSearchQuery(e.target.value)}
+								/>
+							</button>
+						</div>
+					</TableHeading>
 					<Table>
 						<TableHeaders style={{ gridTemplateColumns: `repeat(${billHeaders.length},1fr)` }} headers={billHeaders} />
-						{loading ? <TxtLoader /> : <TableBody TableRow={BillListRow} data={invoiceData} onClick={navigateToBill} />}
+						{loading ? <TxtLoader /> : <TableBody TableRow={BillListRow} data={sortedAndFilteredData} onClick={navigateToBill} />}
 					</Table>
 				</TableContainer>
 			</main>
 		</div>
 	);
-}
+};
 
 export default Billings;

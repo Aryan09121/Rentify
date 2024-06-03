@@ -1,43 +1,4 @@
-export const customerHeaders = ["Serial No", "Owner Name", "Total Vehicle", "Address", "Payment Status"];
-
-export const customerData = [
-	// {
-	// 	data: ["1","tstmp1012", "M.S, Subramanium", "4 Cars", "Vishakhapatnam","ongoing"],
-	// },
-	{
-		data: ["1", "M.S, Subramanium", "4 Cars", "Vishakhapatnam"],
-		status: "ongoing",
-		_id: 1,
-	},
-	{
-		data: ["2", "Ramesh Gupta", "2 Cars", "Varodra"],
-		status: "pending",
-		_id: 2,
-	},
-	{
-		data: ["3", "Vishwas Patel", "6 Cars", "Mumbai"],
-		status: "completed",
-		_id: 3,
-	},
-	{
-		data: ["3", "Bhavna Goel", "4 Cars", "Indore"],
-		status: "ongoing",
-		_id: 4,
-	},
-	{
-		data: ["4", "Saksham Bisen", "9 Cars", "Bhopal"],
-		status: "ongoing",
-		_id: 5,
-	},
-];
-
-export const ownerSortOptions = [
-	{ value: "", label: "Sort By" },
-	{ value: "distance", label: "Distance Travelled" },
-	{ value: "location", label: "Location" },
-	{ value: "total", label: "Number of Cars" },
-	{ value: "status", label: "Payment Status" },
-];
+export const customerHeaders = ["Owner Name", "Total Vehicle", "Address", "Payment Status"];
 
 export const vehicleHeaders = ["Serial No", "Brand Name", "Kilometers", "Rate", "Total Days", "Amount"];
 

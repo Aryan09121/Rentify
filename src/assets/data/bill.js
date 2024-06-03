@@ -9,7 +9,7 @@ export const billData = [
 	},
 ];
 
-export const billHeaders = ["Serial No", "Owner Name", "Bill Amount", "GST", "Total Amount"];
+export const billHeaders = ["Owner Name", "Bill Amount", "Invoice Date", "Total Amount", "status"];
 
 export const billDetailsData = [
 	{

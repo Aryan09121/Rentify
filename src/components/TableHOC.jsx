@@ -135,10 +135,11 @@ export const InvoiceRow = ({ rowdata, className = "tableContents", onClick }) =>
 
 export const BillListRow = ({ rowdata, className = "tableContents", onClick }) => {
 	return (
-		<div onClick={() => onClick(rowdata)} className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length},1fr)` }}>
+		<div onClick={() => onClick(rowdata)} className={className} style={{ gridTemplateColumns: `repeat(${rowdata.data.length + 1},1fr)` }}>
 			{rowdata.data.map((data) => {
 				return <h3 key={rowdata._id}>{data}</h3>;
 			})}
+			<button className={rowdata.status === "paid" ? "tableBtn greenbg" : "tableBtn redbg"}>{rowdata.status}</button>
 		</div>
 	);
 };

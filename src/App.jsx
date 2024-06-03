@@ -74,12 +74,12 @@ const App = () => {
 		<Suspense fallback={<Loader />}>
 			<Routes>
 				<Route path="/" element={<Signup />} />
+				<Route path="/ownerbill" element={<OwnerPdf />} />
 				<Route element={<ProtectedRoute />}>
 					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/invoices" element={<Invoice />} />
 					<Route path="/charges/details" element={<InvoiceDetails />} />
 					<Route path="/bill" element={<BillPdf />} />
-					<Route path="/ownerbill" element={<OwnerPdf />} />
 					<Route path="/charges" element={<Charges />} />
 					<Route path="/vendors" element={<Vendors />} />
 					<Route path="/profile/owner" element={<OwnerProfile />} />
@@ -89,7 +89,7 @@ const App = () => {
 					<Route path="/settings" element={<Settings />} />
 					<Route path="/search" element={<Search />} />
 					<Route path="/billings" element={<Billings />} />
-					<Route path="/billings/:id" element={<BillDetails />} />
+					<Route path="/billings/data" element={<BillDetails />} />
 					<Route path="/add/new" element={<AddNew />} />
 					<Route path="/add/new/owner" element={<AddNewOwner />} />
 					<Route path="/add/new/company" element={<AddNewComapny />} />

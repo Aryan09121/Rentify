@@ -282,7 +282,7 @@ export const payAllInvoice = (ids) => async (dispatch) => {
 	}
 };
 
-export const payAllCompanyInvoices = (ids) => async (dispatch) => {
+export const payAllCompanyInvoices = (companyId, month) => async (dispatch) => {
 	try {
 		dispatch({
 			type: "PAY_ALL_INVOICE_REQUEST",
@@ -297,7 +297,7 @@ export const payAllCompanyInvoices = (ids) => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.post(`${URI}/pay/all/invoice`, { ids }, config);
+		const { data } = await axios.post(`${URI}/pay/all/invoice`, { companyId, month }, config);
 
 		const payload = data.message;
 
@@ -314,7 +314,7 @@ export const payAllCompanyInvoices = (ids) => async (dispatch) => {
 	}
 };
 
-export const payOwnerBill = (id, transaction) => async (dispatch) => {
+export const payOwnerBill = (billdata) => async (dispatch) => {
 	try {
 		dispatch({
 			type: "PAY_OWNER_REQUEST",
@@ -329,7 +329,7 @@ export const payOwnerBill = (id, transaction) => async (dispatch) => {
 		};
 
 		// eslint-disable-next-line no-unused-vars
-		const { data } = await axios.post(`${URI}/pay/owner?id=${id}`, { transaction }, config);
+		const { data } = await axios.post(`${URI}/pay/owner/bill`, billdata, config);
 
 		const payload = {
 			message: data.message,

@@ -5,6 +5,8 @@ import generatePDF, { usePDF, Resolution, Margin } from "react-to-pdf";
 import AdminSidebar from "./AdminSidebar";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getGst } from "../redux/actions/setting.action";
 
 function formatDate(date) {
 	// Ensure date is in the correct format
@@ -31,98 +33,73 @@ const option = {
 	method: "open",
 	resolution: Resolution.MEDIUM,
 	page: {
-		margin: Margin.SMALL,
+		DetailedMargin: {
+			top: Margin.LARGE,
+			right: Margin.SMALL,
+			bottom: Margin.LARGE,
+			left: Margin.SMALL,
+		},
 	},
 };
 
-const gst = 5;
+const fixed = (n) => {
+	return parseFloat(Number(n).toFixed(2));
+};
 
 function BillPdf() {
 	const { targetRef } = usePDF();
 	const [invoices, setInvoices] = useState([]);
-	const [invdata, setInvdata] = useState([]);
+	const { gst } = useSelector((state) => state.settings);
+	const [invdata, setInvdata] = useState();
 	const [total, setTotal] = useState([]);
-	const [company, setCompany] = useState();
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const encodedInvoices = searchParams.get("invoices");
-	const encodedOwner = searchParams.get("owner");
-	const invId = JSON.parse(searchParams.get("invId"));
-	const date = JSON.parse(searchParams.get("date"));
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const generate = () => {
 		generatePDF(targetRef, option);
 	};
 
 	const seeAnexure = () => {
-		// console.log(company._id);
-		navigate(`/charges?id=${company._id}`);
+		const invoicesJson = encodeURIComponent(JSON.stringify(invdata));
+		navigate(`/charges?invoices=${invoicesJson}`);
 	};
 
 	useEffect(() => {
 		// Decode the encoded invoices and parse them back to an array
 		if (encodedInvoices.length > 0) {
 			const decodedInvoices = encodedInvoices ? JSON.parse(decodeURIComponent(encodedInvoices)) : [];
-			console.log(decodedInvoices);
+			// console.log(decodedInvoices);
 			setInvdata(decodedInvoices);
 		}
-		if (encodedOwner) {
-			const decodedOwner = encodedOwner ? JSON.parse(decodeURIComponent(encodedOwner)) : null;
-			setCompany(decodedOwner);
-		}
-	}, [encodedInvoices, encodedOwner]);
+	}, [encodedInvoices]);
 
 	useEffect(() => {
-		if (invdata.length > 0) {
-			const length = invdata?.length;
+		console.log(invdata);
+		if (invdata?.invoices?.length > 0) {
+			const groupedInvoices = invdata.invoices.reduce((acc, inv) => {
+				if (!acc[inv.model]) {
+					acc[inv.model] = [];
+				}
+				acc[inv.model].push(inv);
+				return acc;
+			}, {});
 
-			const data = invdata.map((inv) => {
-				// console.log(inv);
-				// Calculate dayQty - offroad and then sum of all dayQty
-				const totalDayQty = inv.invoice.reduce((total, current) => {
-					return total + (current.dayQty - current.offroad);
-				}, 0);
-
-				// Sum of all kmQty
-				const totalKmQty = inv.invoice.reduce((total, current) => {
-					return total + current.kmQty;
-				}, 0);
-
-				// Sum of all dayAmount
-				const totalDayAmount = inv.invoice.reduce((total, current) => {
-					return total + current.dayAmount;
-				}, 0);
-
-				// Sum of all kmAmount
-				const totalKmAmount = inv.invoice.reduce((total, current) => {
-					return total + current.kmAmount;
-				}, 0);
-
-				// Find the earliest and latest dates
-				const fromDate = inv.invoice.reduce((earliest, current) => {
-					return earliest < new Date(current.from) ? earliest : new Date(current.from);
-				}, new Date(inv.invoice[0].from));
-
-				const toDate = inv.invoice.reduce((latest, current) => {
-					return latest > new Date(current.to) ? latest : new Date(current.to);
-				}, new Date(inv.invoice[0].to));
-
-				// Format the dates
+			const data = Object.entries(groupedInvoices).map(([model, modelInvoices]) => {
+				const totalDayQty = modelInvoices.reduce((total, inv) => total + (inv.days - inv.offroad), 0);
+				const totalKmQty = modelInvoices.reduce((total, inv) => total + (inv.endKm - inv.startKm), 0);
+				const totalDayAmount = fixed(modelInvoices.reduce((total, inv) => total + inv.dayAmount, 0));
+				const totalKmAmount = fixed(modelInvoices.reduce((total, inv) => total + inv.kmAmount, 0));
+				const fromDate = new Date(Math.min(...modelInvoices.map((inv) => new Date(inv.startDate))));
+				const toDate = new Date(Math.max(...modelInvoices.map((inv) => new Date(inv.endDate))));
 				const formattedFromDate = formatDate(fromDate);
 				const formattedToDate = formatDate(toDate);
-
-				const vehicleCount = inv?.invoice?.reduce((acc, inv) => {
-					console.log(inv);
-					if (!acc.includes(inv.car)) {
-						// If it doesn't exist, add it to the accumulator
-						acc.push(inv.car);
-					}
-					return acc;
-				}, []).length;
+				const vehicleCount = modelInvoices.length;
 
 				return {
-					model: inv?.model,
+					model: model,
 					count: vehicleCount,
 					periodFrom: formattedFromDate,
 					periodTo: formattedToDate,
@@ -130,35 +107,25 @@ function BillPdf() {
 					totalKmQty: totalKmQty,
 					totalDayAmount: totalDayAmount,
 					totalKmAmount: totalKmAmount,
-					dayRate: inv?.invoice[0].dayRate,
-					kmRate: inv?.invoice[0].kmRate,
-					length: length,
-					_id: inv?.invoice?._id,
+					dayRate: modelInvoices[0].rate.date,
+					kmRate: modelInvoices[0].rate.km,
 				};
 			});
+			console.log(data);
 			setInvoices(data);
 		}
 	}, [invdata]);
 
 	useEffect(() => {
 		if (invoices.length > 0) {
-			// Calculate the sum of totalDayAmount and totalKmAmount for each invoice
 			const subtotals = invoices.map((invoice) => {
 				return invoice.totalDayAmount + invoice.totalKmAmount;
 			});
 
-			// Calculate the total of subtotals
-			const totalAmount = subtotals.reduce((total, amount) => {
-				return total + amount;
-			}, 0);
-
-			// Calculate GST (5%)
+			const totalAmount = subtotals.reduce((total, amount) => total + amount, 0);
 			const gstAmount = totalAmount * (gst / 100);
-
-			// Calculate the bill total
 			const billTotal = totalAmount + gstAmount;
 
-			// Set the total state
 			setTotal({
 				subtotals: subtotals,
 				totalAmount: totalAmount,
@@ -167,6 +134,10 @@ function BillPdf() {
 			});
 		}
 	}, [invoices]);
+
+	useEffect(() => {
+		dispatch(getGst());
+	}, [dispatch]);
 
 	return (
 		<div className="admin-container">
@@ -186,33 +157,27 @@ function BillPdf() {
 						<h2>Tax Invoice</h2>
 						<div className="basicDetails">
 							<div>
-								<p>GST NO : {company?.gst}</p>
-								<p>HSN Services : {company?.hsn}</p>
-								<p>Pan Card No : {company?.pan}</p>
+								<p>GST NO : {invdata?.companyGst}</p>
+								<p>HSN Services : {invdata?.companyHsn}</p>
+								<p>Pan Card No : {invdata?.companyPan}</p>
 							</div>
 							<div>
-								<p>Invoice NO : {invId}</p>
-								<p>Date : {date}</p>
+								<p>Invoice NO : invoiceId</p>
+								<p>Date : {invdata && invdata?.data[3]}</p>
 							</div>
 						</div>
 						<div className="inviceContainer">
 							<div className="invoiceHeaders">
 								<div>
 									<h3>Bill to Address:</h3>
-									<h5>{company?.name}</h5>
+									<h5>{invdata?.companyName}</h5>
 									<h4>
 										<span style={{ fontWeight: 600 }}>Address: </span>
-										{company?.address?.street +
-											", " +
-											company?.address?.city +
-											",\n" +
-											company?.address?.state +
-											", India, " +
-											company?.address?.pincode}
+										{invdata?.companyAddress}
 									</h4>
 								</div>
 								<div>
-									<p>{date}</p>
+									<p>{invdata && invdata?.data[3]}</p>
 									<p>Vehicle Monthly Rental Basis PO No -</p>
 								</div>
 							</div>
@@ -245,7 +210,7 @@ function BillPdf() {
 									return (
 										<div key={invoice.from + idx}>
 											<div>
-												<p>{invoice?.length + idx + 1}</p>
+												<p>{invoices.length + idx + 1}</p>
 												<article>
 													Minor Maint Charges - {invoice.model}
 													<br />
@@ -270,7 +235,6 @@ function BillPdf() {
 							<div className="invoiceFooter">
 								<div>
 									<p>Taxable Value (Rs): </p>
-									{/* <p>2882549.64</p> */}
 									<p>{Number(total?.totalAmount).toFixed(2)}</p>
 								</div>
 								<div>

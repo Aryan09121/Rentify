@@ -10,7 +10,6 @@ export const ownerReducer = createReducer(initialState, (builder) => {
 		.addCase("GET_OWNERS_SUCCESS", (state, action) => {
 			state.loading = false;
 			state.owners = action.payload.owners;
-			state.message = action.payload.message;
 		})
 		.addCase("GET_OWNERS_FAILURE", (state, action) => {
 			state.loading = false;

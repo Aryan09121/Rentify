@@ -28,6 +28,10 @@ function formatDate(date, d = false) {
 
 const invoiceHeaders = ["Invoice ID", "Company Name", "Email", "Issue Date", "Amount", "Status"];
 
+const fixed = (n) => {
+	return parseFloat(Number(n).toFixed(2));
+};
+
 const Invoice = () => {
 	const [selectedInvoice, setSelectedInvoice] = useState("all");
 	const [filteredInvoiceData, setFilteredInvoiceData] = useState([]);
@@ -44,9 +48,14 @@ const Invoice = () => {
 
 	useEffect(() => {
 		if (invoices) {
-			const companyInvoiceData = invoices.map((invoice) => {
-				console.log(invoice);
+			const currentMonth = new Date().getMonth(); // Get the current month
+			const nextMonth = (currentMonth + 1) % 12; // Calculate the index of the next month (0-indexed)
+
+			const companyInvoiceData = {};
+
+			invoices.forEach((invoice) => {
 				const { company, months } = invoice;
+				// console.log(invoice.months);
 				const {
 					_id: companyId,
 					name: companyName,
@@ -56,48 +65,116 @@ const Invoice = () => {
 					gst: companyGst,
 					hsn: companyHsn,
 				} = company;
-				const monthlyCarData = {};
-				months.forEach((monthInvoice) => {
-					console.log(monthInvoice);
-					const { startDate, endDate, billAmount, invoiceDate } = monthInvoice;
-					const cars = monthInvoice.cars.map((car) => ({
-						model: car.model,
-						registrationNo: car.registrationNo,
-						// Add other car properties here if needed
-					}));
+				// Initialize an empty array to store monthly invoices if not already exists
+				if (!companyInvoiceData[companyId]) {
+					companyInvoiceData[companyId] = {
+						companyId,
+						companyName,
+						companyContact,
+						companyAddress,
+						companyPan,
+						companyGst,
+						companyHsn,
+						ownerName: invoice.owner.name,
+						monthlyInvoices: [],
+					};
+				}
+				// Iterate through each month's invoice
+				months.forEach((monthInvoice, index) => {
+					const {
+						startDate,
+						endDate,
+						billAmount,
+						invoiceDate,
+						startKm,
+						endKm,
+						rate,
+						days,
+						offroad,
+						dayAmount,
+						kmAmount,
+						totalDays,
+						totalAmount,
+						gstAmount,
+						rent,
+						companyStatus,
+						frvCode,
+						car,
+						district,
+					} = monthInvoice;
 
-					if (!monthlyCarData[invoiceDate]) {
-						monthlyCarData[invoiceDate] = {
-							startDate,
-							endDate,
-							billAmount,
-							cars,
-						};
-					} else {
-						monthlyCarData[invoiceDate].cars.push(...cars);
+					// Create an object for the monthly invoice
+					const monthlyInvoice = {
+						month: formatDate(invoiceDate),
+						startDate,
+						endDate,
+						startKm,
+						endKm,
+						billAmount,
+						rate,
+						days,
+						offroad,
+						dayAmount,
+						kmAmount,
+						totalDays,
+						totalAmount,
+						gstAmount,
+						rent,
+						companyStatus,
+						model: invoice.car.model,
+						brand: invoice.car.brand,
+						registrationNo: invoice.car.registrationNo,
+						frvCode,
+						district,
+						carId: car?._id,
+						year: car.year,
+					};
+
+					// If this is the first invoice for this month, create a new array for that month
+					if (!companyInvoiceData[companyId].monthlyInvoices[index]) {
+						companyInvoiceData[companyId].monthlyInvoices[index] = [];
 					}
+
+					// Push the monthly invoice to the corresponding month's array
+					companyInvoiceData[companyId].monthlyInvoices[index].push(monthlyInvoice);
 				});
-				console.log(monthlyCarData);
-
-				const monthlyInvoices = Object.entries(monthlyCarData).map(([invoiceDate, data]) => ({
-					invoiceDate,
-					...data,
-				}));
-
-				return {
-					companyId,
-					companyName,
-					companyContact,
-					companyAddress,
-					companyPan,
-					companyGst,
-					companyHsn,
-					monthlyInvoices,
-				};
 			});
-			console.log(companyInvoiceData);
-			setInvoiceData(companyInvoiceData);
-			setFilteredInvoiceData(companyInvoiceData);
+
+			// Convert the object of companyInvoiceData into an array
+			const companyInvoiceArray = Object.values(companyInvoiceData);
+
+			const invData = companyInvoiceArray.map((invoice, idx) => {
+				const monthData = invoice.monthlyInvoices.map((invoiceMonth, i) => {
+					const totalAmount = invoiceMonth.reduce((acc, data) => {
+						return acc + data.billAmount;
+					}, 0);
+					const data = {
+						data: [idx + i + 1, invoice.companyName, invoice.companyContact, invoiceMonth[0].month, fixed(totalAmount)],
+						status: invoiceMonth[0].companyStatus,
+						companyId: invoice.companyId,
+						companyName: invoice.companyName,
+						companyContact: invoice.companyContact,
+						companyAddress: invoice.companyAddress,
+						companyPan: invoice.companyPan,
+						companyHsn: invoice.companyHsn,
+						companyGst: invoice.companyGst,
+						invoices: invoiceMonth,
+					};
+					return data;
+				});
+				return monthData;
+			});
+
+			const allData = invData.reduce((acc, curr) => {
+				for (const key of curr) {
+					acc.push(key);
+				}
+				return acc;
+			}, []);
+
+			// Set the state variables
+			setInvoiceData(allData);
+			setFilteredInvoiceData(allData);
 		}
 	}, [invoices]);
 
@@ -105,8 +182,10 @@ const Invoice = () => {
 		const filterInvoiceData = () => {
 			let filteredData = invoiceData.slice();
 
+			// console.log(filteredData);
+
 			if (selectedInvoice !== "all") {
-				filteredData = filteredData.filter((invoice) => invoice.monthlyInvoices.some((inv) => inv.companyStatus === selectedInvoice));
+				filteredData = filteredData.filter((invoice) => invoice.status === selectedInvoice);
 			}
 
 			if (searchQuery) {
@@ -137,31 +216,9 @@ const Invoice = () => {
 		}
 	}, [message, error, dispatch]);
 
-	const exportToExcel = () => {
-		const worksheet = XLSX.utils.json_to_sheet(
-			filteredInvoiceData.map((invoice) => {
-				return {
-					"Invoice Id": invoice.companyId,
-					"Owner Name": invoice.companyName,
-					"Owner Email Id": invoice.companyContact,
-					"Invoice Date": invoice.monthlyInvoices[0].invoiceDate,
-					"Invoice Amount": invoice.totalAmount,
-					Status: selectedInvoice,
-				};
-			})
-		);
-		const workbook = XLSX.utils.book_new();
-		XLSX.utils.book_append_sheet(workbook, worksheet, "Invoices");
-		XLSX.writeFile(workbook, "invoices.xlsx");
-	};
-
 	const generatePdf1 = (data) => {
-		const invoicesJson = encodeURIComponent(JSON.stringify(data.invoices));
-		const ownerJson = encodeURIComponent(JSON.stringify(data.company));
-		const id = encodeURIComponent(JSON.stringify(data.data[0]));
-		const date = encodeURIComponent(JSON.stringify(data.data[3]));
-
-		navigate(`/Bill?invoices=${invoicesJson}&owner=${ownerJson}&invId=${id}&date=${date}`);
+		const invoicesJson = encodeURIComponent(JSON.stringify(data));
+		navigate(`/Bill?invoices=${invoicesJson}`);
 	};
 
 	if (loading) {
@@ -182,14 +239,8 @@ const Invoice = () => {
 						</section>
 						<section className="invoice_widget_container">
 							<WidgetItem designation="All Invoices" value={invoiceData.length || 0} />
-							<WidgetItem
-								designation="Paid Invoices"
-								value={invoiceData.filter((i) => i.monthlyInvoices.some((inv) => inv.companyStatus === "paid")).length || 0}
-							/>
-							<WidgetItem
-								designation="Unpaid Invoices"
-								value={invoiceData.filter((i) => i.monthlyInvoices.some((inv) => inv.companyStatus === "unpaid")).length || 0}
-							/>
+							<WidgetItem designation="Paid Invoices" value={invoiceData?.filter((i) => i.status === "paid").length || 0} />
+							<WidgetItem designation="Unpaid Invoices" value={invoiceData?.filter((i) => i.status === "pending").length || 0} />
 						</section>
 						<TableContainer className="invoice_table_container">
 							<TableHeading>
@@ -209,8 +260,8 @@ const Invoice = () => {
 										Paid
 									</h4>
 									<h4
-										className={selectedInvoice === "unpaid" ? "selected_invoice" : ""}
-										onClick={() => setSelectedInvoice("unpaid")}
+										className={selectedInvoice === "pending" ? "selected_invoice" : ""}
+										onClick={() => setSelectedInvoice("pending")}
 									>
 										Unpaid Invoices
 									</h4>
@@ -224,10 +275,6 @@ const Invoice = () => {
 											value={searchQuery}
 											onChange={(e) => setSearchQuery(e.target.value)}
 										/>
-									</button>
-									<button onClick={exportToExcel}>
-										<FaUpload />
-										Export
 									</button>
 								</div>
 							</TableHeading>

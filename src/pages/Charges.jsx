@@ -69,10 +69,6 @@ const columns = [
 		Header: "Amount",
 		accessor: "amount",
 	},
-	{
-		Header: "Status",
-		accessor: "status",
-	},
 ];
 
 const unitOptions = [
@@ -160,15 +156,83 @@ function extractYearMonthInWords(dateString) {
 	return { year, month };
 }
 
+const fixed = (n) => parseFloat(Number(n).toFixed(2));
 const SearchCars = () => {
 	const [query, setQuery] = useState("");
 	const [unit, setUnit] = useState("date");
-	const { allinvoices, loading, message, error } = useSelector((state) => state.invoice);
+	const [headers, setHeaders] = useState([
+		{
+			Header: "S No.",
+			accessor: "sno",
+		},
+		{
+			Header: "District",
+			accessor: "district",
+		},
+		{
+			Header: "Vehicle Reg.no",
+			accessor: "registrationno",
+		},
+		{
+			Header: "Make",
+			accessor: "make",
+		},
+		{
+			Header: "Model",
+			accessor: "model",
+		},
+		{
+			Header: "Year",
+			accessor: "year",
+		},
+		{
+			Header: "FRV CODE",
+			accessor: "frv",
+		},
+		{
+			Header: "Month",
+			accessor: "month",
+		},
+		{
+			Header: "Start",
+			accessor: "start",
+		},
+		{
+			Header: "End",
+			accessor: "end",
+		},
+		{
+			Header: "Total Day",
+			accessor: "days",
+		},
+		{
+			Header: "OFF ROAD DAY",
+			accessor: "offroad",
+		},
+		{
+			Header: "FINAL Qty",
+			accessor: "finaldays",
+		},
+		{
+			Header: "Unit",
+			accessor: "unit",
+		},
+		{
+			Header: "Rate",
+			accessor: "rate",
+		},
+		{
+			Header: "Amount",
+			accessor: "amount",
+		},
+	]);
+	const [allinvoices, setAllinvoices] = useState([]);
+	const { loading, message, error } = useSelector((state) => state.invoice);
 	const location = useLocation();
 	const searchParams = new URLSearchParams(location.search);
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const compId = searchParams.get("id");
+	const invoicesArray = searchParams.get("invoices");
 
 	const [data, setData] = useState([]);
 
@@ -185,9 +249,9 @@ const SearchCars = () => {
 	};
 
 	const payBill = () => {
-		const ids = data?.map((inv) => inv?.invoice?._id);
-		dispatch(payAllCompanyInvoices(ids));
-		dispatch(getIndividualInvoices());
+		const companyId = allinvoices.companyId;
+		const month = allinvoices.data[3];
+		dispatch(payAllCompanyInvoices(companyId, month));
 	};
 
 	const exportToExcel = (type) => {
@@ -207,7 +271,7 @@ const SearchCars = () => {
 						Month: invoice.month,
 						"Start Date": invoice.start,
 						"End Date": invoice.end,
-						"Total Days": invoice.qty,
+						"Total Days": invoice.totaldays,
 						"Offorad Days": invoice.offroad,
 						"Final Qty": invoice.final,
 						Unit: invoice.unit,
@@ -262,15 +326,11 @@ const SearchCars = () => {
 				item.unit.toLowerCase().includes(query.toLowerCase()) ||
 				item.rate.toString().toLowerCase().includes(query.toLowerCase())
 		);
-		// console.log(filteredData);
 		setData(filteredData);
 	}, [query]);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const Table = useCallback(TableSearchTOC(columns, loading ? [] : data, "dashboard-product-box", "", true, 50, handleRowClick), [data]);
 
-	useEffect(() => {
-		dispatch(getIndividualInvoices());
-	}, []);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const Table = useCallback(TableSearchTOC(headers, loading ? [] : data, "dashboard-product-box", "", true, 50, handleRowClick), [data, headers]);
 
 	useEffect(() => {
 		if (error) {
@@ -284,36 +344,40 @@ const SearchCars = () => {
 	}, [message, error, dispatch]);
 
 	useEffect(() => {
-		if (allinvoices?.length > 0) {
-			// const filterInvocie = allinvoices.filter();
-			const data = allinvoices?.map((inv, idx) => {
-				// console.log(inv?.company?._id !== compId?.id);
-				if (inv.company._id.toString() !== compId) {
-					return null;
-				} else {
-					const { year, month } = extractYearMonthInWords(inv.invoiceDate);
-					return {
-						_id: inv?.car?._id,
-						invoice: inv,
-						sno: idx + 1,
-						district: inv.trip.district,
-						registrationno: inv?.car?.registrationNo,
-						make: inv?.car?.brand,
-						model: inv?.car?.model,
-						year: year,
-						frv: inv?.trip?.frvCode,
-						month: `${month.substring(0, 3)}-${year}`,
-						start: unit === "km" ? `${inv?.fromkm} km` : formatDate(inv?.from),
-						end: unit === "km" ? `${inv?.tokm} km` : formatDate(inv?.to),
-						qty: unit === "km" ? inv?.kmQty : inv?.dayQty,
-						offroad: inv?.offroad,
-						final: inv?.dayQty - inv?.offroad,
-						unit: unit,
-						rate: unit === "km" ? inv?.kmRate : inv?.dayRate,
-						amount: unit === "km" ? inv?.kmAmount : inv?.dayAmount,
-						status: <p style={inv?.status === "paid" ? { color: "green" } : { color: "red" }}>{inv?.status}</p>,
-					};
-				}
+		if (invoicesArray.length > 0) {
+			const decodedInvoices = invoicesArray ? JSON.parse(decodeURIComponent(invoicesArray)) : [];
+			console.log(decodedInvoices);
+			setAllinvoices(decodedInvoices);
+		}
+	}, [invoicesArray]);
+
+	useEffect(() => {
+		if (allinvoices?.invoices?.length > 0) {
+			const data = allinvoices?.invoices?.map((inv, idx) => {
+				const { year, month } = extractYearMonthInWords(inv.invoiceDate);
+				return {
+					_id: inv?.carId,
+					invoice: inv,
+					sno: idx + 1,
+					district: inv?.district,
+					registrationno: inv?.registrationNo,
+					make: inv?.brand,
+					model: inv?.model,
+					year: inv?.year,
+					frv: inv?.frvCode,
+					month: inv?.month,
+					start: `${inv?.startKm} km`,
+					startdate: formatDate(inv?.startDate),
+					end: `${inv?.endKm} km`,
+					enddate: formatDate(inv?.endDate),
+					qty: inv?.endKm - inv?.startKm,
+					totaldays: inv?.days,
+					offroad: inv?.offroad,
+					final: inv?.totalDays,
+					unit: unit,
+					rate: unit === "km" ? inv?.rate?.km : inv?.rate?.date,
+					amount: unit === "km" ? inv?.kmAmount : fixed(inv?.rate?.date * inv?.totalDays),
+				};
 			});
 
 			// Create a copy of data with original sno order
@@ -326,6 +390,136 @@ const SearchCars = () => {
 			sortedData?.forEach((item, idx) => {
 				item.sno = idx + 1;
 			});
+			let columns;
+			if (unit === "km") {
+				columns = [
+					{
+						Header: "S No.",
+						accessor: "sno",
+					},
+					{
+						Header: "District",
+						accessor: "district",
+					},
+					{
+						Header: "Vehicle Reg.no",
+						accessor: "registrationno",
+					},
+					{
+						Header: "Make",
+						accessor: "make",
+					},
+					{
+						Header: "Model",
+						accessor: "model",
+					},
+					{
+						Header: "Year",
+						accessor: "year",
+					},
+					{
+						Header: "FRV CODE",
+						accessor: "frv",
+					},
+					{
+						Header: "Month",
+						accessor: "month",
+					},
+					{
+						Header: "Start Km",
+						accessor: "start",
+					},
+					{
+						Header: "End Km",
+						accessor: "end",
+					},
+					{
+						Header: "Qty",
+						accessor: "qty",
+					},
+					{
+						Header: "Unit",
+						accessor: "unit",
+					},
+					{
+						Header: "Rate",
+						accessor: "rate",
+					},
+					{
+						Header: "Amount",
+						accessor: "amount",
+					},
+				];
+			} else {
+				columns = [
+					{
+						Header: "S No.",
+						accessor: "sno",
+					},
+					{
+						Header: "District",
+						accessor: "district",
+					},
+					{
+						Header: "Vehicle Reg.no",
+						accessor: "registrationno",
+					},
+					{
+						Header: "Make",
+						accessor: "make",
+					},
+					{
+						Header: "Model",
+						accessor: "model",
+					},
+					{
+						Header: "Year",
+						accessor: "year",
+					},
+					{
+						Header: "FRV CODE",
+						accessor: "frv",
+					},
+					{
+						Header: "Month",
+						accessor: "month",
+					},
+					{
+						Header: "Start Date",
+						accessor: "startdate",
+					},
+					{
+						Header: "End Date",
+						accessor: "enddate",
+					},
+					{
+						Header: "Total Day",
+						accessor: "totaldays",
+					},
+					{
+						Header: "OFF ROAD DAY",
+						accessor: "offroad",
+					},
+					{
+						Header: "FINAL Qty",
+						accessor: "final",
+					},
+					{
+						Header: "Unit",
+						accessor: "unit",
+					},
+					{
+						Header: "Rate",
+						accessor: "rate",
+					},
+					{
+						Header: "Amount",
+						accessor: "amount",
+					},
+				];
+			}
+			setHeaders(columns);
+
 			setData(sortedData);
 		}
 	}, [allinvoices, unit]);

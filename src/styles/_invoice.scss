@@ -138,19 +138,6 @@
 					@include inputStyles;
 				}
 			}
-			> button:last-child {
-				padding: 1rem 1.5rem;
-				background-color: #ffff;
-				border-radius: 3px;
-				font-size: 1.1rem;
-				font-weight: 600;
-				@include flex(row, unset, center, 1rem);
-				background-color: #029e9d;
-				color: #fcfcfc;
-				> svg {
-					font-size: 1.2rem;
-				}
-			}
 		}
 	}
 }
