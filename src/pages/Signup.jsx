@@ -9,8 +9,8 @@ import { userLogin } from "../redux/actions";
 function SignUp() {
 	const navigate = useNavigate();
 	const [loginDetails, setLoginDetails] = useState({
-		username: "",
-		password: "",
+		username: "911aaryan@gmail.com",
+		password: "Password@111",
 	});
 	const { error, message, loading, user, isAuthenticated } = useSelector((state) => state.user);
 
@@ -57,9 +57,9 @@ function SignUp() {
 							onChange={onChangeHandler}
 							name="username"
 							type="text"
-							placeholder="Email or Phone Number ..."
+							placeholder="911aaryan@gmail.com"
 						/>
-						<input onChange={onChangeHandler} value={loginDetails.password} name="password" type="password" placeholder="password" />
+						<input onChange={onChangeHandler} value={loginDetails.password} name="password" type="password" placeholder="Password@111" />
 						<button className="submitBtn" type="submit">
 							{loading ? "Loading..." : "Log In"}
 						</button>
